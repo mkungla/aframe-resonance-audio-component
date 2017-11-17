@@ -44,7 +44,7 @@ Here is the code from the demo. That is it. Pure html!
   -->
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/resonance-audio/build/resonance-audio.min.js"></script>
-  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/etiennepinchon/aframe-resonance/master/dist/aframe-resonance.min.js"></script>
 </head>
 ```
 
