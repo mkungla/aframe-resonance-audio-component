@@ -5,7 +5,7 @@ else if (!AFRAME) {
   throw "AFRAME has not been loaded!";
 }
 
-let RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
+const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS);
 
 AFRAME.registerComponent('resonance-room', {
   schema: {
