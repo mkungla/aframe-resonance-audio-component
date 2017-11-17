@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Google Resonance Component - A-Frame</title>
+    <meta name="description" content="Glow Component - A-Frame">
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resonance-audio/build/resonance-audio.min.js"></script>
+    <script src="src/resonance.js"></script>
+  </head>
+  <body>
+    <a-scene>
+
+      <a-assets>
+        <a-asset-item id="modelObj" src="static/room/model.obj"></a-asset-item>
+        <a-asset-item id="materialsMtl" src="static/room/materials.mtl"></a-asset-item>
+      </a-assets>
+
+      <!-- ENVIRONMENT -->
+      <a-gradient-sky material="shader: gradient; topColor: 172 253 255; bottomColor: 255 198 253;"></a-gradient-sky>
+      <a-entity obj-model="obj: #modelObj; mtl: #materialsMtl " position="0 1 -0.5"></a-entity>
+      <!-- END ENVIRONMENT -->
+
+      <a-resonance-room
+        src-position="0.85 1.5 -0.7"
+        src="static/track.mp3"
+        loop="true",
+        autoplay="true",
+        width="4"
+        height="3"
+        depth="3.8"
+        helper="true"
+        left-wall="brick-bare"
+        right-wall="curtain-heavy"
+        front-wall="marble"
+        back-wall="glass-thin"
+        down-wall="marble"
+        up-wall="brick-bare"
+        ><a-resonance-room>
+
+    </a-scene>
+
+    <script type="text/javascript">
+      /*setTimeout(()=>{
+        let el = document.querySelector('a-resonance-room');
+        el.audioEl.pause();
+      }, 2000)*/
+    </script>
+  </body>
+</html>

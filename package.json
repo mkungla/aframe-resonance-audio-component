@@ -1,0 +1,26 @@
+{
+  "name": "aframe-resonance",
+  "main": "src/resonance.js",
+  "webpack": "dist/aframe-resonance-component.min.js",
+  "description": "Google Resonance component for A-Frame (https://aframe.io).",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "cleanDSStore": "find . -name '.DS_Store' -type f -delete",
+    "start": "npm run cleanDSStore && budo --verbose --port 3000 --open",
+    "dist": "npm run cleanDSStore && webpack src/resonance.js dist/aframe-resonance-component.js && webpack -p src/resonance.js dist/aframe-resonance-component.min.js"
+  },
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "budo": "^7.1.0",
+    "shelljs": "^0.6.0",
+    "webpack": "^1.12.9",
+    "ghpages": "0.0.3"
+  },
+  "keywords": [
+    "aframe",
+    "aframe-component",
+    "webvr",
+    "vr"
+  ]
+}
