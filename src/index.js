@@ -1,8 +1,9 @@
+/* global AudioContext AFRAME ResonanceAudio */
 if (!ResonanceAudio) {
-  throw "ResonanceAudio has not been loaded!";
+  throw new Error('ResonanceAudio has not been loaded!');
 }
-else if (!AFRAME) {
-  throw "AFRAME has not been loaded!";
+if (!AFRAME) {
+  throw new Error('AFRAME has not been loaded!');
 }
 
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS);
@@ -10,58 +11,58 @@ const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFI
 AFRAME.registerComponent('resonance-room', {
   schema: {
     enabled: {default: true},
-    src: {type: 'asset' },
-    'src-position': {type: 'vec3', default: '0 0 0' },
-    width: {type: 'number', default: 2 },
+    src: {type: 'asset'},
+    'src-position': {type: 'vec3', default: '0 0 0'},
+    width: {type: 'number', default: 2},
     height: {type: 'number', default: 2},
-    depth: {type: 'number', default: 2 },
-    helper: {type: 'boolean', default: false },
+    depth: {type: 'number', default: 2},
+    helper: {type: 'boolean', default: false},
     'left-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     'right-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     'front-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     'back-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     'down-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     'up-wall': {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    loop: {type: 'boolean', default: true },
-    autoplay: {type: 'boolean', default: true }
+    loop: {type: 'boolean', default: true},
+    autoplay: {type: 'boolean', default: true}
   },
-  init() {
-    this.el.sceneEl.addEventListener('loaded', ()=>{
+  init () {
+    this.el.sceneEl.addEventListener('loaded', () => {
       this._camera = this.el.sceneEl.querySelector('[camera]');
-    })
+    });
     this.initResonanceScene();
     this.updateProps();
   },
 
-  update() {
+  update () {
     this._camera = this.el.sceneEl.querySelector('[camera]');
   },
 
-  tick() {
+  tick () {
     // Update listener position (camera)
     let pos = this._camera.getAttribute('position');
     this.el.resonanceAudioScene.setListenerPosition(pos.x, pos.y, pos.z);
   },
 
-  remove() {
+  remove () {
     this.el.audioEl.pause();
     this.el.audioEl = null;
   },
 
-  pause() {
+  pause () {
     if (this.el.audioEl) {
       this.el.audioEl.pause();
     }
   },
 
-  play() {
+  play () {
     if (this.el.audioEl && this.el.audioEl.paused) {
       this.el.audioEl.play();
     }
   },
 
   // Create singleton context..
-  initResonanceScene() {
+  initResonanceScene () {
     if (this.el.audioContext) { return; }
 
     // Create an AudioContext
@@ -73,7 +74,7 @@ AFRAME.registerComponent('resonance-room', {
     this.el.resonanceAudioScene.output.connect(this.el.audioContext.destination);
   },
 
-  updateProps() {
+  updateProps () {
     // Create room
     this.setUpRoom();
     this.setUpAudio();
@@ -84,13 +85,13 @@ AFRAME.registerComponent('resonance-room', {
   },
 
   // Create resonance room
-  setUpRoom() {
+  setUpRoom () {
     let roomDimensions = {
       width: this.data.width,
       height: this.data.height,
       depth: this.data.depth
-    },
-    roomMaterials = {
+    };
+    let roomMaterials = {
       left: this.data['left-wall'],
       right: this.data['right-wall'],
       front: this.data['front-wall'],
@@ -101,7 +102,7 @@ AFRAME.registerComponent('resonance-room', {
     this.el.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
   },
 
-  setUpAudio() {
+  setUpAudio () {
     if (!this.data.src) {
       return;
     }
@@ -135,42 +136,36 @@ AFRAME.registerComponent('resonance-room', {
   },
 
   // Update helper box: helper
-  updateRoomHelper() {
-
+  updateRoomHelper () {
     // Fetch existing helper el
     let oldHelperEl = this.el.querySelector('.resonance-room-helper');
 
     // Add Box
-    if (this.data.helper && !oldHelperEl)
-    {
+    if (this.data.helper && !oldHelperEl) {
       let _helperEl = document.createElement('a-box');
       _helperEl.classList.add('resonance-room-helper');
       // NOTE: GOOGLE RESONANCE DOES NOT HAVE A WAY TO SET THE ROOM POSITION
-      _helperEl.setAttribute('position', {x: 0, y: this.data.height/2, z: 0});
+      _helperEl.setAttribute('position', {x: 0, y: this.data.height / 2, z: 0});
       _helperEl.setAttribute('width', this.data.width);
       _helperEl.setAttribute('height', this.data.height);
       _helperEl.setAttribute('depth', this.data.depth);
       _helperEl.setAttribute('wireframe', true);
       _helperEl.setAttribute('color', 'black');
       this.el.appendChild(_helperEl);
-    }
-    // Remove Helper box
-    else if (!this.data.helper && oldHelperEl)
-    {
+    } else if (!this.data.helper && oldHelperEl) {
+      // Remove Helper box
       oldHelperEl.parendNode.removeChild(oldHelperEl);
       oldHelperEl = null;
     }
   },
 
   // Update helper source: helper
-  updateSourceHelper() {
-
+  updateSourceHelper () {
     // Fetch existing helper el
     let oldHelperEl = this.el.querySelector('.resonance-source-helper');
 
     // Add Sphere
-    if (this.data.helper && !oldHelperEl)
-    {
+    if (this.data.helper && !oldHelperEl) {
       let _helperEl = document.createElement('a-sphere');
       _helperEl.classList.add('resonance-source-helper');
       _helperEl.setAttribute('radius', 0.2);
@@ -180,10 +175,8 @@ AFRAME.registerComponent('resonance-room', {
       _helperEl.setAttribute('color', 'blue');
       _helperEl.setAttribute('position', this.data['src-position']);
       this.el.appendChild(_helperEl);
-    }
-    // Remove Helper box
-    else if (!this.data.helper && oldHelperEl)
-    {
+    } else if (!this.data.helper && oldHelperEl) {
+      // Remove Helper box
       oldHelperEl.parendNode.removeChild(oldHelperEl);
       oldHelperEl = null;
     }
@@ -207,6 +200,6 @@ AFRAME.registerPrimitive('a-resonance-room', {
     'down-wall': 'resonance-room.down-wall',
     'up-wall': 'resonance-room.up-wall',
     loop: 'resonance-room.loop',
-    autoplay: 'resonance-room.autoplay',
+    autoplay: 'resonance-room.autoplay'
   }
 });
