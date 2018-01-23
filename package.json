@@ -25,7 +25,8 @@
   ],
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors",
-    "build": "webpack --config ./config/webpack-dev.js src/index.js build/aframe-resonance-audio-component.js"
+    "build": "webpack --config ./config/webpack-dev.js src/index.js build/aframe-resonance-audio-component.js",
+    "publish": "git subtree push --prefix examples github/mkungla gh-pages"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
