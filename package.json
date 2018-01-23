@@ -1,6 +1,6 @@
 {
   "name": "aframe-resonance-audio-component",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "main": "src/index.js",
   "repository": {
@@ -23,7 +23,16 @@
     "webvr",
     "mozvr"
   ],
+  "scripts": {
+    "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors"
+  },
   "dependencies": {
     "resonance-audio": "^1.0.0"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.17",
+    "standard": "^10.0.3",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
   }
 }
