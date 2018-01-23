@@ -24,7 +24,8 @@
     "mozvr"
   ],
   "scripts": {
-    "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors"
+    "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors",
+    "build": "webpack --config ./config/webpack-dev.js src/index.js build/aframe-resonance-audio-component.js"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"

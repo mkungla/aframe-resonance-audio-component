@@ -28,3 +28,4 @@
 .gitattributes text
 .gitignore text
 examples/assets/** filter=lfs diff=lfs merge=lfs -text
+examples/aframe-resonance-audio-component.js filter=lfs diff=lfs merge=lfs -text
