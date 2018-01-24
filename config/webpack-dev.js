@@ -18,15 +18,15 @@ module.exports = {
     ],
     contentBase: [path.join(__dirname, '../examples'), path.join(__dirname, '../build')],
     host: '0.0.0.0',
+    port: 9000,
     hot: true,
     inline: true,
-    noInfo: true,
-    port: 9000
+    noInfo: true
   },
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, '../build'),
-    filename: '../build/aframe-resonance-audio-component.js'
+    filename: 'aframe-resonance-audio-component.js'
   },
   plugins: PLUGINS,
   devtool: 'inline-source-map'

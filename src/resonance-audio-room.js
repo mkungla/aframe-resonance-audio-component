@@ -64,10 +64,10 @@ AFRAME.registerComponent('resonance-audio-room', {
       depth: this.data.depth
     }
     if ((this.data.width + this.data.height + this.data.depth) === 0) {
-      let box = new AFRAME.THREE.Box3().setFromObject(this.el.object3D)
-      dimensions.width = box.size().x
-      dimensions.height = box.size().y
-      dimensions.depth = box.size().z
+      const bb = new AFRAME.THREE.Box3().setFromObject(this.el.object3D)
+      dimensions.width = bb.size().x
+      dimensions.height = bb.size().y
+      dimensions.depth = bb.size().z
       this.builtInGeometry = false
     }
     // update geometry (only if using default geometry)
@@ -163,10 +163,6 @@ AFRAME.registerPrimitive('a-resonance-audio-room', {
     front: 'resonance-audio-room.front',
     back: 'resonance-audio-room.back',
     down: 'resonance-audio-room.down',
-    up: 'resonance-audio-room.up',
-    src: 'resonance-audio-room.src',
-    'srcpos': 'resonance-audio-room.srcpos',
-    loop: 'resonance-audio-room.loop',
-    autoplay: 'resonance-audio-room.autoplay'
+    up: 'resonance-audio-room.up'
   }
 })
