@@ -36,12 +36,20 @@ AFRAME.registerComponent('resonance-audio-room', {
     // Create an AudioElement.
     this.el.audioElement = document.createElement('audio')
     this.sound = null
+    
+    this.resonanceAudioSceneSource = null
+    this.mediaElementAudioNode = null
+    this.mediaStreamAudioNode = null
+    this.connectedSrc = {
+      element: false,
+      stream: false
+    }
+    this.setUpAudio()
   },
 
   update (oldData) {
     this.roomSetup(oldData)
     this.acousticsSetup(oldData)
-    this.setUpAudio()
   },
 
   tick () {
@@ -111,18 +119,46 @@ AFRAME.registerComponent('resonance-audio-room', {
       }
       this.hasAudio = true
       this.sound = childEl.el.components['resonance-audio-src']
-    })
 
+      // Give the audio src a reference to this room.
+      this.sound.room = this
+    })
+    // Connect audio src to this room.
+    this.connectElementSrc(this.sound.getSource())
+  },
+
+
+  disconnectPreviousSrc () {
+    if (this.connectedSrc.element) {
+      this.mediaElementAudioNode.disconnect(this.resonanceAudioSceneSource.input)
+      this.connectedSrc.element = false
+    }
+    if (this.connectedSrc.stream) {
+      this.mediaStreamAudioNode.disconnect(this.resonanceAudioSceneSource.input)
+      delete this.mediaStreamAudioNode
+      console.log(this.mediaStreamAudioNode)
+      this.connectedSrc.stream = false
+    }
+  },
+
+  connectElementSrc (src) {
+    this.disconnectPreviousSrc();
+    // Don't connect a new element if it's left empty.
+    if (src === '' || typeof src == 'undefined') { return }
     // Load an audio file into the AudioElement.
-    this.el.audioElement.setAttribute('src', this.sound.getSource())
+    this.el.audioElement.setAttribute('src', src) 
     // Generate a MediaElementSource from the AudioElement.
-    let audioElementSource = this.resonanceAudioContext.createMediaElementSource(this.el.audioElement)
+    if (!this.mediaElementAudioNode) {
+      this.mediaElementAudioNode = this.resonanceAudioContext.createMediaElementSource(this.el.audioElement)
+    }
     // Add the MediaElementSource to the scene as an audio input source.
-    let source = this.resonanceAudioScene.createSource()
-    audioElementSource.connect(source.input)
-    // Set position
-    this.el.object3D.updateMatrixWorld()
-    source.setFromMatrix(this.sound.getMatrixWorld())
+    if (!this.resonanceAudioSceneSource) {
+      this.resonanceAudioSceneSource = this.resonanceAudioScene.createSource()
+    }
+    this.mediaElementAudioNode.connect(this.resonanceAudioSceneSource.input)
+    this.connectedSrc.element = true
+    
+    this.setPosition()
 
     // Play the audio.
     if (this.sound.data.autoplay) {
@@ -131,6 +167,27 @@ AFRAME.registerComponent('resonance-audio-room', {
 
     // Looping
     this.el.audioElement.setAttribute('loop', this.sound.data.loop)
+  },
+
+  connectStreamSrc (stream) {
+    this.disconnectPreviousSrc();
+    // Don't connect a new stream if it's left empty.
+    if (stream == null) { return }
+    // Generate a MediaStreamSource from the stream MediaStream.
+    this.mediaStreamAudioNode = this.resonanceAudioContext.createMediaStreamSource(stream)
+    // Add the MediaStreamSource to the scene as an audio input source.
+    if (!this.resonanceAudioSceneSource) {
+      this.resonanceAudioSceneSource = this.resonanceAudioScene.createSource()
+    }
+    this.mediaStreamAudioNode.connect(this.resonanceAudioSceneSource.input)
+    this.connectedSrc.stream = true
+
+    this.setPosition()
+  },
+
+  setPosition () {
+    this.el.object3D.updateMatrixWorld()
+    this.resonanceAudioSceneSource.setFromMatrix(this.sound.getMatrixWorld())
   },
 
   remove () {
