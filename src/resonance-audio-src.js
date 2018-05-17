@@ -18,7 +18,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
   update (oldData) {
     if (Object.keys(oldData).length > 0 && // Skip initialization (this is done by the room).
-        oldData.src != this.data.src       // Only connect if src was changed.
+        oldData.src != this.data.src       // Only connect if src was changed and not if other properties were changed.
         ) {
       this.room.connectElementSrc(this.data.src)
     }
@@ -27,7 +27,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     if (!(mediaStream instanceof MediaStream) && mediaStream != null) {
       throw new TypeError('not a mediastream')
     }
-    this.room.connectStreamSrc(mediaStream);
+    this.room.connectStreamSrc(mediaStream)
   },
   getSource () {
     return this.data.src

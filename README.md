@@ -107,6 +107,39 @@ dimensions.height = bb.size().y
 dimensions.depth = bb.size().z
 ```
 
+
+### Using a MediaStream as input
+```html
+<a-assets>
+  <audio id="track" src="assets/audio/track.mp3"></audio>
+</a-assets>
+<a-resonance-audio-room
+  material="wireframe:true"
+  position="0 0 -5"
+  width="4"
+  height="4"
+  depth="4"
+  ambisonic-order="3"
+  speed-of-sound="343"
+  left="brick-bare" right="curtain-heavy" front="plywood-panel" 
+  back="glass-thin" down="parquet-on-concrete" up="acoustic-ceiling-tiles">
+  <a-resonance-audio-src
+    position="0 0 0"
+    src=""></a-resonance-audio-src>
+</a-resonance-audio-room>
+```
+Use javascript to assign a ```MediaStream``` obtained from, for example, WebRTC. Note that the src attribute must be set but can be left empty.
+```js
+document.querySelector('a-resonance-audio-src').setAttribute('srcObject', stream)
+// Or:
+document.querySelector('a-resonance-audio-src').components['resonance-audio-src'].setMediaStream(stream)
+```
+Switching to and from audio files is also possible:
+```js
+document.querySelector('a-resonance-audio-src').setAttribute('src', '#track')
+```
+This has one limitation: when switching back to an audio file, the resulting src value must be different than the previous value. When going from an audio file to a stream and back to the same audio file again, this can be done by setting src to '' right before switching to a stream.
+
 ***
 
 **Credits:**
