@@ -166,7 +166,11 @@ AFRAME.registerComponent('resonance-audio-room', {
     }
 
     // Looping
-    this.el.audioElement.setAttribute('loop', this.sound.data.loop)
+    if (this.sound.data.loop) {
+      this.el.audioElement.setAttribute('loop', 'true')
+    } else {
+      this.el.audioElement.removeAttribute('loop')
+    }
   },
 
   connectStreamSrc (stream) {
