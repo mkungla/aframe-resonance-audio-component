@@ -137,9 +137,8 @@ document.querySelector('a-resonance-audio-src').components['resonance-audio-src'
 
 document.querySelector('a-resonance-audio-src').src = '#track'
 document.querySelector('a-resonance-audio-src').setAttribute('src', '#track')
-document.querySelector('a-resonance-audio-src').components['resonance-audio-src'].setMediaSrc('assets/audio/track.mp3')
+document.querySelector('a-resonance-audio-src').components['resonance-audio-src'].setMediaSrc('#track')
 ```
-As ```setMediaSrc()``` bypasses A-Frame's updater, the property type it accepts is not asset, but string. The ```setAttribute()``` interface works only on the primitives.
 
 
 ***
