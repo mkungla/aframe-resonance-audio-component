@@ -7,14 +7,13 @@ AFRAME.registerComponent('resonance-audio-src', {
   multiple: false,
 
   schema: {
-    src: {type: 'asset', default: ''},
+    src: {type: 'asset'},
     loop: {type: 'boolean', default: true},
     autoplay: {type: 'boolean', default: true}
   },
   init () {
     this.pos = new AFRAME.THREE.Vector3()
     this.room = null
-    this.mediaStream = null
     this.exposeAPI()
   },
   exposeAPI() {
@@ -24,7 +23,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     const descriptor_srcObject = { 
       set: (value) => { this.setMediaStream(value) },
-      get: ()      => this.mediaStream
+      get: ()      => this.data.srcObject
     }
     Object.defineProperty(this.el, 'src', descriptor_src)
     Object.defineProperty(this.el, 'srcObject', descriptor_srcObject)
@@ -32,12 +31,14 @@ AFRAME.registerComponent('resonance-audio-src', {
     Object.defineProperty(this, 'srcObject', descriptor_srcObject)
   },
   setMediaSrc (src) {
+    // Simplified asset parsing, similar to the one used by A-Frame.
     if (typeof src !== 'string') { throw new TypeError('invalid src') }
     if (src.charAt(0) === '#') {
       const el = document.querySelector(src)
       if (!el) { throw new Error('invalid src') }
       src = el.getAttribute('src')
     }
+    this.data.srcObject = null
     this.data.src = src
     this.room.connectElementSrc(src)
   },
@@ -45,7 +46,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     if (!(mediaStream instanceof MediaStream) && mediaStream != null) {
       throw new TypeError('not a mediastream')
     }
-    this.mediaStream = mediaStream
+    this.data.src = ''
+    this.data.srcObject = mediaStream
     this.room.connectStreamSrc(mediaStream)
   },
   getSource () {
