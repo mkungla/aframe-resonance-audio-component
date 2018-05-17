@@ -6,27 +6,46 @@ AFRAME.registerComponent('resonance-audio-src', {
   // set multiple: true in the component definition:
   multiple: false,
 
-  room: null,
-
   schema: {
-    src: {type: 'asset'},
+    src: {type: 'asset', default: ''},
     loop: {type: 'boolean', default: true},
     autoplay: {type: 'boolean', default: true}
   },
   init () {
     this.pos = new AFRAME.THREE.Vector3()
+    this.room = null
+    this.mediaStream = null
+    this.exposeAPI()
   },
-  update (oldData) {
-    if (Object.keys(oldData).length > 0 && // Skip initialization (this is done by the room).
-        oldData.src != this.data.src       // Only connect if src was changed and not if other properties were changed.
-        ) {
-      this.room.connectElementSrc(this.data.src)
+  exposeAPI() {
+    const descriptor_src = {
+      set: (value) => { this.setMediaSrc(value) },
+      get: ()      => this.data.src
     }
-  }, 
+    const descriptor_srcObject = { 
+      set: (value) => { this.setMediaStream(value) },
+      get: ()      => this.mediaStream
+    }
+    Object.defineProperty(this.el, 'src', descriptor_src)
+    Object.defineProperty(this.el, 'srcObject', descriptor_srcObject)
+    Object.defineProperty(this, 'src', descriptor_src)
+    Object.defineProperty(this, 'srcObject', descriptor_srcObject)
+  },
+  setMediaSrc (src) {
+    if (typeof src !== 'string') { throw new TypeError('invalid src') }
+    if (src.charAt(0) === '#') {
+      const el = document.querySelector(src)
+      if (!el) { throw new Error('invalid src') }
+      src = el.getAttribute('src')
+    }
+    this.data.src = src
+    this.room.connectElementSrc(src)
+  },
   setMediaStream (mediaStream) {
     if (!(mediaStream instanceof MediaStream) && mediaStream != null) {
       throw new TypeError('not a mediastream')
     }
+    this.mediaStream = mediaStream
     this.room.connectStreamSrc(mediaStream)
   },
   getSource () {
@@ -45,14 +64,18 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
   }
 });
 
-// Allow proper interface with monkeypatch.
+// Enable setAttribute interface with monkeypatch.
 (function(){
-  let next = HTMLElement.prototype.setAttribute
+  const next = HTMLElement.prototype.setAttribute
   HTMLElement.prototype.setAttribute = function(prop, value) {
-    if (prop === 'srcObject' && this.tagName.toLowerCase() === 'a-resonance-audio-src') {
-      this.components['resonance-audio-src'].setMediaStream(value)
+    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && prop === 'src') {
+      this.components['resonance-audio-src'].setMediaSrc(value)
       return
     } 
-    return next.call(this, prop, value);
+    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && prop === 'srcObject') {
+      this.components['resonance-audio-src'].setMediaStream(value)
+      return
+    }
+    next.call(this, prop, value)
   }
 })();
