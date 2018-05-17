@@ -109,6 +109,7 @@ dimensions.depth = bb.size().z
 
 
 ### Using a MediaStream as input
+Several APIs have been exposed to allow for dynamic switching between audio files and ```MediaStream```s (obtained from, for example, WebRTC).
 ```html
 <a-assets>
   <audio id="track" src="assets/audio/track.mp3"></audio>
@@ -128,17 +129,18 @@ dimensions.depth = bb.size().z
     src=""></a-resonance-audio-src>
 </a-resonance-audio-room>
 ```
-Use javascript to assign a ```MediaStream``` obtained from, for example, WebRTC. Note that the src attribute must be set but can be left empty.
+The APIs exposed are available on the element having the component and the component itself:
 ```js
+document.querySelector('a-resonance-audio-src').srcObject = stream
 document.querySelector('a-resonance-audio-src').setAttribute('srcObject', stream)
-// Or:
 document.querySelector('a-resonance-audio-src').components['resonance-audio-src'].setMediaStream(stream)
-```
-Switching to and from audio files is also possible:
-```js
+
+document.querySelector('a-resonance-audio-src').src = '#track'
 document.querySelector('a-resonance-audio-src').setAttribute('src', '#track')
+document.querySelector('a-resonance-audio-src').components['resonance-audio-src'].setMediaSrc('assets/audio/track.mp3')
 ```
-This has one limitation: when switching back to an audio file, the resulting src value must be different than the previous value. When going from an audio file to a stream and back to the same audio file again, this can be done by setting src to '' right before switching to a stream.
+As ```setMediaSrc()``` bypasses A-Frame's updater, the property type it accepts is not asset, but string. The ```setAttribute()``` interface works only on the primitives.
+
 
 ***
 
