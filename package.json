@@ -25,16 +25,17 @@
   ],
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors",
-    "build": "webpack --config ./config/webpack-dev.js",
+    "build": "webpack --config ./config/webpack-dev.js --mode production",
     "publish": "git subtree push --prefix examples github/digaverse gh-pages"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^0.1.17",
-    "standard": "^10.0.3",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.11.1"
+    "clean-webpack-plugin": "^0.1.19",
+    "standard": "^11.0.1",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
   }
 }

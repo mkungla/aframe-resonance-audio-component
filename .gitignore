@@ -6,6 +6,9 @@
 .DS_Store
 *.log
 npm-debug.log*
+package-lock.json
+yarn.lock
+
 
 ################################################################################
 # DIRECTORIES to ignore
