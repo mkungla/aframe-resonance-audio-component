@@ -122,7 +122,7 @@ Several APIs have been exposed to allow for dynamic switching between audio file
   depth="4"
   ambisonic-order="3"
   speed-of-sound="343"
-  left="brick-bare" right="curtain-heavy" front="plywood-panel" 
+  left="brick-bare" right="curtain-heavy" front="plywood-panel"
   back="glass-thin" down="parquet-on-concrete" up="acoustic-ceiling-tiles">
   <a-resonance-audio-src
     position="0 0 0"
@@ -155,4 +155,4 @@ document.querySelector('a-resonance-audio-src').components['resonance-audio-src'
 [etiennepinchon/aframe-resonance]: https://github.com/etiennepinchon/aframe-resonance
 [resonance-audio-link]: https://developers.google.com/resonance-audio/
 
-[gh-pages-link]: https://mkungla.github.io/aframe-resonance-audio-component/
+[gh-pages-link]: https://digaverse.github.io/aframe-resonance-audio-component/

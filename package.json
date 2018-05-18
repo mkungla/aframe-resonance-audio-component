@@ -5,12 +5,12 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mkungla/aframe-resonance-audio-component.git"
+    "url": "git+https://github.com/digaverse/aframe-resonance-audio-component.git"
   },
   "bugs": {
-    "url": "https://github.com/mkungla/aframe-resonance-audio-component/issues"
+    "url": "https://github.com/digaverse/aframe-resonance-audio-component/issues"
   },
-  "homepage": "https://github.com/mkungla/aframe-resonance-audio-component#readme",
+  "homepage": "https://github.com/digaverse/aframe-resonance-audio-component#readme",
   "author": "Marko Kungla <marko.kungla@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -26,7 +26,7 @@
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors",
     "build": "webpack --config ./config/webpack-dev.js",
-    "publish": "git subtree push --prefix examples github/mkungla gh-pages"
+    "publish": "git subtree push --prefix examples github/digaverse gh-pages"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
