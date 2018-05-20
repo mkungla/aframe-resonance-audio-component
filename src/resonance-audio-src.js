@@ -1,5 +1,8 @@
 /* global AFRAME */
 
+const log = AFRAME.utils.debug
+const warn = log('components:resonance-audio-src:warn')
+
 AFRAME.registerComponent('resonance-audio-src', {
   dependencies: ['geometry', 'position'],
   // To enable multiple instancing on your component,
@@ -49,7 +52,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.el.audioEl = document.createElement('audio')
     this.mediaElementAudioNode = this.room.resonanceAudioContext.createMediaElementSource(this.el.audioEl)
     
-    // Connect the src already set.
+    // Connect the src that is already set.
     this.connectWithElement(this.data.src)
   },
   
@@ -123,6 +126,29 @@ AFRAME.registerComponent('resonance-audio-src', {
     Object.defineProperty(this.el, 'srcObject', descriptor_srcObject)
     Object.defineProperty(this, 'src', descriptor_src)
     Object.defineProperty(this, 'srcObject', descriptor_srcObject)
+    this.el.sound = {
+      play:  this.playSource.bind(this),
+      pause: this.pauseSource.bind(this),
+      el: this.el.audioEl
+    }
+  },
+
+  playSource () {
+    if (this.connected.stream) {
+      warn("can't play/pause stream. Go to its source.")
+    }
+    if (this.connected.element) {
+      this.el.audioEl.play()
+    }
+  },
+
+  pauseSource () {
+    if (this.connected.stream) {
+      warn("can't play/pause stream. Go to its source.")
+    }
+    if (this.connected.element) {
+      this.el.audioEl.pause()
+    }
   },
 
   setMediaSrc (src) {

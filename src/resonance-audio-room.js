@@ -31,28 +31,36 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
     this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
     
-    this.audioSrcs = new Set()
+    this.sources = new Set()
     this.setUpAudio()
+    this.exposeAPI()
     
     // Update audio source positions on position change.
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position') {
         this.updatePosition()
-        for (let audioSrc of this.audioSrcs) {
-          audioSrc.updatePosition()
-        }
+        this.sources.forEach(source => source.updatePosition())
       }
     })
     // Correctly handle dynamic attachment and detachment of audio sources.
     this.el.addEventListener('child-attached', (e) => {
       const el = e.detail.el
       if (el.hasLoaded) {
-        this.attachAudioSrc(el)
+        this.attachSource(el)
       } else {
-        el.addEventListener('loaded', (e) => { this.attachAudioSrc(el) })
+        el.addEventListener('loaded', e => this.attachSource(el))
       }
     })
-    this.el.addEventListener('child-detached', (e) => { this.detachAudioSrc(e.detail.el) })
+    this.el.addEventListener('child-detached', e => this.detachSource(e.detail.el))
+  },
+
+  exposeAPI () {
+    const API = {
+      play:  this.playSources.bind(this),
+      pause: this.pauseSources.bind(this)
+    }
+    this.el.sound = API
+    this.el.sounds = API
   },
 
   update (oldData) {
@@ -114,32 +122,32 @@ AFRAME.registerComponent('resonance-audio-room', {
     const children = this.el.object3D.children
     if (children.length < 2) { return }
 
-    children.forEach((childEl) => {
-      // Attach.
-      this.attachAudioSrc(childEl.el)
-    })
+    // Attach sources.
+    children.forEach(childEl => this.attachSource(childEl.el))
   },
 
-  attachAudioSrc (el) {
+  attachSource (el) {
     // Only consider relevant elements.
-    if (!el.getAttribute('resonance-audio-src') && !el.components['resonance-audio-src']) { return }
+    if (!el.components['resonance-audio-src']) { return }
 
-    const audioSrc = el.components['resonance-audio-src']
-    this.audioSrcs.add(audioSrc)
-    audioSrc.initAudioSrc(this)
+    const source = el.components['resonance-audio-src']
+    this.sources.add(source)
+    source.initAudioSrc(this)
   },
 
-  detachAudioSrc (el) {
-    const audioSrc = el.components['resonance-audio-src']
-    if (this.audioSrcs.has(audioSrc)) {
-      this.audioSrcs.delete(audioSrc)
+  detachSource (el) {
+    const source = el.components['resonance-audio-src']
+    if (this.sources.has(source)) {
+      this.sources.delete(source)
     }
   },
 
-  remove () {
-    for (let audioSrc of this.audioSrcs) {
-      audioSrc.remove()
-    }
+  playSources () {
+    this.sources.forEach(source => source.el.sound.play())
+  },
+
+  pauseSources () {
+    this.sources.forEach(source => source.el.sound.pause())
   }
 })
 
