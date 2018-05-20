@@ -194,15 +194,17 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
 // Enable setAttribute interface with monkeypatch.
 (function(){
   const next = HTMLElement.prototype.setAttribute
-  HTMLElement.prototype.setAttribute = function(prop, value) {
-    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && prop === 'src') {
-      this.components['resonance-audio-src'].setMediaSrc(value)
-      return
-    } 
-    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && prop === 'srcObject') {
-      this.components['resonance-audio-src'].setMediaStream(value)
-      return
+  HTMLElement.prototype.setAttribute = function(attrName, arg1, arg2) {
+    if (this.tagName === 'A-RESONANCE-AUDIO-SRC') {
+      if (attrName === 'src') {
+        this.components['resonance-audio-src'].setMediaSrc(arg1)
+        return
+      }
+      if (attrName === 'srcObject') {
+        this.components['resonance-audio-src'].setMediaStream(arg1)
+        return
+      }
     }
-    next.call(this, prop, value)
+    next.call(this, attrName, arg1, arg2)
   }
 })();
