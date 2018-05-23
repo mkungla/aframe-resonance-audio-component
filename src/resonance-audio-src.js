@@ -10,7 +10,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   multiple: false,
 
   schema: {
-    src: {type: 'asset'},
+    src: {type: 'string'}, // asset parsing is taken over from A-Frame.
     loop: {type: 'boolean', default: true},
     autoplay: {type: 'boolean', default: true}
   },
@@ -27,6 +27,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.sound = null
 
     // A mapping of elements and stream to their source AudioNode objects.
+    // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode objects can be reused.
     this.mediaAudioSourceNodes = new Map()
 
     // Update audio source position on position component change.
@@ -36,6 +37,8 @@ AFRAME.registerComponent('resonance-audio-src', {
         this.updatePosition()
       }
     })
+
+    this.exposeAPI()
   },
 
   initAudioSrc (room) {
@@ -44,7 +47,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     this.room = room
 
-    // Create source.
+    // Create Resonance source.
     this.resonanceAudioSceneSource = this.room.resonanceAudioScene.createSource()
     
     // Handle position.
@@ -81,34 +84,42 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.resonanceAudioSceneSource.setFromMatrix(this.el.object3D.matrixWorld)
   },
 
+  exposeAPI () {
+    // Make el.sound point to the connected sound source.
+    Object.defineProperty(this.el, 'sound', { get: () => this.sound, enumerable: true })
+  },
+
   disconnect () {
     if (this.sound) {
       this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonanceAudioSceneSource.input)
+      this.sound = null
     }
-    if (this.connected.element) {
-      this.connected.element = false
-    }
-    if (this.connected.stream) {
-      this.connected.stream = false
-    }
+    this.connected.element = false
+    this.connected.stream = false
   },
 
-  connectWithElement (el) {
+  _connect (source, createSourceFn) {
     this.disconnect()
+    
+    // Don't connect a new source if there is none.
+    if (!source) { return false }
 
-    // Don't connect a new element if there is none.
-    if (!el) { return }
+    this.sound = source
 
-    this.sound = el
-
-    // Create new element source AudioNode if element didn't have one yet.
+    // Create new source AudioNode if source object didn't have one yet.
     if (!this.mediaAudioSourceNodes.has(this.sound)) {
-      this.mediaAudioSourceNodes.set(this.sound, this.room.resonanceAudioContext.createMediaElementSource(this.sound))
+      this.mediaAudioSourceNodes.set(this.sound, createSourceFn.call(this.room.resonanceAudioContext, this.sound))
     }
     // Get elemenent source AudioNode.
     this.mediaAudioSourceNodes.get(this.sound).connect(this.resonanceAudioSceneSource.input)
-    this.connected.element = true
+    
+    return true
+  },
 
+  connectWithElement (el) {
+    this.connected.element = this._connect(el, this.room.resonanceAudioContext.createMediaElementSource)
+
+    if (!this.connected.element) { return }
     // Play the audio.
     if (this.data.autoplay) {
       this.sound.play()
@@ -116,20 +127,12 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   connectWithStream (stream) {
-    this.disconnect()
+    this.connected.stream = this._connect(stream, this.room.resonanceAudioContext.createMediaStreamSource)
+    if (!this.connected.stream) { return }
 
-    // Don't connect a new stream if there is none.
-    if (!stream) { return }
-
-    this.sound = stream
-
-    // Create new stream source AudioNode if the stream didn't have one yet.
-    if (!this.mediaAudioSourceNodes.has(this.sound)) {
-      this.mediaAudioSourceNodes.set(this.sound, this.room.resonanceAudioContext.createMediaStreamSource(this.sound))
-    }
-    // Get stream source AudioNode.
-    this.mediaAudioSourceNodes.get(this.sound).connect(this.resonanceAudioSceneSource.input)
-    this.connected.stream = true
+    const unavailable = () => { warn("can't use play/pause on MediaStream. Manipulate the stream's source instead") }
+    this.sound.play = unavailable
+    this.sound.pause = unavailable
   },
 
   setMediaSrc (src) {

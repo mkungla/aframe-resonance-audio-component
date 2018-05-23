@@ -31,7 +31,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
     this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
     
-    this.sources = new Set()
+    this.sources = new Array()
     this.setUpAudio()
     this.exposeAPI()
     
@@ -55,12 +55,12 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   exposeAPI () {
-    const API = {
-      play:  this.playSources.bind(this),
-      pause: this.pauseSources.bind(this)
-    }
-    this.el.sound = API
-    this.el.sounds = API
+    Object.defineProperties(this.el, {
+      // Array of audio source components.
+      sources: { enumerable: true, get: () => this.sources },
+      // Array of audio sources (HTMLMediaElement and MediaStream objects).
+      sounds:  { enumerable: true, get: () => this.sources.map(source => source.el.sound) }
+    })
   },
 
   update (oldData) {
@@ -131,23 +131,15 @@ AFRAME.registerComponent('resonance-audio-room', {
     if (!el.components['resonance-audio-src']) { return }
 
     const source = el.components['resonance-audio-src']
-    this.sources.add(source)
+    this.sources.push(source)
     source.initAudioSrc(this)
   },
 
   detachSource (el) {
     const source = el.components['resonance-audio-src']
-    if (this.sources.has(source)) {
-      this.sources.delete(source)
+    if (this.sources.includes(source)) {
+      this.sources.splice(this.sources.indexOf(source), 1)
     }
-  },
-
-  playSources () {
-    this.sources.forEach(source => source.el.sound.play())
-  },
-
-  pauseSources () {
-    this.sources.forEach(source => source.el.sound.pause())
   }
 })
 
