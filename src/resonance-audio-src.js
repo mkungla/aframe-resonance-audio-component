@@ -63,20 +63,24 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
   
   update (oldData) {
-    // If the audio src was not initialized yet, return.
-    if (!this.room) { return }
+    this.updatePlaybackSettings()
+  },
+
+  updatePlaybackSettings () {
+    // If no element is connected, do nothing.
+    if (!this.connected.element) { return }
 
     // Update loop.
     if (this.data.loop) {
-      this.defaultAudioEl.setAttribute('loop', 'true')
+      this.sound.setAttribute('loop', 'true')
     } else {
-      this.defaultAudioEl.removeAttribute('loop')
+      this.sound.removeAttribute('loop')
     }
     // Update autoplay.
     if (this.data.autoplay) {
-      this.defaultAudioEl.setAttribute('autoplay', 'true')
+      this.sound.setAttribute('autoplay', 'true')
     } else {
-      this.defaultAudioEl.removeAttribute('autoplay')
+      this.sound.removeAttribute('autoplay')
     }
   },
 
@@ -120,17 +124,20 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.connected.element = this._connect(el, this.room.resonanceAudioContext.createMediaElementSource)
 
     if (!this.connected.element) { return }
+    // Apply playback settings.
+    this.updatePlaybackSettings()
     // Play the audio.
-    if (this.data.autoplay) {
+    if (this.sound.getAttribute('autoplay')) {
       this.sound.play()
     }
   },
 
   connectWithStream (stream) {
     this.connected.stream = this._connect(stream, this.room.resonanceAudioContext.createMediaStreamSource)
+    
     if (!this.connected.stream) { return }
-
-    const unavailable = () => { warn("can't use play/pause on MediaStream. Manipulate the stream's source instead") }
+    // Add play/pause API to sound that give a warning when accessed.
+    const unavailable = () => warn("can't use play/pause on MediaStream. Manipulate the stream's source instead")
     this.sound.play = unavailable
     this.sound.pause = unavailable
   },
@@ -148,7 +155,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     } else {
       el = src
     }
-    if (!(el instanceof HTMLElement) || !['VIDEO', 'AUDIO'].includes(el.tagName)) {
+    if (!(el instanceof HTMLMediaElement)) {
         throw new TypeError('invalid src element. Must be video or audio element.')
     }
     // Allow either element or stream, not both.
