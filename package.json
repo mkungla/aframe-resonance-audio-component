@@ -24,7 +24,7 @@
     "mozvr"
   ],
   "scripts": {
-    "start": "webpack-dev-server --config ./config/webpack-dev.js --progress --colors",
+    "start": "webpack-dev-server --config ./config/webpack-dev.js --mode development --progress --colors",
     "build": "webpack --config ./config/webpack-dev.js --mode production",
     "publish": "git subtree push --prefix examples github/digaverse gh-pages"
   },

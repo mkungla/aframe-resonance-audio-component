@@ -16,17 +16,20 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
   
   init () {
+    // The room this audio source is in.
     this.room = null
+    // The connection status.
     this.connected = {
       element: false,
       stream: false
     }
-    this.mediaElementAudioNode = null
-    this.mediaStreamAudioNode = null
-    this.data.srcObject = null
-    this.exposeAPI()
+    // The current connected element or stream.
+    this.sound = null
 
-    // Update on position change.
+    // A mapping of elements and stream to their source AudioNode objects.
+    this.mediaAudioSourceNodes = new Map()
+
+    // Update audio source position on position component change.
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position') {
         this.room.updatePosition()
@@ -48,12 +51,12 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.room.updatePosition()
     this.updatePosition()
     
-    // Prepare audio element.
-    this.el.audioEl = document.createElement('audio')
-    this.mediaElementAudioNode = this.room.resonanceAudioContext.createMediaElementSource(this.el.audioEl)
+    // Prepare default audio element.
+    this.defaultAudioEl = document.createElement('audio')
+    this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.resonanceAudioContext.createMediaElementSource(this.defaultAudioEl))
     
-    // Connect the src that is already set.
-    this.connectWithElement(this.data.src)
+    // Set the src declared in html.
+    this.setMediaSrc(this.data.src)
   },
   
   update (oldData) {
@@ -62,9 +65,15 @@ AFRAME.registerComponent('resonance-audio-src', {
 
     // Update loop.
     if (this.data.loop) {
-      this.el.audioEl.setAttribute('loop', 'true')
+      this.defaultAudioEl.setAttribute('loop', 'true')
     } else {
-      this.el.audioEl.removeAttribute('loop')
+      this.defaultAudioEl.removeAttribute('loop')
+    }
+    // Update autoplay.
+    if (this.data.autoplay) {
+      this.defaultAudioEl.setAttribute('autoplay', 'true')
+    } else {
+      this.defaultAudioEl.removeAttribute('autoplay')
     }
   },
 
@@ -73,31 +82,36 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   disconnect () {
+    if (this.sound) {
+      this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonanceAudioSceneSource.input)
+    }
     if (this.connected.element) {
-      this.mediaElementAudioNode.disconnect(this.resonanceAudioSceneSource.input)
       this.connected.element = false
     }
     if (this.connected.stream) {
-      this.mediaStreamAudioNode.disconnect(this.resonanceAudioSceneSource.input)
-      delete this.mediaStreamAudioNode
       this.connected.stream = false
     }
   },
 
-  connectWithElement (src) {
+  connectWithElement (el) {
     this.disconnect()
 
     // Don't connect a new element if there is none.
-    if (!src) { return }
+    if (!el) { return }
 
-    // Load an audio file into the audio element.
-    this.el.audioEl.setAttribute('src', src)
-    this.mediaElementAudioNode.connect(this.resonanceAudioSceneSource.input)
+    this.sound = el
+
+    // Create new element source AudioNode if element didn't have one yet.
+    if (!this.mediaAudioSourceNodes.has(this.sound)) {
+      this.mediaAudioSourceNodes.set(this.sound, this.room.resonanceAudioContext.createMediaElementSource(this.sound))
+    }
+    // Get elemenent source AudioNode.
+    this.mediaAudioSourceNodes.get(this.sound).connect(this.resonanceAudioSceneSource.input)
     this.connected.element = true
 
     // Play the audio.
     if (this.data.autoplay) {
-      this.el.audioEl.play()
+      this.sound.play()
     }
   },
 
@@ -107,63 +121,38 @@ AFRAME.registerComponent('resonance-audio-src', {
     // Don't connect a new stream if there is none.
     if (!stream) { return }
 
-    // Generate a new MediaStreamSource from the stream MediaStream.
-    this.mediaStreamAudioNode = this.room.resonanceAudioContext.createMediaStreamSource(stream)
-    this.mediaStreamAudioNode.connect(this.resonanceAudioSceneSource.input)
+    this.sound = stream
+
+    // Create new stream source AudioNode if the stream didn't have one yet.
+    if (!this.mediaAudioSourceNodes.has(this.sound)) {
+      this.mediaAudioSourceNodes.set(this.sound, this.room.resonanceAudioContext.createMediaStreamSource(this.sound))
+    }
+    // Get stream source AudioNode.
+    this.mediaAudioSourceNodes.get(this.sound).connect(this.resonanceAudioSceneSource.input)
     this.connected.stream = true
   },
 
-  exposeAPI() {
-    const descriptor_src = {
-      set: (value) => { this.setMediaSrc(value) },
-      get: ()      => this.data.src
-    }
-    const descriptor_srcObject = { 
-      set: (value) => { this.setMediaStream(value) },
-      get: ()      => this.data.srcObject
-    }
-    Object.defineProperty(this.el, 'src', descriptor_src)
-    Object.defineProperty(this.el, 'srcObject', descriptor_srcObject)
-    Object.defineProperty(this, 'src', descriptor_src)
-    Object.defineProperty(this, 'srcObject', descriptor_srcObject)
-    this.el.sound = {
-      play:  this.playSource.bind(this),
-      pause: this.pauseSource.bind(this),
-      el: this.el.audioEl
-    }
-  },
-
-  playSource () {
-    if (this.connected.stream) {
-      warn("can't play/pause stream. Go to its source.")
-    }
-    if (this.connected.element) {
-      this.el.audioEl.play()
-    }
-  },
-
-  pauseSource () {
-    if (this.connected.stream) {
-      warn("can't play/pause stream. Go to its source.")
-    }
-    if (this.connected.element) {
-      this.el.audioEl.pause()
-    }
-  },
-
   setMediaSrc (src) {
-    // Simplified asset parsing, similar to the one used by A-Frame.
-    if (typeof src !== 'string') { throw new TypeError('invalid src') }
-    if (src.charAt(0) === '#') {
-      const el = document.querySelector(src)
-      if (!el) { throw new Error('invalid src') }
-      src = el.getAttribute('src')
+    // Parse src, which can be an id string or an video or audio element.
+    let el
+    if (typeof src === 'string') {
+      if (src.charAt(0) === '#') {
+        el = document.querySelector(src)
+      } else {
+        el = this.defaultAudioEl
+        el.setAttribute('src', src)
+      }
+    } else {
+      el = src
+    }
+    if (!(el instanceof HTMLElement) || !['VIDEO', 'AUDIO'].includes(el.tagName)) {
+        throw new TypeError('invalid src element. Must be video or audio element.')
     }
     // Allow either element or stream, not both.
     this.data.srcObject = null
-    this.data.src = src
+    this.data.src = el
 
-    this.connectWithElement(src)
+    this.connectWithElement(el)
   },
   
   setMediaStream (mediaStream) {
@@ -171,7 +160,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       throw new TypeError('not a mediastream')
     }
     // Allow either element or stream, not both.
-    this.data.src = ''
+    this.data.src = null
     this.data.srcObject = mediaStream
     
     this.connectWithStream(mediaStream)
@@ -179,7 +168,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   remove () {
     this.disconnect()
-    this.el.audioEl.remove()
+    this.defaultAudioEl.remove()
   }
 })
 
