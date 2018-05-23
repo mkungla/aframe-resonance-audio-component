@@ -58,8 +58,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.defaultAudioEl = document.createElement('audio')
     this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.resonanceAudioContext.createMediaElementSource(this.defaultAudioEl))
     
-    // Set the src declared in html.
-    this.setMediaSrc(this.data.src)
+    // Set the src declared in the html.
+    this.setSrc(this.data.src)
   },
   
   update (oldData) {
@@ -90,7 +90,10 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   exposeAPI () {
     // Make el.sound point to the connected sound source.
-    Object.defineProperty(this.el, 'sound', { get: () => this.sound, enumerable: true })
+    Object.defineProperties(this.el, {
+      sound:           { get: () => this.sound, enumerable: true },
+      setResonanceSrc: { value: (src) => this.setSrc(src) }
+    })
   },
 
   disconnect () {
@@ -142,38 +145,33 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.sound.pause = unavailable
   },
 
-  setMediaSrc (src) {
-    // Parse src, which can be an id string or an video or audio element.
+  /**
+   * Set a new source.
+   * @param {string|HTMLMediaElement|MediaStream|null} src 
+   */
+  setSrc (src) {
+    const errorMsg = 'invalid src value. Must be element id string, resource string, HTMLMediaElement or MediaStream'
+
     let el
-    if (typeof src === 'string') {
+    if (src == null) {
+      this.disconnect()
+    } else if (src instanceof MediaStream) {
+      this.connectWithStream(src)
+    } else if (src instanceof HTMLMediaElement) {
+      this.connectWithElement(src)
+    } else if (typeof src === 'string') {
       if (src.charAt(0) === '#') {
-        el = document.querySelector(src)
+        el = document.getElementById(src.substr(1))
       } else {
         el = this.defaultAudioEl
         el.setAttribute('src', src)
       }
+      if (!el) { throw new TypeError(errorMsg) }
+      this.connectWithElement(el)
     } else {
-      el = src
+      throw new TypeError(errorMsg)
     }
-    if (!(el instanceof HTMLMediaElement)) {
-        throw new TypeError('invalid src element. Must be video or audio element.')
-    }
-    // Allow either element or stream, not both.
-    this.data.srcObject = null
-    this.data.src = el
-
-    this.connectWithElement(el)
-  },
-  
-  setMediaStream (mediaStream) {
-    if (!(mediaStream instanceof MediaStream) && mediaStream != null) {
-      throw new TypeError('not a mediastream')
-    }
-    // Allow either element or stream, not both.
-    this.data.src = null
-    this.data.srcObject = mediaStream
-    
-    this.connectWithStream(mediaStream)
+    this.data.src = el || src
   },
 
   remove () {
@@ -193,17 +191,18 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
 // Enable setAttribute interface with monkeypatch.
 (function(){
   const next = HTMLElement.prototype.setAttribute
+  const cmpnt = 'resonance-audio-src'
   HTMLElement.prototype.setAttribute = function(attrName, arg1, arg2) {
-    if (this.tagName === 'A-RESONANCE-AUDIO-SRC') {
-      if (attrName === 'src') {
-        this.components['resonance-audio-src'].setMediaSrc(arg1)
-        return
-      }
-      if (attrName === 'srcObject') {
-        this.components['resonance-audio-src'].setMediaStream(arg1)
-        return
-      }
+
+    // Primitive: setAttribute('src', ...)
+    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && attrName === 'src') {
+      this.components[cmpnt].setSrc(arg1)
+    } else
+    // Entity/primitive: setAttribute('resonance-audio-src', 'src', ...)
+    if (this.attrName === cmpnt && arg1 === 'src') {
+      this.components[cmpnt].setSrc(arg2)
     }
+
     next.call(this, attrName, arg1, arg2)
   }
 })();
