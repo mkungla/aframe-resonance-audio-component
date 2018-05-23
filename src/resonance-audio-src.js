@@ -127,6 +127,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.connected.element = this._connect(el, this.room.resonanceAudioContext.createMediaElementSource)
 
     if (!this.connected.element) { return }
+    // Warn when an element with a stream was connected.
+    if (this.sound.srcObject) {
+      warn("can't use a HTMLMediaElement that contains a stream. Connect the stream itself.")
+    }
     // Apply playback settings.
     this.updatePlaybackSettings()
     // Play the audio.
