@@ -1,4 +1,5 @@
 /* global AFRAME */
+import {ResonanceAudio} from 'resonance-audio'
 
 const log = AFRAME.utils.debug
 const warn = log('components:resonance-audio-src:warn')
@@ -12,7 +13,14 @@ AFRAME.registerComponent('resonance-audio-src', {
   schema: {
     src: {type: 'string'}, // asset parsing is taken over from A-Frame.
     loop: {type: 'boolean', default: true},
-    autoplay: {type: 'boolean', default: true}
+    autoplay: {type: 'boolean', default: true},
+
+    gain: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN},
+    maxDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MAX_DISTANCE},
+    minDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE},
+    directivityPattern: {type: 'vec2', default: {x:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS}},
+    sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
+    rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF}
   },
   
   init () {
@@ -49,6 +57,9 @@ AFRAME.registerComponent('resonance-audio-src', {
 
     // Create Resonance source.
     this.resonanceAudioSceneSource = this.room.resonanceAudioScene.createSource()
+
+    // Update sound values.
+    this.updateSoundSettings()
     
     // Handle position.
     this.room.updatePosition()
@@ -63,7 +74,19 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
   
   update (oldData) {
+    this.updateSoundSettings()
     this.updatePlaybackSettings()
+  },
+
+  updateSoundSettings () {
+    const s = this.resonanceAudioSceneSource
+    if (!s) { return }
+    s.setGain(this.data.gain)
+    s.setMinDistance(this.data.minDistance)
+    s.setMaxDistance(this.data.maxDistance)
+    s.setDirectivityPattern(this.data.directivityPattern.x, this.data.directivityPattern.y)
+    s.setSourceWidth(this.data.sourceWidth)
+    s.setRolloff(this.data.rolloff)
   },
 
   updatePlaybackSettings () {
@@ -89,10 +112,13 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   exposeAPI () {
-    // Make el.sound point to the connected sound source.
     Object.defineProperties(this.el, {
-      sound:           { get: () => this.sound, enumerable: true },
-      setResonanceSrc: { value: (src) => this.setSrc(src) }
+      // The connected sound source.
+      sound:                     { get: () => this.sound, enumerable: true },
+      // The AudioNode that Resonance uses for this source.
+      resonanceAudioSceneSource: { get: () => this.resonanceAudioSceneSource, enumerable: true },
+      // Set a new source.
+      setResonanceSrc:           { value: (src) => this.setSrc(src) }
     })
   },
 
@@ -188,7 +214,15 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
   mappings: {
     src: 'resonance-audio-src.src',
     loop: 'resonance-audio-src.loop',
-    autoplay: 'resonance-audio-src.autoplay'
+    autoplay: 'resonance-audio-src.autoplay',
+
+    gain: 'resonance-audio-src.gain',
+    'min-distance': 'resonance-audio-src.minDistance',
+    'max-distance': 'resonance-audio-src.maxDistaonce',
+    'directivity-pattern': 'resonance-audio-src.directivityPattern',
+    'source-width': 'resonance-audio-src.sourceWidth',
+    rolloff: 'resonance-audio-src.rolloff'
+    // The orientation and position are set by the rotation and position components, respectively.
   }
 });
 
