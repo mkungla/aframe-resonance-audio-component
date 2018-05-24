@@ -118,19 +118,18 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.resonanceAudioScene.setSpeedOfSound(this.data.speedOfSound)
   },
 
+  /**
+   * Set up audio by attaching sources.
+   */
   setUpAudio () {
-    const children = this.el.object3D.children
-    if (children.length < 2) { return }
-
-    // Attach sources.
-    children.forEach(childEl => this.attachSource(childEl.el))
+    this.el.querySelectorAll('[resonance-audio-src]').forEach(childEl => this.attachSource(childEl))
   },
 
   attachSource (el) {
-    // Only consider relevant elements.
-    if (!el.components['resonance-audio-src']) { return }
-
     const source = el.components['resonance-audio-src']
+    // Only consider relevant elements.
+    if (!source) { return }
+
     this.sources.push(source)
     source.initAudioSrc(this)
   },
