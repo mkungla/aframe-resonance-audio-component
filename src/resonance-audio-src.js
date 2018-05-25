@@ -5,7 +5,7 @@ const log = AFRAME.utils.debug
 const warn = log('components:resonance-audio-src:warn')
 
 AFRAME.registerComponent('resonance-audio-src', {
-  dependencies: ['geometry', 'position'],
+  dependencies: ['position'],
   // To enable multiple instancing on your component,
   // set multiple: true in the component definition:
   multiple: false,

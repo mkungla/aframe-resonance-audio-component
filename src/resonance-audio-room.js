@@ -52,6 +52,11 @@ AFRAME.registerComponent('resonance-audio-room', {
       }
     })
     this.el.addEventListener('child-detached', e => this.detachSource(e.detail.el))
+
+    // Hide visual element by default. Don't set visibile to false, because that also hides children elements.
+    if (!this.el.components.material) {
+      this.el.setAttribute('material', {transparent: true, opacity: 0}) 
+    }
   },
 
   exposeAPI () {
