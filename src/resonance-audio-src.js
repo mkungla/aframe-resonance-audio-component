@@ -5,7 +5,7 @@ const log = AFRAME.utils.debug
 const warn = log('components:resonance-audio-src:warn')
 
 AFRAME.registerComponent('resonance-audio-src', {
-  dependencies: ['position'],
+  dependencies: ['position', 'rotation'],
 
   schema: {
     src: {type: 'string'}, // asset parsing is taken over from A-Frame.
@@ -17,7 +17,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     minDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE},
     directivityPattern: {type: 'vec2', default: {x:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS}},
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
-    rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF}
+    rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
+
+    position: {type: 'vec3', default: undefined},
+    rotation: {type: 'vec3', default: undefined}
   },
   
   init () {
@@ -35,9 +38,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode objects can be reused.
     this.mediaAudioSourceNodes = new Map()
 
-    // Update audio source position on position component change.
+    // Update audio source position and orientation on position or rotation component change.
     this.el.addEventListener('componentchanged', (e) => {
-      if (e.detail.name === 'position') {
+      if (e.detail.name === 'position' || e.detail.name === 'rotation') {
         this.room.updatePosition()
         this.updatePosition()
       }
@@ -73,6 +76,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   update (oldData) {
     this.updateSoundSettings()
     this.updatePlaybackSettings()
+    this.updatePosition()
   },
 
   updateSoundSettings () {
@@ -105,7 +109,38 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   updatePosition() {
-    this.resonanceAudioSceneSource.setFromMatrix(this.el.object3D.matrixWorld)
+    if (!this.resonanceAudioSceneSource) { return }
+
+    let matrixWorld
+    if (!this.data.position && !this.data.rotation) {
+      // The position and orientation are set by the position and rotation components, respectively.
+      matrixWorld = this.el.object3D.matrixWorld
+
+    } else {
+      // One or both of the position and orientation were set as properties of the resonance-audio-src component.
+
+      // Position.
+      let localPosition = this.data.position 
+        ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
+        : this.el.object3D.position
+      
+      // Orientation.
+      let localQuaternion
+      if (this.data.rotation) {
+        let radians = [this.data.rotation.x, this.data.rotation.y, this.data.rotation.z].map(THREE.Math.degToRad)
+        localQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(radians[0], radians[1], radians[2], 'YXZ'))
+      } else {
+        localQuaternion = this.el.object3D.quaternion
+      }
+
+      // Position and orientation matrix in the world.
+      matrixWorld = new THREE.Matrix4().multiplyMatrices( 
+        this.el.parentNode.object3D.matrixWorld,
+        new THREE.Matrix4().compose(localPosition, localQuaternion, {x:1,y:1,z:1})
+      ) 
+    }
+    // Update.
+    this.resonanceAudioSceneSource.setFromMatrix(matrixWorld)
   },
 
   exposeAPI () {
