@@ -73,7 +73,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.setSrc(this.data.src)
   },
   
-  update (oldData) {
+  update (oldData) { 
+    if (this.room && oldData.src != this.data.src) {
+      this.setSrc(this.data.src)
+    }
     this.updateSoundSettings()
     this.updatePlaybackSettings()
     this.updatePosition()
@@ -215,7 +218,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     const errorMsg = 'invalid src value. Must be element id string, resource string, HTMLMediaElement or MediaStream'
 
     let el
-    if (src == null) {
+    if (!src) {
       this.disconnect()
     } else if (src instanceof MediaStream) {
       this.connectWithStream(src)
@@ -260,23 +263,4 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
     rolloff: 'resonance-audio-src.rolloff'
     // The orientation and position are set by the rotation and position components, respectively.
   }
-});
-
-// Enable setAttribute interface with monkeypatch.
-(function(){
-  const next = HTMLElement.prototype.setAttribute
-  const cmpnt = 'resonance-audio-src'
-  HTMLElement.prototype.setAttribute = function(attrName, arg1, arg2) {
-
-    // Primitive: setAttribute('src', ...)
-    if (this.tagName === 'A-RESONANCE-AUDIO-SRC' && attrName === 'src') {
-      this.components[cmpnt].setSrc(arg1)
-    } else
-    // Entity/primitive: setAttribute('resonance-audio-src', 'src', ...)
-    if (this.attrName === cmpnt && arg1 === 'src') {
-      this.components[cmpnt].setSrc(arg2)
-    }
-
-    next.call(this, attrName, arg1, arg2)
-  }
-})();
+})
