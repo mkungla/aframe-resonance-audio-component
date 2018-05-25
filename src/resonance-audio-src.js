@@ -243,6 +243,10 @@ AFRAME.registerComponent('resonance-audio-src', {
 })
 
 AFRAME.registerPrimitive('a-resonance-audio-src', {
+  defaultComponents: {
+    geometry: '',
+    material: 'transparent: true; opacity: 0'
+  },
   mappings: {
     src: 'resonance-audio-src.src',
     loop: 'resonance-audio-src.loop',
