@@ -8,9 +8,6 @@ const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFI
 
 AFRAME.registerComponent('resonance-audio-room', {
   dependencies: ['geometry', 'position'],
-  // To enable multiple instancing on your component,
-  // set multiple: true in the component definition:
-  multiple: false,
 
   schema: {
     width: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.width},

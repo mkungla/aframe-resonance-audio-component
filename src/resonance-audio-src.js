@@ -6,9 +6,6 @@ const warn = log('components:resonance-audio-src:warn')
 
 AFRAME.registerComponent('resonance-audio-src', {
   dependencies: ['position'],
-  // To enable multiple instancing on your component,
-  // set multiple: true in the component definition:
-  multiple: false,
 
   schema: {
     src: {type: 'string'}, // asset parsing is taken over from A-Frame.
