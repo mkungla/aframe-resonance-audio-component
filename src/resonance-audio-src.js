@@ -20,7 +20,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
     position: {type: 'vec3', default: undefined},
-    rotation: {type: 'vec3', default: undefined}
+    rotation: {type: 'vec3', default: undefined},
+
+    visualize: {type: 'boolean', default: false}
   },
   
   init () {
@@ -33,6 +35,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     // The current connected element or stream.
     this.sound = null
+    
+    // The object used when visualize is set to true.
+    this.visualizationObject = null
 
     // A mapping of elements and stream to their source AudioNode objects.
     // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode objects can be reused.
@@ -80,6 +85,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updateSoundSettings()
     this.updatePlaybackSettings()
     this.updatePosition()
+    this.updateVisualization(oldData)
   },
 
   updateSoundSettings () {
@@ -144,6 +150,26 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     // Update.
     this.resonanceAudioSceneSource.setFromMatrix(matrixWorld)
+  },
+
+  updateVisualization (oldData) {
+    // room visualization
+    if (!oldData.visualize && this.data.visualize) {
+      this.el.object3D.add(this.getVisualizationObject())
+    } else if (oldData.visualize && !this.data.visualize) {
+      this.el.object3D.remove(this.getVisualizationObject())
+    }
+  },
+
+  getVisualizationObject () {
+    // create object if it didn't exist yet.
+    if (!this.visualizationObject) {
+      this.visualizationObject = new THREE.Mesh(
+        new THREE.BoxGeometry(this.data.minDistance, this.data.minDistance, this.data.minDistance),
+        new THREE.MeshStandardMaterial({wireframe: true, wireframeLinewidth: 2, lights: true, metalness: 0})
+      )
+    }
+    return this.visualizationObject
   },
 
   exposeAPI () {
@@ -246,10 +272,6 @@ AFRAME.registerComponent('resonance-audio-src', {
 })
 
 AFRAME.registerPrimitive('a-resonance-audio-src', {
-  defaultComponents: {
-    geometry: '',
-    material: 'transparent: true; opacity: 0'
-  },
   mappings: {
     src: 'resonance-audio-src.src',
     loop: 'resonance-audio-src.loop',
@@ -260,7 +282,9 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
     'max-distance': 'resonance-audio-src.maxDistaonce',
     'directivity-pattern': 'resonance-audio-src.directivityPattern',
     'source-width': 'resonance-audio-src.sourceWidth',
-    rolloff: 'resonance-audio-src.rolloff'
+    rolloff: 'resonance-audio-src.rolloff',
     // The orientation and position are set by the rotation and position components, respectively.
+
+    visualize: 'resonance-audio-src.visualize'
   }
 })

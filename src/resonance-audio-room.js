@@ -7,26 +7,32 @@ const warn = log('components:resonance-audio-room:warn')
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
 
 AFRAME.registerComponent('resonance-audio-room', {
-  dependencies: ['geometry', 'position'],
+  dependencies: ['position'],
 
   schema: {
     width: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.width},
     height: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.height},
     depth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.depth},
+
     ambisonicOrder: {type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER, oneOf: [1, 3]},
     speedOfSound: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SPEED_OF_SOUND},
+
     left: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     right: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     front: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     back: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     down: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    up: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL}
+    up: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
+
+    visualize: {type: 'boolean', default: false}
   },
+
   init () {
-    this.builtInGeometry = true
     this.resonanceAudioContext = new AudioContext()
     this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
     this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
+
+    this.visualizationObject = null
     
     this.sources = new Array()
     this.setUpAudio()
@@ -63,6 +69,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   update (oldData) {
     this.roomSetup(oldData)
     this.acousticsSetup(oldData)
+    this.updateVisualization(oldData)
   },
 
   updatePosition () {
@@ -77,24 +84,13 @@ AFRAME.registerComponent('resonance-audio-room', {
   // room setup
   roomSetup (oldData) {
     // room dimensions
-    let dimensions = {
+    const dimensions = {
       width: this.data.width,
       height: this.data.height,
       depth: this.data.depth
     }
-    if ((this.data.width + this.data.height + this.data.depth) === 0) {
-      const bb = new AFRAME.THREE.Box3().setFromObject(this.el.object3D)
-      dimensions.width = bb.size().x
-      dimensions.height = bb.size().y
-      dimensions.depth = bb.size().z
-      this.builtInGeometry = false
-    }
-    // update geometry (only if using default geometry)
-    if (this.builtInGeometry) {
-      this.el.setAttribute('geometry', dimensions)
-    }
     // room materials
-    let materials = {
+    const materials = {
       left: this.data.left,
       right: this.data.right,
       front: this.data.front,
@@ -113,6 +109,26 @@ AFRAME.registerComponent('resonance-audio-room', {
 
     this.resonanceAudioScene.setAmbisonicOrder(this.data.ambisonicOrder)
     this.resonanceAudioScene.setSpeedOfSound(this.data.speedOfSound)
+  },
+
+  updateVisualization (oldData) {
+    // room visualization
+    if (!oldData.visualize && this.data.visualize) {
+      this.el.object3D.add(this.getVisualizationObject())
+    } else if (oldData.visualize && !this.data.visualize) {
+      this.el.object3D.remove(this.getVisualizationObject())
+    }
+  },
+
+  getVisualizationObject () {
+    // create object if it didn't exist yet.
+    if (!this.visualizationObject) {
+      this.visualizationObject = new THREE.Mesh(
+        new THREE.BoxGeometry(this.data.width, this.data.height, this.data.depth),
+        new THREE.MeshStandardMaterial({wireframe: true, wireframeLinewidth: 2, lights: true, metalness: 0})
+      )
+    }
+    return this.visualizationObject
   },
 
   /**
@@ -139,11 +155,29 @@ AFRAME.registerComponent('resonance-audio-room', {
   }
 })
 
-AFRAME.registerPrimitive('a-resonance-audio-room', {
-  defaultComponents: {
-    geometry: '',
-    material: 'transparent: true; opacity: 0'
+// Composite component.
+AFRAME.registerComponent('resonance-audio-room-bb', {
+  dependencies: ['position', 'geometry'],
+  schema: AFRAME.components['resonance-audio-room'].schema,
+  init () {
+    if (this.el.components['obj-model'] && !this.el.components['obj-model'].model) {
+      // If bounded by a loaded model.
+      this.el.addEventListener('model-loaded', (e) => this.loadAudioRoom())
+    } else {
+      // If bounded by a different geometry.
+      this.loadAudioRoom()
+    }
   },
+  loadAudioRoom () {
+    const bb = new THREE.Box3().setFromObject(this.el.object3D)
+    this.data.width  = bb.getSize().x
+    this.data.height = bb.getSize().y
+    this.data.depth  = bb.getSize().z
+    this.el.setAttribute('resonance-audio-room', this.data)
+  }
+})
+
+AFRAME.registerPrimitive('a-resonance-audio-room', {
   mappings: {
     width: 'resonance-audio-room.width',
     height: 'resonance-audio-room.height',
@@ -155,6 +189,7 @@ AFRAME.registerPrimitive('a-resonance-audio-room', {
     front: 'resonance-audio-room.front',
     back: 'resonance-audio-room.back',
     down: 'resonance-audio-room.down',
-    up: 'resonance-audio-room.up'
+    up: 'resonance-audio-room.up',
+    visualize: 'resonance-audio-room.visualize'
   }
 })
