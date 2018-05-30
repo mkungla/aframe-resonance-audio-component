@@ -1,4 +1,4 @@
-/* global AFRAME */
+/* global AFRAME, THREE */
 import {ResonanceAudio} from 'resonance-audio'
 
 const log = AFRAME.utils.debug
