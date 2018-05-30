@@ -10,13 +10,16 @@ AFRAME.registerComponent('resonance-audio-room', {
   dependencies: ['position'],
 
   schema: {
+    // Room dimensions. The position is the center point of this box.
     width: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.width},
     height: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.height},
     depth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.depth},
 
+    // Resonance audio parameters.
     ambisonicOrder: {type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER, oneOf: [1, 3]},
     speedOfSound: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SPEED_OF_SOUND},
 
+    // Room wall materials.
     left: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     right: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     front: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
@@ -24,15 +27,17 @@ AFRAME.registerComponent('resonance-audio-room', {
     down: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     up: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
 
+    // Whether to add a visualization of the room. This shows a wireframe of the box that is the room.
     visualize: {type: 'boolean', default: false}
   },
 
   init () {
+    // Initialize the audio context and connect with Resonance.
     this.resonanceAudioContext = new AudioContext()
     this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
     this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
 
-    this.visualizationObject = null
+    this.visualization = null
     
     this.sources = new Array()
     this.setUpAudioSources()
@@ -42,6 +47,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position' || e.detail.name === 'rotation') {
         this.updatePosition()
+        this.updateVisualization()
         this.sources.forEach(source => source.updatePosition())
       }
     })
@@ -112,23 +118,31 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   updateVisualization (oldData) {
-    // room visualization
-    if (!oldData.visualize && this.data.visualize) {
-      this.el.object3D.add(this.getVisualizationObject())
-    } else if (oldData.visualize && !this.data.visualize) {
-      this.el.object3D.remove(this.getVisualizationObject())
-    }
-  },
+    const d = this.data
 
-  getVisualizationObject () {
-    // create object if it didn't exist yet.
-    if (!this.visualizationObject) {
-      this.visualizationObject = new THREE.Mesh(
-        new THREE.BoxGeometry(this.data.width, this.data.height, this.data.depth),
-        new THREE.MeshStandardMaterial({wireframe: true, wireframeLinewidth: 2, lights: true, metalness: 0})
-      )
+    // Add or remove visualization to or from the DOM.
+    // This is done to the root so it is not affected by the current entity.
+    if (oldData) {
+      if (!oldData.visualize && d.visualize) {
+        // Create entity if it didn't exist yet.
+        if (!this.visualization) {
+          this.visualization = document.createElement('a-box')
+          this.visualization.audioRoom = this.el
+          this.visualization.setAttribute('material', 'wireframe', true)
+        }
+        this.el.sceneEl.appendChild(this.visualization)
+      } else if (oldData.visualize && !d.visualize) {
+        this.el.sceneEl.removeChild(this.visualization)
+      }
     }
-    return this.visualizationObject
+    
+    // Update the visualized entity. 
+    if (!d.visualize) { return }
+    this.visualization.setAttribute('position', this.el.getAttribute('position'))
+    this.visualization.setAttribute('rotation', this.el.getAttribute('rotation'))
+    this.visualization.setAttribute('width', d.width)
+    this.visualization.setAttribute('height', d.height)
+    this.visualization.setAttribute('depth', d.depth)
   },
 
   /**
@@ -151,6 +165,13 @@ AFRAME.registerComponent('resonance-audio-room', {
     const source = el.components['resonance-audio-src']
     if (this.sources.includes(source)) {
       this.sources.splice(this.sources.indexOf(source), 1)
+    }
+  },
+
+  remove () {
+    if (this.visualization) {
+      this.el.sceneEl.removeChild(this.visualization)
+      this.visualization = null
     }
   }
 })
