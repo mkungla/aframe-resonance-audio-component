@@ -8,8 +8,8 @@ const ARACVER = require('./version')
 
 const log = AFRAME.utils.debug
 // const error = log('A-Frame Resonance Audio Component:error')
-const info = log('A-Frame Resonance Audio Componente:info')
-const warn = log('A-Frame Resonance Audio Componente:warn')
+const info = log('A-Frame Resonance Audio Component:info')
+const warn = log('A-Frame Resonance Audio Component:warn')
 
 if (module.hot) {
   module.hot.accept()
