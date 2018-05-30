@@ -40,7 +40,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     
     // Update audio source positions on position change.
     this.el.addEventListener('componentchanged', (e) => {
-      if (e.detail.name === 'position') {
+      if (e.detail.name === 'position' || e.detail.name === 'rotation') {
         this.updatePosition()
         this.sources.forEach(source => source.updatePosition())
       }
