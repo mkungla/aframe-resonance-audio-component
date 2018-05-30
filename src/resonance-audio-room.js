@@ -35,7 +35,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.visualizationObject = null
     
     this.sources = new Array()
-    this.setUpAudio()
+    this.setUpAudioSources()
     this.exposeAPI()
     
     // Update audio source positions on position change.
@@ -134,7 +134,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   /**
    * Set up audio by attaching sources.
    */
-  setUpAudio () {
+  setUpAudioSources () {
     this.el.querySelectorAll('[resonance-audio-src]').forEach(childEl => this.attachSource(childEl))
   },
 
