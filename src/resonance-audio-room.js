@@ -50,6 +50,8 @@ AFRAME.registerComponent('resonance-audio-room', {
     // Collection of audio sources.
     this.sources = new Array()
 
+    // Set up the room acoustics before the audio sources are set up.
+    this.updateRoomAcoustics()
     this.setUpAudioSources()
     this.exposeAPI()
     
@@ -91,7 +93,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   update (oldData) {
-    this.updateRoomAcoustics(oldData)
+    this.updateRoomAcoustics()
     this.updateVisualization(oldData)
   },
 
@@ -113,7 +115,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   /**
    * Update room acoustics.
    */
-  updateRoomAcoustics (oldData) {
+  updateRoomAcoustics () {
     this.resonanceAudioScene.setRoomProperties({
       width: this.data.width,
       height: this.data.height,
