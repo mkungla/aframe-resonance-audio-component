@@ -38,6 +38,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     // The current connected element or stream.
     this.sound = null
 
+    // The Resonance audio source.
+    this.resonance = null
+
     // Visualization entity of the audio source.
     this.visualization = null
 
@@ -67,7 +70,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.room = room
 
     // Create Resonance source.
-    this.resonanceAudioSceneSource = this.room.resonanceAudioScene.createSource()
+    this.resonance = this.room.resonanceAudioScene.createSource()
 
     // Update sound values.
     this.updateSoundSettings()
@@ -98,7 +101,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   updateSoundSettings () {
-    const s = this.resonanceAudioSceneSource
+    const s = this.resonance
     if (!s) { return }
     s.setGain(this.data.gain)
     s.setMinDistance(this.data.minDistance)
@@ -127,7 +130,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   updatePosition() {
-    if (!this.resonanceAudioSceneSource) { return }
+    if (!this.resonance) { return }
 
     let matrixWorld
     if (!this.data.position && !this.data.rotation) {
@@ -148,7 +151,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     
     // Update.
-    this.resonanceAudioSceneSource.setFromMatrix(matrixWorld)
+    this.resonance.setFromMatrix(matrixWorld)
   },
 
   /**
@@ -216,17 +219,17 @@ AFRAME.registerComponent('resonance-audio-src', {
   exposeAPI () {
     Object.defineProperties(this.el, {
       // The connected sound source.
-      sound:                     { get: () => this.sound, enumerable: true },
+      sound:           { enumerable: true, get: () => this.sound },
       // The AudioNode that Resonance uses for this source.
-      resonanceAudioSceneSource: { get: () => this.resonanceAudioSceneSource, enumerable: true },
+      resonance:       { enumerable: true, get: () => this.resonance },
       // Set a new source.
-      setResonanceSrc:           { value: (src) => this.setSrc(src) }
+      setResonanceSrc: { value: (src) => this.setSrc(src) }
     })
   },
 
   disconnect () {
     if (this.sound) {
-      this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonanceAudioSceneSource.input)
+      this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonance.input)
       this.sound = null
     }
     this.connected.element = false
@@ -246,7 +249,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       this.mediaAudioSourceNodes.set(this.sound, createSourceFn.call(this.room.resonanceAudioContext, this.sound))
     }
     // Get elemenent source AudioNode.
-    this.mediaAudioSourceNodes.get(this.sound).connect(this.resonanceAudioSceneSource.input)
+    this.mediaAudioSourceNodes.get(this.sound).connect(this.resonance.input)
     
     return true
   },
