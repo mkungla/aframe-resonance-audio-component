@@ -22,6 +22,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     position: {type: 'vec3', default: undefined},
     rotation: {type: 'vec3', default: undefined},
 
+    // Whether to show a visualization of the audio source. This shows a sphere wireframe of the 
+    // source with its radius set to the minDistance.
     visualize: {type: 'boolean', default: false}
   },
   
@@ -35,9 +37,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     // The current connected element or stream.
     this.sound = null
-    
-    // The object used when visualize is set to true.
-    this.visualizationObject = null
+
+    // Visualization entity of the audio source.
+    this.visualization = null
 
     // A mapping of elements and stream to their source AudioNode objects.
     // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode objects can be reused.
@@ -48,8 +50,12 @@ AFRAME.registerComponent('resonance-audio-src', {
       if (e.detail.name === 'position' || e.detail.name === 'rotation') {
         this.room.updatePosition()
         this.updatePosition()
+        this.updateVisualization()
       }
     })
+
+    // When the scene has loaded and all world positions are calculated, place the visualization.
+    this.el.sceneEl.addEventListener('loaded', (e) => this.updateVisualization())
 
     this.exposeAPI()
   },
@@ -76,6 +82,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     
     // Set the src declared in the html.
     this.setSrc(this.data.src)
+
+    // The room is known, so also update the visualization of this audio source.
+    this.updateVisualization()
   },
   
   update (oldData) { 
@@ -123,53 +132,85 @@ AFRAME.registerComponent('resonance-audio-src', {
     let matrixWorld
     if (!this.data.position && !this.data.rotation) {
       // The position and orientation are set by the position and rotation components, respectively.
+      this.el.sceneEl.object3D.updateMatrixWorld(true)
       matrixWorld = this.el.object3D.matrixWorld
 
     } else {
       // One or both of the position and orientation were set as properties of the resonance-audio-src component.
 
-      // Position.
-      let localPosition = this.data.position 
-        ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
-        : this.el.object3D.position
-      
-      // Orientation.
-      let localQuaternion
-      if (this.data.rotation) {
-        let radians = [this.data.rotation.x, this.data.rotation.y, this.data.rotation.z].map(THREE.Math.degToRad)
-        localQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(radians[0], radians[1], radians[2], 'YXZ'))
-      } else {
-        localQuaternion = this.el.object3D.quaternion
-      }
-
+      const worldRotation = this.getWorldRotation()
       // Position and orientation matrix in the world.
-      matrixWorld = new THREE.Matrix4().multiplyMatrices( 
-        this.el.parentNode.object3D.matrixWorld,
-        new THREE.Matrix4().compose(localPosition, localQuaternion, {x:1,y:1,z:1})
-      ) 
+      matrixWorld = new THREE.Matrix4()
+        .setPosition(this.getWorldPosition())
+        .makeRotationX(worldRotation.x)
+        .makeRotationY(worldRotation.y)
+        .makeRotationZ(worldRotation.z)
     }
+    
     // Update.
     this.resonanceAudioSceneSource.setFromMatrix(matrixWorld)
   },
 
+  /**
+   * Update the visualization of this audio room according to the properties set.
+   */
   updateVisualization (oldData) {
-    // room visualization
-    if (!oldData.visualize && this.data.visualize) {
-      this.el.object3D.add(this.getVisualizationObject())
-    } else if (oldData.visualize && !this.data.visualize) {
-      this.el.object3D.remove(this.getVisualizationObject())
+    const d = this.data
+
+    // Add or remove visualization to or from the DOM.
+    // This is done to the root so it is not affected by the current entity.
+    if (oldData) {
+      if (!oldData.visualize && d.visualize) {
+        // Create entity if it didn't exist yet.
+        if (!this.visualization) {
+          this.visualization = document.createElement('a-sphere')
+          this.visualization.audioSrc = this.el
+          this.visualization.setAttribute('material', 'wireframe', true)
+        }
+        this.el.sceneEl.appendChild(this.visualization)
+      } else if (oldData.visualize && !d.visualize) {
+        this.el.sceneEl.removeChild(this.visualization)
+      }
+    }
+    
+    // Update the visualized entity.
+    if (d.visualize) {
+      this.visualization.setAttribute('position', this.getWorldPosition())
+      this.visualization.setAttribute('rotation', this.getWorldRotation())
+      this.visualization.setAttribute('radius', d.minDistance)
     }
   },
 
-  getVisualizationObject () {
-    // create object if it didn't exist yet.
-    if (!this.visualizationObject) {
-      this.visualizationObject = new THREE.Mesh(
-        new THREE.BoxGeometry(this.data.minDistance, this.data.minDistance, this.data.minDistance),
-        new THREE.MeshStandardMaterial({wireframe: true, wireframeLinewidth: 2, lights: true, metalness: 0})
-      )
+  /**
+   * @returns {THREE.Math.Vector3} - with keys x, y and z representing the position on each axis.
+   */
+  getWorldPosition () {
+    this.el.sceneEl.object3D.updateMatrixWorld(true)
+
+    return this.data.position
+      ? this.el.object3D.parent.getWorldPosition().add(new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z))
+      : this.el.object3D.getWorldPosition()
+  },
+
+  /**
+   * Get world rotation in degrees.
+   * @returns {object} - with keys x, y and z representing the rotation in degrees around each axis.
+   */
+  getWorldRotation () {
+    this.el.sceneEl.object3D.updateMatrixWorld(true)
+    
+    const baseRadians   = this.data.rotation
+      ? new THREE.Euler().setFromQuaternion(this.el.object3D.parent.getWorldQuaternion())
+      : new THREE.Euler().setFromQuaternion(this.el.object3D.getWorldQuaternion())
+    const offsetDegrees = this.data.rotation
+      ? this.data.rotation
+      : {x:0, y:0, z:0}
+
+    return {
+      x: THREE.Math.radToDeg(baseRadians.x) + offsetDegrees.x,
+      y: THREE.Math.radToDeg(baseRadians.y) + offsetDegrees.y,
+      z: THREE.Math.radToDeg(baseRadians.z) + offsetDegrees.z,
     }
-    return this.visualizationObject
   },
 
   exposeAPI () {
@@ -268,10 +309,17 @@ AFRAME.registerComponent('resonance-audio-src', {
   remove () {
     this.disconnect()
     this.defaultAudioEl.remove()
+    if (this.visualization) {
+      this.el.sceneEl.removeChild(this.visualization)
+      this.visualization = null
+    }
   }
 })
 
 AFRAME.registerPrimitive('a-resonance-audio-src', {
+  defaultComponents: {
+    'resonance-audio-src': {}
+  },
   mappings: {
     src: 'resonance-audio-src.src',
     loop: 'resonance-audio-src.loop',

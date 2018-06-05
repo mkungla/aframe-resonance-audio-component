@@ -27,23 +27,33 @@ AFRAME.registerComponent('resonance-audio-room', {
     down: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
     up: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
 
-    // Whether to add a visualization of the room. This shows a wireframe of the box that is the room.
+    // Whether to show a visualization of the room. This shows a wireframe of the box that is considered as the room.
     visualize: {type: 'boolean', default: false}
   },
 
+  /**
+   * Initialize:
+   * - the audio pipeline;
+   * - the connection with the audio sources;
+   * - the API; and
+   * - the event listeners that handle changes.
+   */
   init () {
     // Initialize the audio context and connect with Resonance.
     this.resonanceAudioContext = new AudioContext()
     this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
     this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
 
+    // Visualization entity of the room.
     this.visualization = null
     
+    // Collection of audio sources.
     this.sources = new Array()
+
     this.setUpAudioSources()
     this.exposeAPI()
     
-    // Update audio source positions on position change.
+    // Propagate position and rotation updates to audio room, audio sources and the visualization.
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position' || e.detail.name === 'rotation') {
         this.updatePosition()
@@ -51,7 +61,7 @@ AFRAME.registerComponent('resonance-audio-room', {
         this.sources.forEach(source => source.updatePosition())
       }
     })
-    // Correctly handle dynamic attachment and detachment of audio sources.
+    // Handle dynamic attachment and detachment of audio sources.
     this.el.addEventListener('child-attached', (e) => {
       const el = e.detail.el
       if (el.hasLoaded) {
@@ -61,62 +71,68 @@ AFRAME.registerComponent('resonance-audio-room', {
       }
     })
     this.el.addEventListener('child-detached', e => this.detachSource(e.detail.el))
+
+    // When the scene has loaded and all world positions are calculated, place the visualization.
+    this.el.sceneEl.addEventListener('loaded', e => this.updateVisualization())
   },
 
+  /**
+   * Expose two collections on the element for easey access:
+   * - audioSources: the connected resonance-audio-src components.
+   * - sounds: the connected HTMLMediaElement and MediaStream objects.
+   */
   exposeAPI () {
     Object.defineProperties(this.el, {
       // Array of audio source components.
-      sources: { enumerable: true, get: () => this.sources },
+      audioSources: { enumerable: true, get: () => this.sources },
       // Array of audio sources (HTMLMediaElement and MediaStream objects).
-      sounds:  { enumerable: true, get: () => this.sources.map(source => source.el.sound) }
+      sounds:       { enumerable: true, get: () => this.sources.map(source => source.el.sound) }
     })
   },
 
   update (oldData) {
-    this.roomSetup(oldData)
-    this.acousticsSetup(oldData)
+    this.updateRoomAcoustics(oldData)
     this.updateVisualization(oldData)
   },
 
+  /**
+   * Update entity position and orientation (which determines the audio room position and 
+   * orientation). This is called after the position or rotation of the entity is updated.
+   */
   updatePosition () {
-    this.el.object3D.updateMatrixWorld()
+    this.el.object3D.updateMatrixWorld(true)
   },
 
-  // update resonanceAudioScene after room is tocked
+  /**
+   * Update resonanceAudioScene's listener after room is tocked.
+   */
   tock () {
     this.resonanceAudioScene.setListenerFromMatrix(this.el.sceneEl.camera.el.object3D.matrixWorld)
   },
 
-  // room setup
-  roomSetup (oldData) {
-    // room dimensions
-    const dimensions = {
+  /**
+   * Update room acoustics.
+   */
+  updateRoomAcoustics (oldData) {
+    this.resonanceAudioScene.setRoomProperties({
       width: this.data.width,
       height: this.data.height,
       depth: this.data.depth
-    }
-    // room materials
-    const materials = {
+    }, {
       left: this.data.left,
       right: this.data.right,
       front: this.data.front,
       back: this.data.back,
       down: this.data.down,
       up: this.data.up
-    }
-    this.resonanceAudioScene.setRoomProperties(dimensions, materials)
-  },
-
-  // room acoustics setup
-  acousticsSetup (oldData) {
-    if (!this.resonanceAudioScene ||
-      ((oldData.ambisonicOrder === this.data.ambisonicOrder) &&
-      (oldData.speedOfSound === this.data.speedOfSound))) { return }
-
+    })
     this.resonanceAudioScene.setAmbisonicOrder(this.data.ambisonicOrder)
     this.resonanceAudioScene.setSpeedOfSound(this.data.speedOfSound)
   },
 
+  /**
+   * Update the visualization of this audio room according to the properties set.
+   */
   updateVisualization (oldData) {
     const d = this.data
 
@@ -137,21 +153,27 @@ AFRAME.registerComponent('resonance-audio-room', {
     }
     
     // Update the visualized entity. 
-    if (!d.visualize) { return }
-    this.visualization.setAttribute('position', this.el.getAttribute('position'))
-    this.visualization.setAttribute('rotation', this.el.getAttribute('rotation'))
-    this.visualization.setAttribute('width', d.width)
-    this.visualization.setAttribute('height', d.height)
-    this.visualization.setAttribute('depth', d.depth)
+    if (d.visualize) {
+      this.el.sceneEl.object3D.updateMatrixWorld(true)
+      this.visualization.setAttribute('position', this.el.object3D.getWorldPosition())
+      this.visualization.setAttribute('rotation', new THREE.Euler().setFromQuaternion(this.el.object3D.getWorldQuaternion()).toArray().slice(0, 3).map(THREE.Math.radToDeg).join(' '))
+      this.visualization.setAttribute('width', d.width)
+      this.visualization.setAttribute('height', d.height)
+      this.visualization.setAttribute('depth', d.depth)
+    }
   },
 
   /**
-   * Set up audio by attaching sources.
+   * Set up audio by attaching audio sources.
    */
   setUpAudioSources () {
     this.el.querySelectorAll('[resonance-audio-src]').forEach(childEl => this.attachSource(childEl))
   },
 
+  /**
+   * Attach audio source by storing its HTMLElement reference and initializing its audio.
+   * @param {HTMLElement} el 
+   */
   attachSource (el) {
     const source = el.components['resonance-audio-src']
     // Only consider relevant elements.
@@ -161,6 +183,10 @@ AFRAME.registerComponent('resonance-audio-room', {
     source.initAudioSrc(this)
   },
 
+  /**
+   * Detach audio source by removing its HTMLElement reference.
+   * @param {HTMLElement} el 
+   */
   detachSource (el) {
     const source = el.components['resonance-audio-src']
     if (this.sources.includes(source)) {
@@ -168,6 +194,9 @@ AFRAME.registerComponent('resonance-audio-room', {
     }
   },
 
+  /**
+   * On component removal, delete the visualization entity.
+   */
   remove () {
     if (this.visualization) {
       this.el.sceneEl.removeChild(this.visualization)
@@ -176,7 +205,10 @@ AFRAME.registerComponent('resonance-audio-room', {
   }
 })
 
-// Composite component.
+/**
+ * Composite bounding box component. Use this one if the room should be the bounding box of the 
+ * entity this component is attached to.
+ */
 AFRAME.registerComponent('resonance-audio-room-bb', {
   dependencies: ['position', 'geometry'],
   schema: AFRAME.components['resonance-audio-room'].schema,
@@ -198,7 +230,11 @@ AFRAME.registerComponent('resonance-audio-room-bb', {
   }
 })
 
+
 AFRAME.registerPrimitive('a-resonance-audio-room', {
+  defaultComponents: {
+    'resonance-audio-room': {}
+  },
   mappings: {
     width: 'resonance-audio-room.width',
     height: 'resonance-audio-room.height',
