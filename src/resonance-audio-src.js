@@ -19,8 +19,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
-    position: {type: 'vec3', default: undefined},
-    rotation: {type: 'vec3', default: undefined},
+    position: {type: 'vec3', default: null},
+    rotation: {type: 'vec3', default: null},
 
     // Whether to show a visualization of the audio source. This shows a sphere wireframe of the 
     // source with its radius set to the minDistance.
@@ -133,7 +133,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     if (!this.resonance) { return }
 
     let matrixWorld
-    if (!this.data.position && !this.data.rotation) {
+    if (!isVec3Set(this.data.position) && !isVec3Set(this.data.rotation)) {
       // The position and orientation are set by the position and rotation components, respectively.
       this.el.sceneEl.object3D.updateMatrixWorld(true)
       matrixWorld = this.el.object3D.matrixWorld
@@ -144,10 +144,10 @@ AFRAME.registerComponent('resonance-audio-src', {
       const worldRotation = this.getWorldRotation()
       // Position and orientation matrix in the world.
       matrixWorld = new THREE.Matrix4()
-        .setPosition(this.getWorldPosition())
         .makeRotationX(worldRotation.x)
         .makeRotationY(worldRotation.y)
         .makeRotationZ(worldRotation.z)
+        .setPosition(this.getWorldPosition())
     }
     
     // Update.
@@ -190,7 +190,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   getWorldPosition () {
     this.el.sceneEl.object3D.updateMatrixWorld(true)
 
-    return this.data.position
+    return isVec3Set(this.data.position)
       ? this.el.object3D.parent.getWorldPosition().add(new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z))
       : this.el.object3D.getWorldPosition()
   },
@@ -202,10 +202,10 @@ AFRAME.registerComponent('resonance-audio-src', {
   getWorldRotation () {
     this.el.sceneEl.object3D.updateMatrixWorld(true)
     
-    const baseRadians   = this.data.rotation
+    const baseRadians   = isVec3Set(this.data.rotation)
       ? new THREE.Euler().setFromQuaternion(this.el.object3D.parent.getWorldQuaternion())
       : new THREE.Euler().setFromQuaternion(this.el.object3D.getWorldQuaternion())
-    const offsetDegrees = this.data.rotation
+    const offsetDegrees = isVec3Set(this.data.rotation)
       ? this.data.rotation
       : {x:0, y:0, z:0}
 
@@ -339,3 +339,15 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
     visualize: 'resonance-audio-src.visualize'
   }
 })
+
+
+/**
+ * Check if x, y and z properties are set.
+ * @param {boolean}
+ */
+function isVec3Set(v) {
+  return typeof v == 'object' 
+      && typeof v.x != 'undefined' 
+      && typeof v.y != 'undefined' 
+      && typeof v.z != 'undefined'
+}
