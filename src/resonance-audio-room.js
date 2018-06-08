@@ -109,7 +109,8 @@ AFRAME.registerComponent('resonance-audio-room', {
    * Update resonanceAudioScene's listener after room is tocked.
    */
   tock () {
-    this.resonanceAudioScene.setListenerFromMatrix(this.el.sceneEl.camera.el.object3D.matrixWorld)
+    // Calculate camera position relative to room.
+    this.resonanceAudioScene.setListenerFromMatrix(new THREE.Matrix4().add(this.el.sceneEl.camera.el.object3D.matrixWorld).subtract(this.el.object3D.matrixWorld))
   },
 
   /**
@@ -252,3 +253,24 @@ AFRAME.registerPrimitive('a-resonance-audio-room', {
     visualize: 'resonance-audio-room.visualize'
   }
 })
+
+
+/**
+ * Add elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
+ * @param {THREE.Matrix4} the matrix to add from
+ * @return {THREE.Matrix4} this
+ */
+THREE.Matrix4.prototype.add = function(m) {
+  this.elements = this.elements.map((e,i) => e + m.elements[i])
+  return this
+}
+
+/**
+ * Subtract elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
+ * @param {THREE.Matrix4} the matrix to add from
+ * @return {THREE.Matrix4} this
+ */
+THREE.Matrix4.prototype.subtract = function(m) {
+  this.elements = this.elements.map((e,i) => e - m.elements[i])
+  return this
+}

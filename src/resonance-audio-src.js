@@ -19,8 +19,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
-    position: {type: 'vec3', default: null},
-    rotation: {type: 'vec3', default: null},
+    position: {type: 'vec3', default: {}},
+    rotation: {type: 'vec3', default: {}},
 
     // Whether to show a visualization of the audio source. This shows a sphere wireframe of the 
     // source with its radius set to the minDistance.
@@ -129,29 +129,34 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
   },
 
+  /**
+   * Update the position in Google Resonance of this audio source, so relative to the audio room.
+   */
   updatePosition() {
     if (!this.resonance) { return }
 
-    let matrixWorld
+    let matrixRoom
     if (!isVec3Set(this.data.position) && !isVec3Set(this.data.rotation)) {
       // The position and orientation are set by the position and rotation components, respectively.
       this.el.sceneEl.object3D.updateMatrixWorld(true)
-      matrixWorld = this.el.object3D.matrixWorld
 
+      // Calculate source position relative to the room position.
+      matrixRoom = new THREE.Matrix4().add(this.el.object3D.matrixWorld).subtract(this.room.el.object3D.matrixWorld)
     } else {
       // One or both of the position and orientation were set as properties of the resonance-audio-src component.
 
-      const worldRotation = this.getWorldRotation()
-      // Position and orientation matrix in the world.
-      matrixWorld = new THREE.Matrix4()
-        .makeRotationX(worldRotation.x)
-        .makeRotationY(worldRotation.y)
-        .makeRotationZ(worldRotation.z)
-        .setPosition(this.getWorldPosition())
+      const roomRotation = this.getRoomRotation()
+      matrixRoom = new THREE.Matrix4().compose(
+        this.getRoomPosition(), 
+        new THREE.Quaternion().setFromEuler(
+          new THREE.Euler().reorder('YXZ').fromArray([roomRotation.x, roomRotation.y, roomRotation.z].map(THREE.Math.degToRad))
+        ),
+        {x:1,y:1,z:1}
+      )
     }
     
     // Update.
-    this.resonance.setFromMatrix(matrixWorld)
+    this.resonance.setFromMatrix(matrixRoom)
   },
 
   /**
@@ -196,6 +201,13 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   /**
+   * @return {THREE.Math.Vector3} - the position relative to the room.
+   */
+  getRoomPosition () {
+    return this.getWorldPosition().sub(this.room.el.object3D.getWorldPosition())
+  },
+
+  /**
    * Get world rotation in degrees.
    * @returns {object} - with keys x, y and z representing the rotation in degrees around each axis.
    */
@@ -213,6 +225,20 @@ AFRAME.registerComponent('resonance-audio-src', {
       x: THREE.Math.radToDeg(baseRadians.x) + offsetDegrees.x,
       y: THREE.Math.radToDeg(baseRadians.y) + offsetDegrees.y,
       z: THREE.Math.radToDeg(baseRadians.z) + offsetDegrees.z,
+    }
+  },
+
+  /**
+   * Get rotation relative to the room in degrees.
+   * @returns {object} - with keys x, y and z representing the rotation in degrees around each axis.
+   */
+  getRoomRotation () {
+    const roomWorldRotation = new THREE.Euler().setFromQuaternion(this.room.el.object3D.getWorldQuaternion()).toArray().map(THREE.Math.radToDeg)
+    const worldRotation = this.getWorldRotation()
+    return {
+      x: worldRotation.x - roomWorldRotation[0],
+      y: worldRotation.y - roomWorldRotation[1],
+      z: worldRotation.z - roomWorldRotation[2]
     }
   },
 
@@ -350,4 +376,24 @@ function isVec3Set(v) {
       && typeof v.x != 'undefined' 
       && typeof v.y != 'undefined' 
       && typeof v.z != 'undefined'
+}
+
+/**
+ * Add elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
+ * @param {THREE.Matrix4} - the matrix to add from
+ * @return {THREE.Matrix4} this
+ */
+THREE.Matrix4.prototype.add = function(m) {
+  this.elements = this.elements.map((e,i) => e + m.elements[i])
+  return this
+}
+
+/**
+ * Subtract elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
+ * @param {THREE.Matrix4} - the matrix to add from
+ * @return {THREE.Matrix4} this
+ */
+THREE.Matrix4.prototype.subtract = function(m) {
+  this.elements = this.elements.map((e,i) => e - m.elements[i])
+  return this
 }
