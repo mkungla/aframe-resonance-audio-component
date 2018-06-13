@@ -99,7 +99,8 @@ AFRAME.registerComponent('resonance-audio-room', {
 
   /**
    * Update entity position and orientation (which determines the audio room position and 
-   * orientation). This is called after the position or rotation of the entity is updated.
+   * orientation) in the world. This is called after the position or rotation of the entity is 
+   * updated.
    */
   updatePosition () {
     this.el.object3D.updateMatrixWorld(true)
@@ -110,7 +111,12 @@ AFRAME.registerComponent('resonance-audio-room', {
    */
   tock () {
     // Calculate camera position relative to room.
-    this.resonanceAudioScene.setListenerFromMatrix(new THREE.Matrix4().add(this.el.sceneEl.camera.el.object3D.matrixWorld).subtract(this.el.object3D.matrixWorld))
+    this.resonanceAudioScene.setListenerFromMatrix(
+      new THREE.Matrix4().multiplyMatrices(
+        new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld),
+        this.el.sceneEl.camera.el.object3D.matrixWorld
+      ) 
+    )
   },
 
   /**
@@ -158,11 +164,18 @@ AFRAME.registerComponent('resonance-audio-room', {
     // Update the visualized entity. 
     if (d.visualize) {
       this.el.sceneEl.object3D.updateMatrixWorld(true)
-      this.visualization.setAttribute('position', this.el.object3D.getWorldPosition())
-      this.visualization.setAttribute('rotation', new THREE.Euler().setFromQuaternion(this.el.object3D.getWorldQuaternion()).toArray().slice(0, 3).map(THREE.Math.radToDeg).join(' '))
-      this.visualization.setAttribute('width', d.width)
+      const p = new THREE.Vector3()
+      const q = new THREE.Quaternion()
+      const s = new THREE.Vector3()
+      this.el.object3D.matrixWorld.decompose(p, q, s)
+      const r = new THREE.Euler().setFromQuaternion(q, 'YXZ')
+      const r2d = THREE.Math.radToDeg
+
+      this.visualization.setAttribute('position', p)
+      this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
+      this.visualization.setAttribute('width',  d.width)
       this.visualization.setAttribute('height', d.height)
-      this.visualization.setAttribute('depth', d.depth)
+      this.visualization.setAttribute('depth',  d.depth)
     }
   },
 
@@ -253,24 +266,3 @@ AFRAME.registerPrimitive('a-resonance-audio-room', {
     visualize: 'resonance-audio-room.visualize'
   }
 })
-
-
-/**
- * Add elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
- * @param {THREE.Matrix4} the matrix to add from
- * @return {THREE.Matrix4} this
- */
-THREE.Matrix4.prototype.add = function(m) {
-  this.elements = this.elements.map((e,i) => e + m.elements[i])
-  return this
-}
-
-/**
- * Subtract elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
- * @param {THREE.Matrix4} the matrix to add from
- * @return {THREE.Matrix4} this
- */
-THREE.Matrix4.prototype.subtract = function(m) {
-  this.elements = this.elements.map((e,i) => e - m.elements[i])
-  return this
-}

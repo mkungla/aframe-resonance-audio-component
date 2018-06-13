@@ -135,28 +135,56 @@ AFRAME.registerComponent('resonance-audio-src', {
   updatePosition() {
     if (!this.resonance) { return }
 
-    let matrixRoom
+    this.resonance.setFromMatrix(this.getMatrixRoom())
+  },
+
+  /**
+   * Get a copy of the matrixWorld of the audio source, taking into account any custom set position
+   * or rotation. The matrixWorld contains the audio source's position and rotation in world 
+   * coordinates.
+   * @return {THREE.Matrix4}
+   */
+  getMatrixWorld () {
+    // Update all world matrices.
+    this.el.sceneEl.object3D.updateMatrixWorld()
+
     if (!isVec3Set(this.data.position) && !isVec3Set(this.data.rotation)) {
-      // The position and orientation are set by the position and rotation components, respectively.
-      this.el.sceneEl.object3D.updateMatrixWorld(true)
-
-      // Calculate source position relative to the room position.
-      matrixRoom = new THREE.Matrix4().add(this.el.object3D.matrixWorld).subtract(this.room.el.object3D.matrixWorld)
+      // No custom position or rotation was set, so simply return a copy of the matrixWorld of the
+      // current entity.
+      return new THREE.Matrix4().copy(this.el.object3D.matrixWorld)
     } else {
-      // One or both of the position and orientation were set as properties of the resonance-audio-src component.
-
-      const roomRotation = this.getRoomRotation()
-      matrixRoom = new THREE.Matrix4().compose(
-        this.getRoomPosition(), 
-        new THREE.Quaternion().setFromEuler(
-          new THREE.Euler().reorder('YXZ').fromArray([roomRotation.x, roomRotation.y, roomRotation.z].map(THREE.Math.degToRad))
-        ),
-        {x:1,y:1,z:1}
+      const localPosition = isVec3Set(this.data.position) 
+        ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
+        : this.el.object3D.position
+      const localRotation = isVec3Set(this.data.rotation)
+        ? new THREE.Euler()
+            .reorder('YXZ')
+            .fromArray([
+              this.data.rotation.x, 
+              this.data.rotation.y, 
+              this.data.rotation.z].map(THREE.Math.degToRad)
+            )
+        : this.el.object3D.rotation
+      // Return matirxWorld calculated by multiplying the parent's matrixWorld and the local
+      // matrix, as Three.js's Object3D.updateMatrixWorld() basically does.
+      return new THREE.Matrix4().multiplyMatrices(
+        this.el.object3D.parent.matrixWorld,
+        new THREE.Matrix4().compose(
+          localPosition,
+          new THREE.Quaternion().setFromEuler(localRotation),
+          {x:1,y:1,z:1}
+        )
       )
     }
-    
-    // Update.
-    this.resonance.setFromMatrix(matrixRoom)
+  },
+
+  /**
+   * Get a matrix of the audio source's position and rotation relative to the audio room, taking 
+   * into account any custom set position or rotation.
+   * @return {THREE.Matrix4}
+   */
+  getMatrixRoom () {
+    return this.getMatrixWorld().premultiply(new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld))
   },
 
   /**
@@ -165,8 +193,8 @@ AFRAME.registerComponent('resonance-audio-src', {
   updateVisualization (oldData) {
     const d = this.data
 
-    // Add or remove visualization to or from the DOM.
-    // This is done to the root so it is not affected by the current entity.
+    // Add or remove visualization to or from the DOM. This is done to the root so it is not
+    // affected by the current entity.
     if (oldData) {
       if (!oldData.visualize && d.visualize) {
         // Create entity if it didn't exist yet.
@@ -183,62 +211,16 @@ AFRAME.registerComponent('resonance-audio-src', {
     
     // Update the visualized entity.
     if (d.visualize) {
-      this.visualization.setAttribute('position', this.getWorldPosition())
-      this.visualization.setAttribute('rotation', this.getWorldRotation())
+      const p = new THREE.Vector3()
+      const q = new THREE.Quaternion()
+      const s = new THREE.Vector3()
+      this.getMatrixWorld().decompose(p, q, s)
+      const r = new THREE.Euler().setFromQuaternion(q, 'YXZ')
+      const r2d = THREE.Math.radToDeg
+
+      this.visualization.setAttribute('position', p)
+      this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
       this.visualization.setAttribute('radius', d.minDistance)
-    }
-  },
-
-  /**
-   * @returns {THREE.Math.Vector3} - with keys x, y and z representing the position on each axis.
-   */
-  getWorldPosition () {
-    this.el.sceneEl.object3D.updateMatrixWorld(true)
-
-    return isVec3Set(this.data.position)
-      ? this.el.object3D.parent.getWorldPosition().add(new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z))
-      : this.el.object3D.getWorldPosition()
-  },
-
-  /**
-   * @return {THREE.Math.Vector3} - the position relative to the room.
-   */
-  getRoomPosition () {
-    return this.getWorldPosition().sub(this.room.el.object3D.getWorldPosition())
-  },
-
-  /**
-   * Get world rotation in degrees.
-   * @returns {object} - with keys x, y and z representing the rotation in degrees around each axis.
-   */
-  getWorldRotation () {
-    this.el.sceneEl.object3D.updateMatrixWorld(true)
-    
-    const baseRadians   = isVec3Set(this.data.rotation)
-      ? new THREE.Euler().setFromQuaternion(this.el.object3D.parent.getWorldQuaternion())
-      : new THREE.Euler().setFromQuaternion(this.el.object3D.getWorldQuaternion())
-    const offsetDegrees = isVec3Set(this.data.rotation)
-      ? this.data.rotation
-      : {x:0, y:0, z:0}
-
-    return {
-      x: THREE.Math.radToDeg(baseRadians.x) + offsetDegrees.x,
-      y: THREE.Math.radToDeg(baseRadians.y) + offsetDegrees.y,
-      z: THREE.Math.radToDeg(baseRadians.z) + offsetDegrees.z,
-    }
-  },
-
-  /**
-   * Get rotation relative to the room in degrees.
-   * @returns {object} - with keys x, y and z representing the rotation in degrees around each axis.
-   */
-  getRoomRotation () {
-    const roomWorldRotation = new THREE.Euler().setFromQuaternion(this.room.el.object3D.getWorldQuaternion()).toArray().map(THREE.Math.radToDeg)
-    const worldRotation = this.getWorldRotation()
-    return {
-      x: worldRotation.x - roomWorldRotation[0],
-      y: worldRotation.y - roomWorldRotation[1],
-      z: worldRotation.z - roomWorldRotation[2]
     }
   },
 
@@ -376,24 +358,4 @@ function isVec3Set(v) {
       && typeof v.x != 'undefined' 
       && typeof v.y != 'undefined' 
       && typeof v.z != 'undefined'
-}
-
-/**
- * Add elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
- * @param {THREE.Matrix4} - the matrix to add from
- * @return {THREE.Matrix4} this
- */
-THREE.Matrix4.prototype.add = function(m) {
-  this.elements = this.elements.map((e,i) => e + m.elements[i])
-  return this
-}
-
-/**
- * Subtract elements of Matrix4 to elements of the current matrix, i.e. m11 += n11, m12 += n12, ...
- * @param {THREE.Matrix4} - the matrix to add from
- * @return {THREE.Matrix4} this
- */
-THREE.Matrix4.prototype.subtract = function(m) {
-  this.elements = this.elements.map((e,i) => e - m.elements[i])
-  return this
 }
