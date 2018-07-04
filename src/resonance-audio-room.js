@@ -16,7 +16,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     depth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.depth},
 
     // Resonance audio parameters.
-    ambisonicOrder: {type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER, oneOf: [1, 3]},
+    ambisonicOrder: {type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER},
     speedOfSound: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SPEED_OF_SOUND},
 
     // Room wall materials.
@@ -40,9 +40,9 @@ AFRAME.registerComponent('resonance-audio-room', {
    */
   init () {
     // Initialize the audio context and connect with Resonance.
-    this.resonanceAudioContext = new AudioContext()
-    this.resonanceAudioScene = new ResonanceAudio(this.resonanceAudioContext)
-    this.resonanceAudioScene.output.connect(this.resonanceAudioContext.destination)
+    this.audioContext = new AudioContext()
+    this.resonanceAudioScene = new ResonanceAudio(this.audioContext)
+    this.resonanceAudioScene.output.connect(this.audioContext.destination)
 
     // Visualization entity of the room.
     this.visualization = null
@@ -79,7 +79,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   /**
-   * Expose two collections on the element for easey access:
+   * Expose two collections on the element for easy access:
    * - audioSources: the connected resonance-audio-src components.
    * - sounds: the connected HTMLMediaElement and MediaStream objects.
    */
@@ -88,7 +88,7 @@ AFRAME.registerComponent('resonance-audio-room', {
       // Array of audio source components.
       audioSources: { enumerable: true, get: () => this.sources },
       // Array of audio sources (HTMLMediaElement and MediaStream objects).
-      sounds:       { enumerable: true, get: () => this.sources.map(source => source.el.sound) }
+      sounds:       { enumerable: true, get: () => this.sources.map(source => source.sound) }
     })
   },
 

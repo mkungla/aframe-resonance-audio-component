@@ -59,8 +59,6 @@ AFRAME.registerComponent('resonance-audio-src', {
 
     // When the scene has loaded and all world positions are calculated, place the visualization.
     this.el.sceneEl.addEventListener('loaded', (e) => this.updateVisualization())
-
-    this.exposeAPI()
   },
 
   initAudioSrc (room) {
@@ -81,7 +79,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     
     // Prepare default audio element.
     this.defaultAudioEl = document.createElement('audio')
-    this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.resonanceAudioContext.createMediaElementSource(this.defaultAudioEl))
+    this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.audioContext.createMediaElementSource(this.defaultAudioEl))
     
     // Set the src declared in the html.
     this.setSrc(this.data.src)
@@ -224,17 +222,6 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
   },
 
-  exposeAPI () {
-    Object.defineProperties(this.el, {
-      // The connected sound source.
-      sound:           { enumerable: true, get: () => this.sound },
-      // The AudioNode that Resonance uses for this source.
-      resonance:       { enumerable: true, get: () => this.resonance },
-      // Set a new source.
-      setResonanceSrc: { value: (src) => this.setSrc(src) }
-    })
-  },
-
   disconnect () {
     if (this.sound) {
       this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonance.input)
@@ -254,7 +241,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
     // Create new source AudioNode if source object didn't have one yet.
     if (!this.mediaAudioSourceNodes.has(this.sound)) {
-      this.mediaAudioSourceNodes.set(this.sound, createSourceFn.call(this.room.resonanceAudioContext, this.sound))
+      this.mediaAudioSourceNodes.set(this.sound, createSourceFn.call(this.room.audioContext, this.sound))
     }
     // Get elemenent source AudioNode.
     this.mediaAudioSourceNodes.get(this.sound).connect(this.resonance.input)
@@ -263,7 +250,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   connectWithElement (el) {
-    this.connected.element = this._connect(el, this.room.resonanceAudioContext.createMediaElementSource)
+    this.connected.element = this._connect(el, this.room.audioContext.createMediaElementSource)
 
     if (!this.connected.element) { return }
     // Warn when an element with a stream was connected.
@@ -279,7 +266,7 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   connectWithStream (stream) {
-    this.connected.stream = this._connect(stream, this.room.resonanceAudioContext.createMediaStreamSource)
+    this.connected.stream = this._connect(stream, this.room.audioContext.createMediaStreamSource)
     
     if (!this.connected.stream) { return }
     // Add play/pause API to sound that give a warning when accessed.
