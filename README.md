@@ -84,6 +84,13 @@ When this is loaded, `track.mp3` plays indefinitely. Running the following javas
 document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src', stream)
 ```
 
+# Installation
+For now:
+1. Clone this repository.
+2. Run `npm install` followed by `npm run build`.
+3. Add `build/aframe-resonance-audio-component.js` to your html page.
+4. Use the component like in one of the above examples.
+
 # API
 ## resonance-audio-room
 ### Properties
@@ -154,6 +161,7 @@ The visualized entities are added to the root scene so they are not affected by 
 
 The bounding box feature isn't perfect yet. It currently takes the dimensions of the entity's bounding box and assumes the center point of the entity is the same as the center point of the audio room. This is correct for simple shapes, but might not be correct for more complex models.
 
+Audio rooms (entities with component resonance-audio-room) and audio sources (entities with component resonance-audio-src) have a one to many relationship, and only that relationship. Rooms do not have any influence on eachother. The same goes for audio sources and rooms there are not descendants of, even if they are physically positioned within another audio room. Do not nest rooms. Furthermore, source entities don't have to be immediate room childs, but can be deeper descendants.
 
 ***
 
