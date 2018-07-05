@@ -1,6 +1,6 @@
 {
   "name": "aframe-resonance-audio-component",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "main": "src/index.js",
   "repository": {
@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack-dev.js --mode development --progress --colors",
-    "build": "webpack --config ./config/webpack-dev.js --mode production",
+    "build": "webpack --config ./config/webpack-prod.js --mode production",
     "publish": "git subtree push --prefix examples github/digaverse gh-pages"
   },
   "dependencies": {
