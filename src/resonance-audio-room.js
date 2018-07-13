@@ -43,15 +43,15 @@ AFRAME.registerComponent('resonance-audio-room', {
 
     // Visualization entity of the room.
     this.visualization = null
-    
+
     // Collection of audio sources.
-    this.sources = new Array()
+    this.sources = []
 
     // Set up the room acoustics before the audio sources are set up.
     this.updateRoomAcoustics()
     this.setUpAudioSources()
     this.exposeAPI()
-    
+
     // Propagate position and rotation updates to audio room, audio sources and the visualization.
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position' || e.detail.name === 'rotation') {
@@ -84,7 +84,7 @@ AFRAME.registerComponent('resonance-audio-room', {
       // Array of audio source components.
       audioSources: { enumerable: true, get: () => this.sources },
       // Array of audio sources (HTMLMediaElement and MediaStream objects).
-      sounds:       { enumerable: true, get: () => this.sources.map(source => source.sound) }
+      sounds: { enumerable: true, get: () => this.sources.map(source => source.sound) }
     })
   },
 
@@ -94,8 +94,8 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   /**
-   * Update entity position and orientation (which determines the audio room position and 
-   * orientation) in the world. This is called after the position or rotation of the entity is 
+   * Update entity position and orientation (which determines the audio room position and
+   * orientation) in the world. This is called after the position or rotation of the entity is
    * updated.
    * @returns {this}
    */
@@ -160,8 +160,8 @@ AFRAME.registerComponent('resonance-audio-room', {
         this.visualization = null
       }
     }
-    
-    // Update the visualized entity. 
+
+    // Update the visualized entity.
     if (d.visualize) {
       this.el.sceneEl.object3D.updateMatrixWorld(true)
       const p = new THREE.Vector3()
@@ -173,9 +173,9 @@ AFRAME.registerComponent('resonance-audio-room', {
 
       this.visualization.setAttribute('position', p)
       this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
-      this.visualization.setAttribute('width',  d.width)
+      this.visualization.setAttribute('width', d.width)
       this.visualization.setAttribute('height', d.height)
-      this.visualization.setAttribute('depth',  d.depth)
+      this.visualization.setAttribute('depth', d.depth)
     }
     return this
   },
@@ -223,7 +223,6 @@ AFRAME.registerComponent('resonance-audio-room', {
     }
   }
 })
-
 
 AFRAME.registerPrimitive('a-resonance-audio-room', {
   defaultComponents: {

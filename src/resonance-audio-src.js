@@ -1,4 +1,4 @@
-/* global AFRAME, THREE */
+/* global AFRAME, THREE, MediaStream, HTMLMediaElement */
 const { ResonanceAudio } = require('resonance-audio')
 
 const log = AFRAME.utils.debug
@@ -15,18 +15,18 @@ AFRAME.registerComponent('resonance-audio-src', {
     gain: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN},
     maxDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MAX_DISTANCE},
     minDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE},
-    directivityPattern: {type: 'vec2', default: {x:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y:ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS}},
+    directivityPattern: {type: 'vec2', default: {x: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS}},
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
     position: {type: 'vec3', default: {}},
     rotation: {type: 'vec3', default: {}},
 
-    // Whether to show a visualization of the audio source. This shows a sphere wireframe of the 
+    // Whether to show a visualization of the audio source. This shows a sphere wireframe of the
     // source with its radius set to the minDistance.
     visualize: {type: 'boolean', default: false}
   },
-  
+
   init () {
     // The room this audio source is in.
     this.room = null
@@ -72,24 +72,24 @@ AFRAME.registerComponent('resonance-audio-src', {
 
     // Update sound values.
     this.updateSoundSettings()
-    
+
     // Handle position.
     this.room.updatePosition()
     this.updatePosition()
-    
+
     // Prepare default audio element.
     this.defaultAudioEl = document.createElement('audio')
     this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.audioContext.createMediaElementSource(this.defaultAudioEl))
-    
+
     // Set the src declared in the html.
     this.setSrc(this.data.src)
 
     // The room is known, so also update the visualization of this audio source.
     this.updateVisualization()
   },
-  
-  update (oldData) { 
-    if (this.room && oldData.src != this.data.src) {
+
+  update (oldData) {
+    if (this.room && oldData.src !== this.data.src) {
       this.setSrc(this.data.src)
     }
     this.updateSoundSettings()
@@ -131,7 +131,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    * Update the position in Google Resonance of this audio source, so relative to the audio room.
    * @returns {this}
    */
-  updatePosition() {
+  updatePosition () {
     if (!this.resonance) { return }
     this.resonance.setFromMatrix(this.getMatrixRoom())
     return this
@@ -139,7 +139,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   /**
    * Get a copy of the matrixWorld of the audio source, taking into account any custom set position
-   * or rotation. The matrixWorld contains the audio source's position and rotation in world 
+   * or rotation. The matrixWorld contains the audio source's position and rotation in world
    * coordinates.
    * @return {THREE.Matrix4}
    */
@@ -152,17 +152,17 @@ AFRAME.registerComponent('resonance-audio-src', {
       // current entity.
       return new THREE.Matrix4().copy(this.el.object3D.matrixWorld)
     } else {
-      const localPosition = isVec3Set(this.data.position) 
+      const localPosition = isVec3Set(this.data.position)
         ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
         : this.el.object3D.position
       const localRotation = isVec3Set(this.data.rotation)
         ? new THREE.Euler()
-            .reorder('YXZ')
-            .fromArray([
-              this.data.rotation.x, 
-              this.data.rotation.y, 
-              this.data.rotation.z].map(THREE.Math.degToRad)
-            )
+          .reorder('YXZ')
+          .fromArray([
+            this.data.rotation.x,
+            this.data.rotation.y,
+            this.data.rotation.z].map(THREE.Math.degToRad)
+          )
         : this.el.object3D.rotation
       // Return matirxWorld calculated by multiplying the parent's matrixWorld and the local
       // matrix, as Three.js's Object3D.updateMatrixWorld() basically does.
@@ -171,14 +171,14 @@ AFRAME.registerComponent('resonance-audio-src', {
         new THREE.Matrix4().compose(
           localPosition,
           new THREE.Quaternion().setFromEuler(localRotation),
-          {x:1,y:1,z:1}
+          {x: 1, y: 1, z: 1}
         )
       )
     }
   },
 
   /**
-   * Get a matrix of the audio source's position and rotation relative to the audio room, taking 
+   * Get a matrix of the audio source's position and rotation relative to the audio room, taking
    * into account any custom set position or rotation.
    * @return {THREE.Matrix4}
    */
@@ -209,7 +209,7 @@ AFRAME.registerComponent('resonance-audio-src', {
         this.visualization = null
       }
     }
-    
+
     // Update the visualized entity.
     if (d.visualize) {
       const p = new THREE.Vector3()
@@ -237,7 +237,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   _connect (source, createSourceFn) {
     this.disconnect()
-    
+
     // Don't connect a new source if there is none.
     if (!source) { return false }
 
@@ -249,7 +249,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
     // Get elemenent source AudioNode.
     this.mediaAudioSourceNodes.get(this.sound).connect(this.resonance.input)
-    
+
     return true
   },
 
@@ -271,7 +271,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   connectWithStream (stream) {
     this.connected.stream = this._connect(stream, this.room.audioContext.createMediaStreamSource)
-    
+
     if (!this.connected.stream) { return }
     // Add play/pause API to sound that give a warning when accessed.
     const unavailable = () => warn("can't use play/pause on MediaStream. Manipulate the stream's source instead")
@@ -281,7 +281,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   /**
    * Set a new source.
-   * @param {string|HTMLMediaElement|MediaStream|null} src 
+   * @param {string|HTMLMediaElement|MediaStream|null} src
    */
   setSrc (src) {
     const errorMsg = 'invalid src value. Must be element id string, resource string, HTMLMediaElement or MediaStream'
@@ -339,14 +339,13 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
   }
 })
 
-
 /**
  * Check if x, y and z properties are set.
  * @param {boolean}
  */
-function isVec3Set(v) {
-  return typeof v == 'object' 
-      && typeof v.x != 'undefined' 
-      && typeof v.y != 'undefined' 
-      && typeof v.z != 'undefined'
+function isVec3Set (v) {
+  return typeof v === 'object' &&
+      typeof v.x !== 'undefined' &&
+      typeof v.y !== 'undefined' &&
+      typeof v.z !== 'undefined'
 }
