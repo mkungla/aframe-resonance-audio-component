@@ -1,13 +1,10 @@
 /* global AFRAME, THREE, AudioContext */
-import {ResonanceAudio} from 'resonance-audio'
-
-const log = AFRAME.utils.debug
-const warn = log('components:resonance-audio-room:warn')
+const { ResonanceAudio } = require('resonance-audio')
 
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
 
 AFRAME.registerComponent('resonance-audio-room', {
-  dependencies: ['position'],
+  dependencies: ['position', 'rotation'],
 
   schema: {
     // Room dimensions. The position is the center point of this box.
@@ -58,9 +55,8 @@ AFRAME.registerComponent('resonance-audio-room', {
     // Propagate position and rotation updates to audio room, audio sources and the visualization.
     this.el.addEventListener('componentchanged', (e) => {
       if (e.detail.name === 'position' || e.detail.name === 'rotation') {
-        this.updatePosition()
-        this.updateVisualization()
-        this.sources.forEach(source => source.updatePosition())
+        this.updatePosition().updateVisualization()
+        this.sources.forEach(source => source.updatePosition().updateVisualization())
       }
     })
     // Handle dynamic attachment and detachment of audio sources.
@@ -69,13 +65,13 @@ AFRAME.registerComponent('resonance-audio-room', {
       if (el.hasLoaded) {
         this.attachSource(el)
       } else {
-        el.addEventListener('loaded', e => this.attachSource(el))
+        el.addEventListener('loaded', () => this.attachSource(el))
       }
     })
     this.el.addEventListener('child-detached', e => this.detachSource(e.detail.el))
 
     // When the scene has loaded and all world positions are calculated, place the visualization.
-    this.el.sceneEl.addEventListener('loaded', e => this.updateVisualization())
+    this.el.sceneEl.addEventListener('loaded', () => this.updateVisualization())
   },
 
   /**
@@ -101,9 +97,11 @@ AFRAME.registerComponent('resonance-audio-room', {
    * Update entity position and orientation (which determines the audio room position and 
    * orientation) in the world. This is called after the position or rotation of the entity is 
    * updated.
+   * @returns {this}
    */
   updatePosition () {
     this.el.object3D.updateMatrixWorld(true)
+    return this
   },
 
   /**
@@ -115,7 +113,7 @@ AFRAME.registerComponent('resonance-audio-room', {
       new THREE.Matrix4().multiplyMatrices(
         new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld),
         this.el.sceneEl.camera.el.object3D.matrixWorld
-      ) 
+      )
     )
   },
 
@@ -141,6 +139,7 @@ AFRAME.registerComponent('resonance-audio-room', {
 
   /**
    * Update the visualization of this audio room according to the properties set.
+   * @returns {this}
    */
   updateVisualization (oldData) {
     const d = this.data
@@ -158,6 +157,7 @@ AFRAME.registerComponent('resonance-audio-room', {
         this.el.sceneEl.appendChild(this.visualization)
       } else if (oldData.visualize && !d.visualize) {
         this.el.sceneEl.removeChild(this.visualization)
+        this.visualization = null
       }
     }
     
@@ -177,6 +177,7 @@ AFRAME.registerComponent('resonance-audio-room', {
       this.visualization.setAttribute('height', d.height)
       this.visualization.setAttribute('depth',  d.depth)
     }
+    return this
   },
 
   /**
@@ -188,7 +189,7 @@ AFRAME.registerComponent('resonance-audio-room', {
 
   /**
    * Attach audio source by storing its HTMLElement reference and initializing its audio.
-   * @param {HTMLElement} el 
+   * @param {HTMLElement} el
    */
   attachSource (el) {
     const source = el.components['resonance-audio-src']
@@ -200,20 +201,22 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   /**
-   * Detach audio source by removing its HTMLElement reference.
-   * @param {HTMLElement} el 
+   * Detach audio source by disconnecting it and by removing its component reference.
+   * @param {HTMLElement} el
    */
   detachSource (el) {
     const source = el.components['resonance-audio-src']
-    if (this.sources.includes(source)) {
-      this.sources.splice(this.sources.indexOf(source), 1)
-    }
+    if (!source || !this.sources.includes(source)) { return }
+
+    this.sources.splice(this.sources.indexOf(source), 1)
+    source.disconnect()
   },
 
   /**
-   * On component removal, delete the visualization entity.
+   * On component removal, delete the visualization entity and detach sources.
    */
   remove () {
+    [...this.sources].map(source => this.detachSource(source.el))
     if (this.visualization) {
       this.el.sceneEl.removeChild(this.visualization)
       this.visualization = null

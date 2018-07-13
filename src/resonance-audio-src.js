@@ -1,5 +1,5 @@
 /* global AFRAME, THREE */
-import {ResonanceAudio} from 'resonance-audio'
+const { ResonanceAudio } = require('resonance-audio')
 
 const log = AFRAME.utils.debug
 const warn = log('components:resonance-audio-src:warn')
@@ -129,11 +129,12 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   /**
    * Update the position in Google Resonance of this audio source, so relative to the audio room.
+   * @returns {this}
    */
   updatePosition() {
     if (!this.resonance) { return }
-
     this.resonance.setFromMatrix(this.getMatrixRoom())
+    return this
   },
 
   /**
@@ -187,6 +188,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   /**
    * Update the visualization of this audio room according to the properties set.
+   * @returns {this}
    */
   updateVisualization (oldData) {
     const d = this.data
@@ -204,6 +206,7 @@ AFRAME.registerComponent('resonance-audio-src', {
         this.el.sceneEl.appendChild(this.visualization)
       } else if (oldData.visualize && !d.visualize) {
         this.el.sceneEl.removeChild(this.visualization)
+        this.visualization = null
       }
     }
     
@@ -220,6 +223,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
       this.visualization.setAttribute('radius', d.minDistance)
     }
+    return this
   },
 
   disconnect () {
