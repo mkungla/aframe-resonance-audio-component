@@ -22,4 +22,5 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 require('./resonance-audio-room')
+require('./resonance-audio-room-bb')
 require('./resonance-audio-src')
