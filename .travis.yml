@@ -83,6 +83,9 @@ jobs:
     # verify
     - stage: verify
       env: JOB=lint
+      language: node_js
+      node_js:
+        - node
       install: yarn install
       script: yarn run lint
 
