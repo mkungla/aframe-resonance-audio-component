@@ -235,4 +235,4 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 [dep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component#info=dependencies
 
 [devdep-status-img]: https://david-dm.org/digaverse/aframe-resonance-audio-component/dev-status.svg
-[devdep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component#info=devDependencies
+[devdep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component?type=dev
