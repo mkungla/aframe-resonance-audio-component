@@ -1,0 +1,10 @@
+.git
+.github
+config
+examples
+tests
+.editorconfig
+.eslintrc.js
+.gitattributes
+.gitignore
+.mailmap

@@ -1,5 +1,5 @@
 {
-  "name": "aframe-resonance-audio-component",
+  "name": "@digaverse/aframe-resonance-audio-component",
   "version": "0.1.0",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "main": "src/index.js",
@@ -26,7 +26,7 @@
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack-dev.js --mode development --progress --colors",
     "build": "webpack --config ./config/webpack-prod.js --mode production",
-    "publish": "git subtree push --prefix examples github/digaverse gh-pages",
+    "gh-pages": "git subtree push --prefix examples github/digaverse gh-pages",
     "lint": "./node_modules/.bin/eslint tests/ src/ config/",
     "test": "karma start ./tests/karma.conf.js",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
