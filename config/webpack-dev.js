@@ -4,12 +4,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 var PLUGINS = [
   new CleanWebpackPlugin(['../build']),
-  new webpack.NamedModulesPlugin(),
   new webpack.HotModuleReplacementPlugin()
 ]
-if (process.env.NODE_ENV === 'production') {
-  PLUGINS.push(new webpack.optimize.UglifyJsPlugin())
-}
 
 module.exports = {
   devServer: {
@@ -21,7 +17,7 @@ module.exports = {
     port: 9000,
     hot: true,
     inline: true,
-    noInfo: true
+    noInfo: false
   },
   entry: './src/index.js',
   output: {

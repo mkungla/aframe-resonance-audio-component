@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Basic usage with primitives | A-Frame Resonance Audio Component</title>
+    <title>Usage with primitives and MediaStream objects | A-Frame Resonance Audio Component</title>
     <script src="https://cdn.jsdelivr.net/npm/aframe@0.7.1"></script>
     <script src="../aframe-resonance-audio-component.js"></script>
   </head>
@@ -12,7 +12,7 @@
 
     <a-scene>
       <a-resonance-audio-room
-        material="wireframe:true"
+        visualize="true"
         position="0 0 -5"
         width="4"
         height="4"
@@ -26,9 +26,10 @@
         down="parquet-on-concrete"
         up="acoustic-ceiling-tiles">
         <a-resonance-audio-src
+          visualize="true"
           position="0 0 0"
           src=""></a-resonance-audio-src>
-      <a-resonance-audio-room>
+      </a-resonance-audio-room>
       <a-sky color="#6EBAA7"></a-sky>
 
     </a-scene>
@@ -51,7 +52,7 @@
       let stream = captureStream.call(srcEl)
 
       // Set resonance audio src to stream.
-      document.querySelector('a-resonance-audio-src').setAttribute('srcObject', stream)
+      document.querySelector('a-resonance-audio-src').setAttribute('resonance-audio-src', 'src', stream)
 
       // Start stream.
       srcEl.play()
