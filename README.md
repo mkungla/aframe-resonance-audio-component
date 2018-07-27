@@ -165,10 +165,12 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 
 
 ### Future work
-- Monkeypatch the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
+- Allow attaching audio sources to audio rooms irrespective of the A-Frame entity hierarchy.
+- Hook the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
+- Take scaling into account.
 - Add event that emits when an audio source is attached to an audio room.
 - Make the visualization entity a child instead of a root entity.
-- Attach descendent audio sources to the appropriate room that are dynamically added (i.e. non-immediate childs).
+- Find a better method of calculating the bounding box in `resonance-audio-room-bb`.
 
 ***
 

@@ -61,6 +61,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.el.sceneEl.addEventListener('loaded', (e) => this.updateVisualization())
   },
 
+  /**
+   * Initiate this audio source as a source attached to the passed room.
+   * @param {resonance-audio-room} room
+   */
   initAudioSrc (room) {
     if (this.room) {
       throw new Error('audio src can only be initiated once')
@@ -88,6 +92,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updateVisualization()
   },
 
+  /**
+   * Update with new properties.
+   * @param {object} oldData
+   */
   update (oldData) {
     if (this.room && oldData.src !== this.data.src) {
       this.setSrc(this.data.src)
@@ -98,6 +106,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updateVisualization(oldData)
   },
 
+  /**
+   * Update the Resonance sound settings based on the properties.
+   */
   updateSoundSettings () {
     const s = this.resonance
     if (!s) { return }
@@ -109,6 +120,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     s.setRolloff(this.data.rolloff)
   },
 
+  /**
+   * Update the playback settings.
+   */
   updatePlaybackSettings () {
     // If no element is connected, do nothing.
     if (!this.connected.element) { return }
@@ -226,6 +240,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     return this
   },
 
+  /**
+   * Disconnect HTMLMediaElement or MediaStream from this resonance-audio-src.
+   */
   disconnect () {
     if (this.sound) {
       this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonance.input)
@@ -235,6 +252,12 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.connected.stream = false
   },
 
+  /**
+   * Connect a HTMLMediaElement or MediaStream to the room's AudioContext.
+   * @param {HTMLMediaElement|MediaStream} source - the audio source
+   * @param {function} createSourceFn - the function that creates an AudioSourceNode based on the passed source
+   * @returns {boolean} false if there was not source to connect
+   */
   _connect (source, createSourceFn) {
     this.disconnect()
 
@@ -253,6 +276,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     return true
   },
 
+  /**
+   * Connect a media element to this resonance-audio-src.
+   * @param {HTMLMediaElement} el - the media element
+   */
   connectWithElement (el) {
     this.connected.element = this._connect(el, this.room.audioContext.createMediaElementSource)
 
@@ -269,6 +296,10 @@ AFRAME.registerComponent('resonance-audio-src', {
     }
   },
 
+  /**
+   * Connect a stream to this resonance-audio-src.
+   * @param {MediaStream} stream - the stream
+   */
   connectWithStream (stream) {
     this.connected.stream = this._connect(stream, this.room.audioContext.createMediaStreamSource)
 
@@ -308,6 +339,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.data.src = el || src
   },
 
+  /**
+   * Clean up when this component is removed.
+   */
   remove () {
     this.disconnect()
     this.defaultAudioEl.remove()
