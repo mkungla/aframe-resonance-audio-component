@@ -4,7 +4,7 @@
 
 | Linux | macOS | Windows |
 | --- | --- | --- |
-| [![TravisCI Build Status][travis-img]][travis-link] | - | - |
+| [![TravisCI Build Status][travis-img]][travis-link] | - | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 [![Project License][license-img]][license-link]
 [![Grade Badge][codacy-grade-img]][codacy-grade-link]
@@ -217,6 +217,10 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 <!-- travis-ci -->
 [travis-img]: https://travis-ci.org/digaverse/aframe-resonance-audio-component.svg?branch=master
 [travis-link]: https://travis-ci.org/digaverse/aframe-resonance-audio-component
+
+<!-- appveyor -->
+[appveyor-img]: https://ci.appveyor.com/api/projects/status/44hwcfb3i05mhq7f/branch/master?svg=true
+[appveyor-link]: https://ci.appveyor.com/project/mkungla/aframe-resonance-audio-component
 
 <!-- License -->
 [license-img]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
