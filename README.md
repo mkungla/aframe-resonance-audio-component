@@ -23,7 +23,7 @@ Example with basic usage with primitives:
   <a-resonance-audio-room
     visualize="true"    position="0 0 -5"          width="40" height="4" depth="4"
     ambisonic-order="3" speed-of-sound="343"
-    left="brick-bare"   right="curtain-heavy"      front="plywood-panel" 
+    left="brick-bare"   right="curtain-heavy"      front="plywood-panel"
     back="glass-thin"   down="parquet-on-concrete" up="acoustic-ceiling-tiles">
     <a-resonance-audio-src
       visualize="true"  position="-10 0 0"
@@ -45,7 +45,7 @@ Example with entities, models and a bounding box room:
   </a-assets>
   <a-entity
     obj-model="obj: #room-obj; mtl: #room-mtl"
-    position="0 1 -0.5" 
+    position="0 1 -0.5"
     resonance-audio-room-bb="
       visualize: true;
       left: brick-bare; right: transparent;        front: transparent;
@@ -71,7 +71,7 @@ Take the following example. A more comprehensive version is available in [exampl
   <a-resonance-audio-room
     visualize="true"    position="0 0 -5"          width="4" height="4" depth="4"
     ambisonic-order="3" speed-of-sound="343"
-    left="brick-bare"   right="curtain-heavy"      front="plywood-panel" 
+    left="brick-bare"   right="curtain-heavy"      front="plywood-panel"
     back="glass-thin"   down="parquet-on-concrete" up="acoustic-ceiling-tiles">
     <a-resonance-audio-src
       id="audioSource"  visualize="true"   position="0 0 0"
@@ -85,7 +85,19 @@ document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src'
 ```
 
 # Installation
-For now:
+
+**npm**
+
+```
+npm install --save @digaverse/aframe-resonance-audio-component
+# Or
+yarn add @digaverse/aframe-resonance-audio-component
+```
+
+`import '@digaverse/aframe-resonance-audio-component'`
+
+**from source**
+
 1. Clone this repository.
 2. Run `npm install` followed by `npm run build`.
 3. Add `build/aframe-resonance-audio-component.js` to your html page.
