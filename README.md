@@ -109,7 +109,8 @@ For now:
 | `up`     | Material of the room ceiling.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
 | `visualize` | Show a wireframe box visualization of the audio room.  | false
 ### Members
-Accessible via ```entity.components['resonance-audio-room'].<member>```.
+Accessible via `entity.components['resonance-audio-room'].<member>`.
+
 | Name | Description | Type |
 | - | - | - |
 | `audioContext` | The audio context used by Google Resonance. | [AudioContext](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)
@@ -137,7 +138,8 @@ Accessible via ```entity.components['resonance-audio-room'].<member>```.
 | `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. | false
 
 ### Members
-Accessible via ```entity.components['resonance-audio-src'].<member>```.
+Accessible via `entity.components['resonance-audio-src'].<member>`.
+
 | Name | Description | Type |
 | - | - | - |
 | `room` | The audio room component. | [AComponent](https://github.com/aframevr/aframe/blob/master/src/core/component.js)
