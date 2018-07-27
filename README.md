@@ -1,5 +1,8 @@
 # A-Frame Resonance Audio Component
 **Rich, Immersive, Audio [👉 Live demo 👈][gh-pages-link]**  
+
+[![TravisCI Build Status][travis-img]][travis-link]
+
 > With Resonance Audio, bring dynamic spatial sound into your A-Frame VR, AR experiences at scale.
 
 [Google Resonance](https://developers.google.com/resonance-audio/) works with audio rooms and audio sources. The acoustics of each source are affected by the room it is in. For that purpose, this package provides three components:
@@ -201,3 +204,7 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 [resonance-audio-link]: https://developers.google.com/resonance-audio/
 
 [gh-pages-link]: https://digaverse.github.io/aframe-resonance-audio-component/
+
+<!-- travis-ci -->
+[travis-img]: https://travis-ci.org/digaverse/aframe-resonance-audio-component.svg?branch=master
+[travis-link]: https://travis-ci.org/digaverse/aframe-resonance-audio-component
