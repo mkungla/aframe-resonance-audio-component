@@ -1,7 +1,16 @@
 # A-Frame Resonance Audio Component
 **Rich, Immersive, Audio [👉 Live demo 👈][gh-pages-link]**  
 
-[![TravisCI Build Status][travis-img]][travis-link]
+
+| Linux | macOS | Windows |
+| --- | --- | --- |
+| [![TravisCI Build Status][travis-img]][travis-link] | - | - |
+
+[![Project License][license-img]][license-link]
+[![Grade Badge][codacy-grade-img]][codacy-grade-link]
+[![Dependencies][dep-status-img]][dep-status-link]
+[![Dev Dependencies][devdep-status-img]][devdep-status-link]
+
 
 > With Resonance Audio, bring dynamic spatial sound into your A-Frame VR, AR experiences at scale.
 
@@ -208,3 +217,18 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 <!-- travis-ci -->
 [travis-img]: https://travis-ci.org/digaverse/aframe-resonance-audio-component.svg?branch=master
 [travis-link]: https://travis-ci.org/digaverse/aframe-resonance-audio-component
+
+<!-- License -->
+[license-img]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+[license-link]: https://raw.githubusercontent.com/digaverse/aframe-resonance-audio-component/master/LICENSE
+
+<!-- Codacy Badge Grade -->
+[codacy-grade-img]: https://api.codacy.com/project/badge/Grade/91449b55485b4f83810e1ce1aff33e7e
+[codacy-grade-link]: https://www.codacy.com/app/mkungla/aframe-resonance-audio-component?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=digaverse/aframe-resonance-audio-component&amp;utm_campaign=Badge_Grade
+
+<!-- Dependencies -->
+[dep-status-img]: https://david-dm.org/digaverse/aframe-resonance-audio-component/status.svg
+[dep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component#info=dependencies
+
+[devdep-status-img]: https://david-dm.org/digaverse/aframe-resonance-audio-component/dev-status.svg
+[devdep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component#info=devDependencies
