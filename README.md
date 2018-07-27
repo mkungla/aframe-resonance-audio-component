@@ -188,4 +188,4 @@ Audio rooms (entities with component resonance-audio-room) and audio sources (en
 [etiennepinchon/aframe-resonance]: https://github.com/etiennepinchon/aframe-resonance
 [resonance-audio-link]: https://developers.google.com/resonance-audio/
 
-[gh-pages-link]: https://digaverse.github.io/aframe-resonance-audio-componen
+[gh-pages-link]: https://digaverse.github.io/aframe-resonance-audio-component/

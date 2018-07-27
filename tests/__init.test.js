@@ -4,10 +4,14 @@
  * __init.test.js is run before every test case.
  */
 window.debug = true
-require('log-suppress').init(console)
 const AScene = require('aframe').AScene
 
 setup(function () {
+  // Suppress all the irrelevant A-Frame logging.
+  if (typeof console.log === 'function') {
+    console.log = function () {}
+  }
+
   this.sinon = sinon.createSandbox()
   // Stubs to not create a WebGL context since Travis CI runs headless.
   this.sinon.stub(AScene.prototype, 'render')
