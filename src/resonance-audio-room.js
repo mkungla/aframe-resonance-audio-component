@@ -1,5 +1,6 @@
 /* global AFRAME, THREE, AudioContext */
 const { ResonanceAudio } = require('resonance-audio')
+const { onceWhenLoaded } = require('./utils')
 
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
 
@@ -28,13 +29,6 @@ AFRAME.registerComponent('resonance-audio-room', {
     visualize: {type: 'boolean', default: false}
   },
 
-  /**
-   * Initialize:
-   * - the audio pipeline;
-   * - the connection with the audio sources;
-   * - the API; and
-   * - the event listeners that handle changes.
-   */
   init () {
     // Initialize the audio context and connect with Resonance.
     this.audioContext = new AudioContext()
@@ -46,67 +40,28 @@ AFRAME.registerComponent('resonance-audio-room', {
 
     // Collection of audio sources.
     this.sources = []
+    this.exposeAPI()
 
     // Set up the room acoustics before the audio sources are set up.
     this.updateRoomAcoustics()
-    this.setUpAudioSources()
-    this.exposeAPI()
 
-    // Propagate position and rotation updates to audio room, audio sources and the visualization.
-    this.el.addEventListener('componentchanged', (e) => {
-      if (e.detail.name === 'position' || e.detail.name === 'rotation') {
-        this.updatePosition().updateVisualization()
-        this.sources.forEach(source => source.updatePosition().updateVisualization())
-      }
-    })
-    // Handle dynamic attachment and detachment of audio sources.
-    this.el.addEventListener('child-attached', (e) => {
-      const el = e.detail.el
-      if (el.hasLoaded) {
-        this.attachSource(el)
-      } else {
-        el.addEventListener('loaded', () => this.attachSource(el))
-      }
-    })
-    this.el.addEventListener('child-detached', e => this.detachSource(e.detail.el))
+    // Update on entity change.
+    this.onEntityChange = this.onEntityChange.bind(this)
+    this.el.addEventListener('componentchanged', this.onEntityChange)
 
-    // When the scene has loaded and all world positions are calculated, place the visualization.
-    this.el.sceneEl.addEventListener('loaded', () => this.updateVisualization())
-  },
-
-  /**
-   * Expose two collections on the element for easy access:
-   * - audioSources: the connected resonance-audio-src components.
-   * - sounds: the connected HTMLMediaElement and MediaStream objects.
-   */
-  exposeAPI () {
-    Object.defineProperties(this.el, {
-      // Array of audio source components.
-      audioSources: { enumerable: true, get: () => this.sources },
-      // Array of audio sources (HTMLMediaElement and MediaStream objects).
-      sounds: { enumerable: true, get: () => this.sources.map(source => source.sound) }
+    // When the scene has loaded and all world positions are calculated, update the visualization.
+    onceWhenLoaded(this.el.sceneEl, () => {
+      this.updateVisualization()
     })
   },
 
-  update (oldData) {
+  update (oldData) { 
+    this.el.sceneEl.object3D.updateMatrixWorld(true)
     this.updateRoomAcoustics()
-    this.updateVisualization(oldData)
+    this.toggleShowVisualization(oldData.visualize, this.data.visualize)
+    this.updateVisualization()
   },
 
-  /**
-   * Update entity position and orientation (which determines the audio room position and
-   * orientation) in the world. This is called after the position or rotation of the entity is
-   * updated.
-   * @returns {this}
-   */
-  updatePosition () {
-    this.el.object3D.updateMatrixWorld(true)
-    return this
-  },
-
-  /**
-   * Update resonanceAudioScene's listener after room is tocked.
-   */
   tock () {
     // Calculate camera position relative to room.
     this.resonanceAudioScene.setListenerFromMatrix(
@@ -115,6 +70,12 @@ AFRAME.registerComponent('resonance-audio-room', {
         this.el.sceneEl.camera.el.object3D.matrixWorld
       )
     )
+  },
+
+  remove () {
+    [...this.sources].map(source => source.leaveRoom())
+    this.toggleShowVisualization(this.data.visualize, false)
+    this.el.removeEventListener('componentchanged', this.onEntityChange)
   },
 
   /**
@@ -141,28 +102,9 @@ AFRAME.registerComponent('resonance-audio-room', {
    * Update the visualization of this audio room according to the properties set.
    * @returns {this}
    */
-  updateVisualization (oldData) {
+  updateVisualization () {
     const d = this.data
-
-    // Add or remove visualization to or from the DOM.
-    // This is done to the root so it is not affected by the current entity.
-    if (oldData) {
-      if (!oldData.visualize && d.visualize) {
-        // Create entity if it didn't exist yet.
-        if (!this.visualization) {
-          this.visualization = document.createElement('a-box')
-          this.visualization.audioRoom = this.el
-          this.visualization.setAttribute('material', 'wireframe', true)
-        }
-        this.el.sceneEl.appendChild(this.visualization)
-      } else if (oldData.visualize && !d.visualize) {
-        this.el.sceneEl.removeChild(this.visualization)
-        this.visualization = null
-      }
-    }
-
-    // Update the visualized entity.
-    if (d.visualize) {
+    if (d.visualize && this.visualization) {
       this.el.sceneEl.object3D.updateMatrixWorld(true)
       const p = new THREE.Vector3()
       const q = new THREE.Quaternion()
@@ -181,46 +123,69 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   /**
-   * Set up audio by attaching audio sources.
+   * Toggle showing the visualization.
+   * @param {boolean} previous - the previous setting
+   * @param {boolean} current - the new setting
    */
-  setUpAudioSources () {
-    this.el.querySelectorAll('[resonance-audio-src]').forEach(childEl => this.attachSource(childEl))
+  toggleShowVisualization (previous, current) {
+    // This is done to the root so it is not affected by the current entity.
+    if (!previous && current) {
+      this.visualization = document.createElement('a-box')
+      this.visualization.audioRoom = this.el
+      this.visualization.setAttribute('material', 'wireframe', true)
+      this.el.sceneEl.appendChild(this.visualization)
+    } else if (previous && !current && this.visualization) {
+      this.el.sceneEl.removeChild(this.visualization)
+      this.visualization = null
+    }
   },
 
   /**
-   * Attach audio source by storing its HTMLElement reference and initializing its audio.
+   * When the entity's position or rotation is changed, update visualization and sources
+   * accordingly.
+   * @param {Event} evt
+   */
+  onEntityChange (evt) {
+    if (evt.detail.name !== 'position' && evt.detail.name !== 'rotation') { return }
+
+    this.updateVisualization()
+    this.sources.forEach(source => source.updateResonancePosition().updateVisualization())
+  },
+
+  /**
+   * Expose two collections on the element for easy access:
+   * - audioSources: the connected resonance-audio-src components.
+   * - sounds: the connected HTMLMediaElement and MediaStream objects.
+   */
+  exposeAPI () {
+    Object.defineProperties(this.el, {
+      // Array of audio source components.
+      audioSources: { enumerable: true, get: () => this.sources },
+      // Array of audio sources (HTMLMediaElement and MediaStream objects).
+      sounds: { enumerable: true, get: () => this.sources.map(source => source.sound) }
+    })
+  },
+
+  /**
+   * Store audio source.
    * @param {HTMLElement} el
    */
-  attachSource (el) {
-    const source = el.components['resonance-audio-src']
+  store (el) {
     // Only consider relevant elements.
-    if (!source) { return }
+    if (!el || !el.components || !('resonance-audio-src' in el.components)) { return }
 
-    this.sources.push(source)
-    source.initAudioSrc(this)
+    this.sources.push(el.components['resonance-audio-src'])
   },
 
   /**
-   * Detach audio source by disconnecting it and by removing its component reference.
-   * @param {HTMLElement} el
+   * Forget audio source by forgetting its component reference.
+   * @param {HTMLElement} el - the audio source
    */
-  detachSource (el) {
+  forget (el) {
     const source = el.components['resonance-audio-src']
     if (!source || !this.sources.includes(source)) { return }
 
     this.sources.splice(this.sources.indexOf(source), 1)
-    source.disconnect()
-  },
-
-  /**
-   * On component removal, delete the visualization entity and detach sources.
-   */
-  remove () {
-    [...this.sources].map(source => this.detachSource(source.el))
-    if (this.visualization) {
-      this.el.sceneEl.removeChild(this.visualization)
-      this.visualization = null
-    }
   }
 })
 
