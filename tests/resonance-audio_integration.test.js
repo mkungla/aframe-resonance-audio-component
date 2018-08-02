@@ -12,6 +12,7 @@ const {
   createMatrixFromResonanceSource
 } = require('./helpers')
 const cr = 'resonance-audio-room'
+const crbb = 'resonance-audio-room-bb'
 const cs = 'resonance-audio-src'
 
 suite(`component ${cs} in a ${cr}`, function () {
@@ -520,5 +521,50 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
       done()
     })
     srcEl1.setAttribute(cs, 'room', '#nonexistent-room')
+  })
+})
+
+suite(`component ${crbb}`, () => {
+  test('model loading, src entering the room, and bounded-audioroom-loaded event', done => {
+    /*
+    Structure:
+      <a-scene>
+        <a-entity
+          obj-model="
+            obj:url(base/tests/assets/room-model.obj);
+            mtl:url(base/tests/assets/room-materials.mtl)"
+          resonance-audio-room-bb="visualize:true">         <!-- roomEl -->
+          <a-entity resonance-audio-src></a-entity>         <!-- el -->
+        </a-entity>
+      </a-scene>
+    */
+    const [w, h, d] = [4.0400071144104, 2.970021963119507, 3.7050031423568726]
+    putOnPage(
+      sceneFactory([
+        elementFactory('a-assets', {}),
+        entityFactory({
+          'obj-model': {
+            obj: 'url(base/tests/assets/room-model.obj)',
+            mtl: 'url(base/tests/assets/room-materials.mtl)'
+          },
+          [crbb]: {visualize: true}
+        }, [
+          entityFactory({[cs]: {}})
+        ])
+      ])
+    )
+    document.querySelector(`[${crbb}]`).addEventListener('bounded-audioroom-loaded', evt => {
+      const component = evt.target.components[cr]
+      const srcEl = document.querySelector(`[${cs}]`)
+      expect(component.data.width).to.equal(w)
+      expect(component.data.height).to.equal(h)
+      expect(component.data.depth).to.equal(d)
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
+      expect(component.visualization.getAttribute('width')).to.equal(w.toString())
+      expect(component.visualization.getAttribute('height')).to.equal(h.toString())
+      expect(component.visualization.getAttribute('depth')).to.equal(d.toString())
+      expect(srcEl.components[cs].room).to.equal(component)
+      done()
+    })
   })
 })

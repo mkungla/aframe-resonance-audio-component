@@ -55,7 +55,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     })
   },
 
-  update (oldData) { 
+  update (oldData) {
     this.el.sceneEl.object3D.updateMatrixWorld(true)
     this.updateRoomAcoustics()
     this.toggleShowVisualization(oldData.visualize, this.data.visualize)

@@ -1,7 +1,7 @@
 /* global suite, test, expect */
 require('aframe')
 require('../src/index.js')
-const { sceneFactory, entityFactory, putOnPageAndWaitForLoad } = require('./helpers')
+const { sceneFactory, entityFactory, putOnPage } = require('./helpers')
 const cr = 'resonance-audio-room'
 const crbb = 'resonance-audio-room-bb'
 
@@ -16,25 +16,25 @@ suite(`component ${crbb}`, () => {
       </a-scene>
     */
     const [w, h, d] = [1, 2, 3]
-    putOnPageAndWaitForLoad(
+    putOnPage(
       sceneFactory(
         entityFactory({
           geometry: {primitive: 'box', width: w, height: h, depth: d},
           [crbb]: {visualize: true}
         })
-      ),
-      () => {
-        const el = document.querySelector(`[${crbb}]`)
-        expect(el.components[cr].data.width).to.equal(w)
-        expect(el.components[cr].data.height).to.equal(h)
-        expect(el.components[cr].data.depth).to.equal(d)
-        expect(el.components[cr].resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
-        expect(el.components[cr].visualization.getAttribute('width')).to.equal(w.toString())
-        expect(el.components[cr].visualization.getAttribute('height')).to.equal(h.toString())
-        expect(el.components[cr].visualization.getAttribute('depth')).to.equal(d.toString())
-        done()
-      }
+      )
     )
+    document.querySelector(`[${crbb}]`).addEventListener('bounded-audioroom-loaded', evt => {
+      const component = evt.target.components[cr]
+      expect(component.data.width).to.equal(w)
+      expect(component.data.height).to.equal(h)
+      expect(component.data.depth).to.equal(d)
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
+      expect(component.visualization.getAttribute('width')).to.equal(w.toString())
+      expect(component.visualization.getAttribute('height')).to.equal(h.toString())
+      expect(component.visualization.getAttribute('depth')).to.equal(d.toString())
+      done()
+    })
   })
 
   test('extraction of sphere dimensions to audio room dimensions', done => {
@@ -47,24 +47,24 @@ suite(`component ${crbb}`, () => {
       </a-scene>
     */
     const r = 3
-    putOnPageAndWaitForLoad(
+    putOnPage(
       sceneFactory(
         entityFactory({
           geometry: {primitive: 'sphere', radius: r},
           [crbb]: {visualize: true}
         })
-      ),
-      () => {
-        const el = document.querySelector(`[${crbb}]`)
-        expect(el.components[cr].data.width).to.equal(r * 2)
-        expect(el.components[cr].data.height).to.equal(r * 2)
-        expect(el.components[cr].data.depth).to.equal(r * 2)
-        expect(el.components[cr].resonanceAudioScene._room.early._halfDimensions).to.include({width: r, height: r, depth: r})
-        expect(el.components[cr].visualization.getAttribute('width')).to.equal((r * 2).toString())
-        expect(el.components[cr].visualization.getAttribute('height')).to.equal((r * 2).toString())
-        expect(el.components[cr].visualization.getAttribute('depth')).to.equal((r * 2).toString())
-        done()
-      }
+      )
     )
+    document.querySelector(`[${crbb}]`).addEventListener('bounded-audioroom-loaded', evt => {
+      const component = evt.target.components[cr]
+      expect(component.data.width).to.equal(r * 2)
+      expect(component.data.height).to.equal(r * 2)
+      expect(component.data.depth).to.equal(r * 2)
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: r, height: r, depth: r})
+      expect(component.visualization.getAttribute('width')).to.equal((r * 2).toString())
+      expect(component.visualization.getAttribute('height')).to.equal((r * 2).toString())
+      expect(component.visualization.getAttribute('depth')).to.equal((r * 2).toString())
+      done()
+    })
   })
 })

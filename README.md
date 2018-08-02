@@ -146,6 +146,13 @@ Accessible via `entity.components['resonance-audio-room'].<member>`.
 | `el.audioSources` | Returns sources. | array of resonance-audio-src component instances |
 | `el.sounds` | A collection of the origins of the attached audio sources. | array of [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) and/or [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) objects |
 
+## resonance-audio-room-bb
+This component's only purpose is to instantiate a resonance-audio-room component with the dimensions of the bounded object. For any interaction, use the resonance-audio-room component after it has been fully loaded.
+### Events
+| Event                    | `evt.detail` property | Description             |
+| ------------------------ | --------------------- | ----------------------- |
+| bounded-audioroom-loaded | `room`                | The audio room element. |
+
 ## resonance-audio-src
 ### Properties
 | Property | Description | Default value | Values |
