@@ -182,6 +182,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       this.visualization.setAttribute('position', p)
       this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
       this.visualization.setAttribute('radius', d.minDistance)
+      this.visualization.setAttribute('material', 'color', this.room ? '#FFF' : '#F00')
     }
     return this
   },

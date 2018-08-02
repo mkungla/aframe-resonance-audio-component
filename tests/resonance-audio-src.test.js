@@ -129,6 +129,7 @@ suite(`component ${cs} without entering an audio room`, () => {
   test('visualization', () => {
     expect(component.visualization).to.be.an.instanceof(AFRAME.AEntity)
     expect(component.visualization.audioSrc).to.equal(el)
+    expect(component.visualization.getAttribute('material').color).to.equal('#F00')
   })
   test('remove and re-add visualization', () => {
     const v = component.visualization

@@ -34,15 +34,15 @@ suite(`component ${cs} in a ${cr}`, function () {
         </a-assets>
         <a-entity position="-1 -2 -3">                                  <!-- containerEl -->
           <a-entity
-            resonance-audio-room
+            resonance-audio-room="..."
             position="3 3 3">                                           <!-- roomEl -->
             <a-entity
-              resonance-audio-src="src:#track"
+              resonance-audio-src="src:#track;..."
               id="srcEl1"
               position="1 1 1"
               rotation="0 45 0"></a-entity>                             <!-- srcEl1 -->
             <a-entity
-              resonance-audio-src="position:-1 -1 -1; rotation:0 -90 0"
+              resonance-audio-src="position:-1 -1 -1; rotation:0 -90 0;..."
               id="srcEl2"></a-entity>                                   <!-- srcEl2 -->
           </a-entity>
         </a-entity>
@@ -85,7 +85,6 @@ suite(`component ${cs} in a ${cr}`, function () {
             entityFactory({
               id: 'srcEl2',
               [cs]: {
-                src: '',
                 visualize: true,
                 position: '-1 -1 -1',
                 rotation: '0 -90 0'
@@ -144,6 +143,9 @@ suite(`component ${cs} in a ${cr}`, function () {
       expect(component1.resonance._directivity._alpha).to.equal(0.5)
       expect(component1.resonance._directivity._sharpness).to.equal(2)
       expect(component1.resonance._encoder._spreadIndex).to.equal(Math.min(359, Math.max(0, Math.round(20)))) // sourceWidth
+    })
+    test('visualization', () => {
+      expect(component1.visualization.getAttribute('material').color).to.equal('#FFF')
     })
   })
 
@@ -518,6 +520,7 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
       expect(component1.resonance).to.equal(null)
       expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
       compareMatrixtoPosAndRot(component1.visualization.object3D.matrixWorld, {x: -1, y: -1, z: -1}, {x: 0, y: 0, z: 0})
+      expect(component1.visualization.getAttribute('material').color).to.equal('#F00')
       done()
     })
     srcEl1.setAttribute(cs, 'room', '#nonexistent-room')

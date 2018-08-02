@@ -169,7 +169,7 @@ This component's only purpose is to instantiate a resonance-audio-room component
 | [`rolloff`](https://developers.google.com/resonance-audio/reference/web/Source#setRolloff) | Source's rolloff model. | [`logarithmic`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L92) | [`logarithmic` \| `linear` \| `none`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L86)
 | `position` | The position in local coordinates. If set, this position will be used instead of the entity's position component. Revert to the entity's position by setting this property to any invalid position (such as `null`). | { }
 | `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { }
-| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. | false
+| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. | false
 
 ### Members
 Accessible via `entity.components['resonance-audio-src'].<member>`.
