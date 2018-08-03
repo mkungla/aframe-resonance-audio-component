@@ -58,7 +58,7 @@ AFRAME.registerComponent('resonance-audio-src', {
 
   update (oldData) {
     if (this.room && oldData.src !== this.data.src) {
-      this.setSrc(this.data.src)
+      this.connectSrc(this.data.src)
     }
     this.el.sceneEl.object3D.updateMatrixWorld(true)
     this.updateSoundSettings()
@@ -77,7 +77,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       onceWhenLoaded(this.el.sceneEl, () => {
         const roomLeft = this.leaveRoom()
         const roomEntered = this.enter(roomEl)
-        this.setSrc(this.data.src)
+        this.connectSrc(this.data.src)
         this.updateSoundSettings()
         this.el.sceneEl.object3D.updateMatrixWorld(true)
         this.updateResonancePosition().updateVisualization()
@@ -383,7 +383,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    * Set a new source.
    * @param {string|HTMLMediaElement|MediaStream|null} src
    */
-  setSrc (src) {
+  connectSrc (src) {
     const errorMsg = 'invalid src value. Must be element id string, resource string, HTMLMediaElement or MediaStream'
 
     this.disconnect()
