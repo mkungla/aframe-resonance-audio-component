@@ -1,4 +1,4 @@
-/* global setup, suite, test, expect, AFRAME, HTMLElement, HTMLMediaElement */
+/* global setup, teardown, suite, test, expect, AFRAME, HTMLElement, HTMLMediaElement */
 require('aframe')
 require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
@@ -28,9 +28,7 @@ suite(`component ${cs} in a ${cr}`, function () {
       Create this structure:
       <a-scene>
         <a-assets>
-          <audio
-            id="track"
-            src="base/tests/assets/track.mp3" />
+          <audio id="track" src="base/tests/assets/track.mp3" />
         </a-assets>
         <a-entity position="-1 -2 -3">                                  <!-- containerEl -->
           <a-entity
@@ -528,7 +526,11 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
 })
 
 suite(`component ${crbb}`, () => {
-  test('model loading, src entering the room, and bounded-audioroom-loaded event', done => {
+  const [w, h, d] = [4.0400071144104, 2.970021963119507, 3.7050031423568726]
+  let roomComponent
+  let srcEl
+
+  setup(done => {
     /*
     Structure:
       <a-scene>
@@ -541,7 +543,6 @@ suite(`component ${crbb}`, () => {
         </a-entity>
       </a-scene>
     */
-    const [w, h, d] = [4.0400071144104, 2.970021963119507, 3.7050031423568726]
     putOnPage(
       sceneFactory([
         elementFactory('a-assets', {}),
@@ -557,17 +558,26 @@ suite(`component ${crbb}`, () => {
       ])
     )
     document.querySelector(`[${crbb}]`).addEventListener('bounded-audioroom-loaded', evt => {
-      const component = evt.target.components[cr]
-      const srcEl = document.querySelector(`[${cs}]`)
-      expect(component.data.width).to.equal(w)
-      expect(component.data.height).to.equal(h)
-      expect(component.data.depth).to.equal(d)
-      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
-      expect(component.visualization.getAttribute('width')).to.equal(w.toString())
-      expect(component.visualization.getAttribute('height')).to.equal(h.toString())
-      expect(component.visualization.getAttribute('depth')).to.equal(d.toString())
-      expect(srcEl.components[cs].room).to.equal(component)
+      roomComponent = evt.target.components[cr]
+      srcEl = document.querySelector(`[${cs}]`)
       done()
     })
+  })
+
+  test('model loading, src entering the room, and bounded-audioroom-loaded event', () => {
+    expect(roomComponent.data.width).to.equal(w)
+    expect(roomComponent.data.height).to.equal(h)
+    expect(roomComponent.data.depth).to.equal(d)
+    expect(roomComponent.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
+    expect(roomComponent.visualization.getAttribute('width')).to.equal(w.toString())
+    expect(roomComponent.visualization.getAttribute('height')).to.equal(h.toString())
+    expect(roomComponent.visualization.getAttribute('depth')).to.equal(d.toString())
+    expect(srcEl.components[cs].room).to.equal(roomComponent)
+  })
+
+  teardown(() => {
+    // This is to prevent the error "TypeError: this.el.getObject3D(...) is undefined" on this line:
+    // https://github.com/aframevr/aframe/blob/master/src/components/geometry.js#L58
+    roomComponent.el.removeAttribute('geometry')
   })
 })
