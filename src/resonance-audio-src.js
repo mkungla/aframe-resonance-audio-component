@@ -40,9 +40,6 @@ AFRAME.registerComponent('resonance-audio-src', {
     // The Resonance audio source.
     this.resonance = null
 
-    // Visualization entity of the audio source.
-    this.visualization = null
-
     // The default audio element used when src is set to a resource string.
     this.defaultAudioEl = null
 
@@ -155,13 +152,20 @@ AFRAME.registerComponent('resonance-audio-src', {
   toggleShowVisualization (previous, current) {
     // This is done to the root so it is not affected by the current entity.
     if (!previous && current) {
-      this.visualization = document.createElement('a-sphere')
-      this.visualization.audioSrc = this.el
-      this.visualization.setAttribute('material', 'wireframe', true)
-      this.el.sceneEl.appendChild(this.visualization)
-    } else if (previous && !current && this.visualization) {
-      this.el.sceneEl.removeChild(this.visualization)
-      this.visualization = null
+      this.el.setObject3D(
+        'audio-src',
+        new THREE.Mesh(
+          new THREE.SphereBufferGeometry(this.data.minDistance, 36, 18),
+          new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            metalness: 0,
+            wireframe: true,
+            visible: true
+          })
+        )
+      )
+    } else if (previous && !current && this.el.getObject3D('audio-src')) {
+      this.el.removeObject3D('audio-src')
     }
   },
 
@@ -171,18 +175,14 @@ AFRAME.registerComponent('resonance-audio-src', {
    */
   updateVisualization () {
     const d = this.data
-    if (d.visualize && this.visualization) {
-      const p = new THREE.Vector3()
-      const q = new THREE.Quaternion()
-      const s = new THREE.Vector3()
-      this.getMatrixWorld().decompose(p, q, s)
-      const r = new THREE.Euler().setFromQuaternion(q, 'YXZ')
-      const r2d = THREE.Math.radToDeg
-
-      this.visualization.setAttribute('position', p)
-      this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
-      this.visualization.setAttribute('radius', d.minDistance)
-      this.visualization.setAttribute('material', 'color', this.room ? '#FFF' : '#F00')
+    const v = this.el.getObject3D('audio-src')
+    if (d.visualize && v) {
+      const m = this.getMatrixLocal()
+      v.position.setFromMatrixPosition(m)
+      v.quaternion.setFromRotationMatrix(m)
+      v.material.color.setHex(this.room ? 0xffffff : 0xff0000)
+      v.geometry.scale(d.minDistance, d.minDistance, d.minDistance)
+      v.matrixWorldNeedsUpdate = true
     }
     return this
   },
@@ -232,38 +232,60 @@ AFRAME.registerComponent('resonance-audio-src', {
       // current entity.
       return new THREE.Matrix4().copy(this.el.object3D.matrixWorld)
     } else {
-      const localPosition = isVec3Set(this.data.position)
-        ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
-        : this.el.object3D.position
-      const localRotation = isVec3Set(this.data.rotation)
-        ? new THREE.Euler()
-          .reorder('YXZ')
-          .fromArray([
-            this.data.rotation.x,
-            this.data.rotation.y,
-            this.data.rotation.z].map(THREE.Math.degToRad)
-          )
-        : this.el.object3D.rotation
-      // Return matirxWorld calculated by multiplying the parent's matrixWorld and the local
+      // Return matrixWorld calculated by multiplying the parent's matrixWorld and the local
       // matrix, as Three.js's Object3D.updateMatrixWorld() basically does.
       return new THREE.Matrix4().multiplyMatrices(
-        this.el.object3D.parent.matrixWorld,
-        new THREE.Matrix4().compose(
-          localPosition,
-          new THREE.Quaternion().setFromEuler(localRotation),
-          {x: 1, y: 1, z: 1}
-        )
+        this.el.parentNode.object3D.matrixWorld,
+        this.getMatrixLocalCustom()
       )
     }
   },
 
   /**
+   * Get the matrix in local coordinates. The position and rotation attributes (individually)
+   * take precedence over any position and rotation components set on the current entity. The
+   * scale is 1.
+   * @returns {THREE.Matrix4}
+   */
+  getMatrixLocalCustom () {
+    let localPosition, localQuaternion
+
+    if (isVec3Set(this.data.position)) {
+      localPosition = new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
+    } else {
+      localPosition = this.el.object3D.position
+    }
+
+    if (isVec3Set(this.data.rotation)) {
+      let radians = [this.data.rotation.x, this.data.rotation.y, this.data.rotation.z].map(THREE.Math.degToRad)
+      localQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler().reorder('YXZ').fromArray(radians))
+    } else {
+      localQuaternion = this.el.object3D.quaternion
+    }
+
+    return new THREE.Matrix4().compose(localPosition, localQuaternion, {x: 1, y: 1, z: 1})
+  },
+
+  /**
    * Get a matrix of the audio source's position and rotation relative to the audio room, taking
    * into account any custom set position or rotation.
-   * @return {THREE.Matrix4}
+   * @returns {THREE.Matrix4}
    */
   getMatrixRoom () {
-    return this.getMatrixWorld().premultiply(new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld))
+    return this.getMatrixWorld().premultiply(
+      new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld)
+    )
+  },
+
+  /**
+   * Get a matrix of position and rotation relative to its owner entity, taking into account any
+   * custom set position or rotation.
+   * @returns {THREE.Matrix4}
+   */
+  getMatrixLocal () {
+    return this.getMatrixWorld().premultiply(
+      new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld)
+    )
   },
 
   /**

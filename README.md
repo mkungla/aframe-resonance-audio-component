@@ -169,7 +169,7 @@ This component's only purpose is to instantiate a resonance-audio-room component
 | [`rolloff`](https://developers.google.com/resonance-audio/reference/web/Source#setRolloff) | Source's rolloff model. | [`logarithmic`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L92) | [`logarithmic` \| `linear` \| `none`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L86)
 | `position` | The position in local coordinates. If set, this position will be used instead of the entity's position component. Revert to the entity's position by setting this property to any invalid position (such as `null`). | { }
 | `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { }
-| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. | false
+| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. Access using `el.getObject3D('audio-src')`. | false
 
 ### Members
 Accessible via `entity.components['resonance-audio-src'].<member>`.
@@ -183,7 +183,6 @@ Accessible via `entity.components['resonance-audio-src'].<member>`.
 | `resonance` | Reference to the Google Resonance audio source | [Source](https://developers.google.com/resonance-audio/reference/web/Source)
 | `defaultAudioEl` | The audio element used when a resource string is set as the source. | [HTMLAudioElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement)
 | `mediaAudioSourceNodes` | A collection of references to sources (so they can be reused). | mapping of [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) to [MediaElementAudioSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/MediaElementAudioSourceNode) and [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) to [MediaStreamAudioSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamAudioSourceNode)
-| `visualization` | A reference to the visualized A-Frame entity. The element has a back-reference to the original audio source via its `audioSrc` property. | HTMLElement & [AEntity](https://github.com/aframevr/aframe/blob/master/src/core/a-entity.js) & [ANode](https://github.com/aframevr/aframe/blob/master/src/core/a-node.js)
 
 ### Events
 | Event | `evt.detail` property | Description |
@@ -201,8 +200,6 @@ The visuals are now a simple box wireframe for the audio room and a simple spher
 
 The audio seems to continue to propagate to infinity outside of an audio room when the default directivity pattern is set.
 
-The visualized entities are added to the root scene so they are not affected by parent entities. This has the disadvantage that they don't get properly repositioned when parent entities are. This will be solved in future work.
-
 The bounding box feature isn't perfect yet. It currently takes the dimensions of the entity's bounding box and assumes the center point of the entity is the same as the center point of the audio room. This is correct for simple shapes, but might not be correct for more complex models.
 
 Audio rooms (entities with component resonance-audio-room) and audio sources (entities with component resonance-audio-src) have a one to many relationship, and only that relationship. Rooms do not have any influence on eachother. The same goes for audio sources and rooms that they are not descendants of, even if they are physically positioned within another audio room. Do not nest rooms. Furthermore, source entities don't have to be immediate room childs, but can be deeper descendants (except when dynamically adding entities with the resonance-audio-src component).
@@ -214,7 +211,6 @@ Dynamically changing positioning and rotation of audio source or room container 
 - Hook the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
 - Take scaling into account.
 - Add event that emits when an audio source is attached to an audio room.
-- Make the visualization entity a child instead of a root entity.
 - Find a better method of calculating the bounding box in `resonance-audio-room-bb`.
 
 ***

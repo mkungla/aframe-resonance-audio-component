@@ -1,4 +1,4 @@
-/* global setup, suite, test, expect, AFRAME */
+/* global setup, suite, test, expect, THREE */
 require('aframe')
 require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
@@ -57,7 +57,7 @@ suite(`component ${cs} default`, () => {
   })
   test('visualization', () => {
     expect(el.getAttribute(cs).visualize).to.equal(false)
-    expect(component.visualization).to.equal(null)
+    expect(el.getObject3D('audio-src')).to.equal(undefined)
   })
 })
 
@@ -112,7 +112,7 @@ suite(`component ${cs} without entering an audio room`, () => {
     // Resonance Source in world coordinates (changed).
     compareMatrixtoPosAndRot(component.getMatrixWorld(), {x: 6, y: 5, z: 4}, {x: 0, y: 45, z: 0})
     // Visualization in world coordinates (changed).
-    compareMatrixtoPosAndRot(component.visualization.object3D.matrixWorld, {x: 6, y: 5, z: 4}, {x: 0, y: 45, z: 0})
+    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, {x: 6, y: 5, z: 4}, {x: 0, y: 45, z: 0})
   })
   test('update audio src rotation', () => {
     el.setAttribute(cs, 'rotation', '0 90 0')
@@ -122,34 +122,32 @@ suite(`component ${cs} without entering an audio room`, () => {
     // Resonance Source in world coordinates (changed).
     compareMatrixtoPosAndRot(component.getMatrixWorld(), {x: 3, y: 2, z: 1}, {x: 0, y: 90, z: 0})
     // Visualization in world coordinates (changed).
-    compareMatrixtoPosAndRot(component.visualization.object3D.matrixWorld, {x: 3, y: 2, z: 1}, {x: 0, y: 90, z: 0})
-    window.i++
+    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, {x: 3, y: 2, z: 1}, {x: 0, y: 90, z: 0})
   })
 
   test('visualization', () => {
-    expect(component.visualization).to.be.an.instanceof(AFRAME.AEntity)
-    expect(component.visualization.audioSrc).to.equal(el)
-    expect(component.visualization.getAttribute('material').color).to.equal('#F00')
+    expect(el.getObject3D('audio-src')).to.be.an.instanceof(THREE.Object3D)
+    //expect(component.visualization.audioSrc).to.equal(el) 
+    expect(el.getObject3D('audio-src').material.color.getHex()).to.equal(0xff0000)
   })
   test('remove and re-add visualization', () => {
-    const v = component.visualization
-    expect(v).to.be.an.instanceOf(AFRAME.AEntity)
+    const currentObject3Dcount = el.object3D.children.length
+    expect(el.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)
+
     el.setAttribute(cs, 'visualize', false)
-    expect(component.visualization).to.not.equal(v)
-    expect([...el.sceneEl.children]).to.not.include(v)
+    expect(el.getObject3D('audio-src')).to.equal(undefined)
+    expect(el.object3D.children.length).to.equal(currentObject3Dcount - 1)
 
     el.setAttribute(cs, 'visualize', true)
-    expect(component.visualization).to.not.equal(null)
-    expect([...el.sceneEl.children]).to.include(component.visualization)
+    expect(el.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)
+    expect(el.object3D.children.length).to.equal(currentObject3Dcount)
   })
 
   test('remove component', done => {
-    const v = component.visualization
-    expect(v).to.be.an.instanceOf(AFRAME.AEntity)
+    expect(el.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)
     el.addEventListener('componentremoved', evt => {
       if (evt.detail.name !== cs) { return }
-      expect(component.visualization).to.not.equal(v)
-      expect([...el.sceneEl.children]).to.not.include(v)
+      expect(el.getObject3D('audio-src')).to.equal(undefined)
       done()
     })
     el.removeAttribute(cs)
