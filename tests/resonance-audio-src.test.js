@@ -127,7 +127,6 @@ suite(`component ${cs} without entering an audio room`, () => {
 
   test('visualization', () => {
     expect(el.getObject3D('audio-src')).to.be.an.instanceof(THREE.Object3D)
-    //expect(component.visualization.audioSrc).to.equal(el) 
     expect(el.getObject3D('audio-src').material.color.getHex()).to.equal(0xff0000)
   })
   test('remove and re-add visualization', () => {

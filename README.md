@@ -133,7 +133,7 @@ yarn add @digaverse/aframe-resonance-audio-component
 | `back`     | Material of the back room wall.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
 | `left`     | Material of the room floor.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
 | `up`     | Material of the room ceiling.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `visualize` | Show a wireframe box visualization of the audio room.  | false
+| `visualize` | Show a wireframe box visualization of the audio room. Access using `el.getObject3D('audio-room')`. | false
 ### Members
 Accessible via `entity.components['resonance-audio-room'].<member>`.
 
@@ -142,7 +142,6 @@ Accessible via `entity.components['resonance-audio-room'].<member>`.
 | `audioContext` | The audio context used by Google Resonance. | [AudioContext](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)
 | `resonanceAudioScene` | The reference to the Google Resonance instance managing the audio in this room. | [ResonanceAudio](https://developers.google.com/resonance-audio/reference/web/ResonanceAudio)
 | `sources` | A collection of the attached audio source components. | array of resonance-audio-src component instances |
-| `visualization` | A reference to the visualized A-Frame entity. That element has a reference to the original room via its `audioRoom` property. | HTMLElement & [AEntity](https://github.com/aframevr/aframe/blob/master/src/core/a-entity.js) & [ANode](https://github.com/aframevr/aframe/blob/master/src/core/a-node.js)
 | `el.audioSources` | Returns sources. | array of resonance-audio-src component instances |
 | `el.sounds` | A collection of the origins of the attached audio sources. | array of [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) and/or [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) objects |
 

@@ -4,6 +4,11 @@ const { onceWhenLoaded } = require('./utils')
 
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
 
+/**
+ * The Object3D name of the visualization.
+ */
+const visName = 'audio-room'
+
 AFRAME.registerComponent('resonance-audio-room', {
   dependencies: ['position', 'rotation'],
 
@@ -34,9 +39,6 @@ AFRAME.registerComponent('resonance-audio-room', {
     this.audioContext = new AudioContext()
     this.resonanceAudioScene = new ResonanceAudio(this.audioContext)
     this.resonanceAudioScene.output.connect(this.audioContext.destination)
-
-    // Visualization entity of the room.
-    this.visualization = null
 
     // Collection of audio sources.
     this.sources = []
@@ -99,45 +101,46 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
 
   /**
-   * Update the visualization of this audio room according to the properties set.
+   * Toggle showing the visualization.
+   * @param {boolean} previous - the previous setting
+   * @param {boolean} current - the new setting
    * @returns {this}
    */
-  updateVisualization () {
-    const d = this.data
-    if (d.visualize && this.visualization) {
-      this.el.sceneEl.object3D.updateMatrixWorld(true)
-      const p = new THREE.Vector3()
-      const q = new THREE.Quaternion()
-      const s = new THREE.Vector3()
-      this.el.object3D.matrixWorld.decompose(p, q, s)
-      const r = new THREE.Euler().setFromQuaternion(q, 'YXZ')
-      const r2d = THREE.Math.radToDeg
-
-      this.visualization.setAttribute('position', p)
-      this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
-      this.visualization.setAttribute('width', d.width)
-      this.visualization.setAttribute('height', d.height)
-      this.visualization.setAttribute('depth', d.depth)
+  toggleShowVisualization (previous, current) {
+    // This is done to the root so it is not affected by the current entity.
+    if (!previous && current) {
+      this.el.setObject3D(
+        visName,
+        new THREE.Mesh(
+          new THREE.BoxBufferGeometry(this.data.width, this.data.height, this.data.depth),
+          new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            metalness: 0,
+            wireframe: true,
+            visible: true
+          })
+        )
+      )
+    } else if (previous && !current && this.el.getObject3D(visName)) {
+      this.el.removeObject3D(visName)
     }
     return this
   },
 
   /**
-   * Toggle showing the visualization.
-   * @param {boolean} previous - the previous setting
-   * @param {boolean} current - the new setting
+   * Update the visualization of this audio room according to the properties set.
+   * @returns {this}
    */
-  toggleShowVisualization (previous, current) {
-    // This is done to the root so it is not affected by the current entity.
-    if (!previous && current) {
-      this.visualization = document.createElement('a-box')
-      this.visualization.audioRoom = this.el
-      this.visualization.setAttribute('material', 'wireframe', true)
-      this.el.sceneEl.appendChild(this.visualization)
-    } else if (previous && !current && this.visualization) {
-      this.el.sceneEl.removeChild(this.visualization)
-      this.visualization = null
+  updateVisualization () {
+    const d = this.data
+    const v = this.el.getObject3D(visName)
+    const params = v && v.geometry.parameters
+    if (d.visualize && v &&
+       (d.width !== params.width || d.height !== params.height || d.depth !== params.depth)) {
+      this.toggleShowVisualization(true, false)
+      this.toggleShowVisualization(false, true)
     }
+    return this
   },
 
   /**
@@ -148,8 +151,7 @@ AFRAME.registerComponent('resonance-audio-room', {
   onEntityChange (evt) {
     if (evt.detail.name !== 'position' && evt.detail.name !== 'rotation') { return }
 
-    this.updateVisualization()
-    this.sources.forEach(source => source.updateResonancePosition().updateVisualization())
+    this.sources.forEach(source => source.updateResonancePosition())
   },
 
   /**

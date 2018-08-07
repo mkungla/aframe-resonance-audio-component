@@ -1,5 +1,6 @@
-/* global AFRAME, THREE */
+/* global AFRAME */
 require('./resonance-audio-room')
+const { getBoundingBox } = require('./utils.js')
 
 /**
  * Composite bounding box component. Use this one if the room should be the bounding box of the
@@ -24,7 +25,7 @@ AFRAME.registerComponent('resonance-audio-room-bb', {
   },
   setFromBB (base = {}) {
     // TODO: make a better bounding box, taking into account the centrepoint position of the entity.
-    const size = new THREE.Box3().setFromObject(this.el.object3D).getSize()
+    const size = getBoundingBox(this.el.object3D).getSize()
     this.setRoom({...base, width: size.x, height: size.y, depth: size.z})
   },
   setRoom (values) {

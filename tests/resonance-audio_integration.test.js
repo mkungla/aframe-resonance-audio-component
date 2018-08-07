@@ -1,4 +1,4 @@
-/* global setup, teardown, suite, test, expect, THREE, AFRAME, HTMLElement, HTMLMediaElement */
+/* global setup, teardown, suite, test, expect, THREE, HTMLElement, HTMLMediaElement */
 require('aframe')
 require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
@@ -227,18 +227,6 @@ suite(`component ${cs} in a ${cr}`, function () {
       expect(component1.resonance._directivity._sharpness).to.equal(2.1)
       expect(component1.resonance._encoder._spreadIndex).to.equal(Math.min(359, Math.max(0, Math.round(31))))
     })
-    test('remove and re-add visualization', () => {
-      const currentObject3Dcount = srcEl1.object3D.children.length
-      expect(srcEl1.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)
-
-      srcEl1.setAttribute(cs, 'visualize', false)
-      expect(srcEl1.getObject3D('audio-src')).to.equal(undefined)
-      expect(srcEl1.object3D.children.length).to.equal(currentObject3Dcount - 1)
-
-      srcEl1.setAttribute(cs, 'visualize', true)
-      expect(srcEl1.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)
-      expect(srcEl1.object3D.children.length).to.equal(currentObject3Dcount)
-    })
   })
 
   suite(`${cr} changes`, () => {
@@ -372,11 +360,11 @@ suite(`component ${cs} in a ${cr}`, function () {
       roomEl.removeChild(srcEl1)
     })
     test(`remove component ${cr}`, done => {
-      const v = roomComponent.visualization
-      expect(v).to.be.an.instanceOf(AFRAME.AEntity)
+      expect(roomEl.getObject3D('audio-room')).to.be.an.instanceOf(THREE.Object3D)
       expect(roomComponent.sources).to.be.an('array').that.includes(component1)
       roomEl.addEventListener('componentremoved', evt => {
         if (evt.detail.name !== cr) { return }
+        expect(roomEl.getObject3D('audio-room')).to.equal(undefined)
         expect(roomComponent.sources).to.be.an('array').that.does.not.include(component1)
         expect(component1.room).to.equal(null)
         expect(component2.room).to.equal(null)
@@ -560,13 +548,15 @@ suite(`component ${crbb}`, () => {
   })
 
   test('model loading, src entering the room, and bounded-audioroom-loaded event', () => {
-    expect(roomComponent.data.width).to.equal(w)
-    expect(roomComponent.data.height).to.equal(h)
-    expect(roomComponent.data.depth).to.equal(d)
-    expect(roomComponent.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
-    expect(roomComponent.visualization.getAttribute('width')).to.equal(w.toString())
-    expect(roomComponent.visualization.getAttribute('height')).to.equal(h.toString())
-    expect(roomComponent.visualization.getAttribute('depth')).to.equal(d.toString())
+    const delta = 0.000001
+    expect(roomComponent.data.width).to.be.closeTo(w, delta)
+    expect(roomComponent.data.height).to.be.closeTo(h, delta)
+    expect(roomComponent.data.depth).to.be.closeTo(d, delta)
+    expect(roomComponent.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({width: w / 2, height: h / 2, depth: d / 2})
+    const visualizationSize = new THREE.Box3().setFromObject(roomComponent.el.getObject3D('audio-room')).getSize()
+    expect(visualizationSize.x).to.be.closeTo(w, delta)
+    expect(visualizationSize.y).to.be.closeTo(h, delta)
+    expect(visualizationSize.z).to.be.closeTo(d, delta)
     expect(srcEl.components[cs].room).to.equal(roomComponent)
   })
 

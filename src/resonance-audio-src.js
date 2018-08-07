@@ -4,6 +4,11 @@ const { isVec3Set, onceWhenLoaded } = require('./utils')
 
 const warn = AFRAME.utils.debug('components:resonance-audio-src:warn')
 
+/**
+ * The Object3D name of the visualization.
+ */
+const visName = 'audio-src'
+
 AFRAME.registerComponent('resonance-audio-src', {
   dependencies: ['position', 'rotation'],
 
@@ -150,10 +155,9 @@ AFRAME.registerComponent('resonance-audio-src', {
    * @param {boolean} current - the new setting
    */
   toggleShowVisualization (previous, current) {
-    // This is done to the root so it is not affected by the current entity.
     if (!previous && current) {
       this.el.setObject3D(
-        'audio-src',
+        visName,
         new THREE.Mesh(
           new THREE.SphereBufferGeometry(this.data.minDistance, 36, 18),
           new THREE.MeshStandardMaterial({
@@ -164,8 +168,8 @@ AFRAME.registerComponent('resonance-audio-src', {
           })
         )
       )
-    } else if (previous && !current && this.el.getObject3D('audio-src')) {
-      this.el.removeObject3D('audio-src')
+    } else if (previous && !current && this.el.getObject3D(visName)) {
+      this.el.removeObject3D(visName)
     }
   },
 
@@ -175,13 +179,18 @@ AFRAME.registerComponent('resonance-audio-src', {
    */
   updateVisualization () {
     const d = this.data
-    const v = this.el.getObject3D('audio-src')
+    let v = this.el.getObject3D(visName)
     if (d.visualize && v) {
+      // If appearance changed, redraw.
+      if (v.geometry.parameters.radius !== this.data.minDistance) {
+        this.toggleShowVisualization(true, false)
+        this.toggleShowVisualization(false, true)
+        v = this.el.getObject3D(visName)
+      }
       const m = this.getMatrixLocal()
       v.position.setFromMatrixPosition(m)
       v.quaternion.setFromRotationMatrix(m)
       v.material.color.setHex(this.room ? 0xffffff : 0xff0000)
-      v.geometry.scale(d.minDistance, d.minDistance, d.minDistance)
       v.matrixWorldNeedsUpdate = true
     }
     return this
