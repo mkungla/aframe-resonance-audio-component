@@ -246,6 +246,22 @@ suite(`component ${cs} in a ${cr}`, function () {
     })
   })
 
+  suite(`${cs} changes`, () => {
+    test('position and orientation update', () => {
+      srcEl1.setAttribute('position', '2 2 2') // in world coordinates: 4 3 2
+      srcEl1.setAttribute('rotation', '0 90 0')
+      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      // Audio source in world coordinates (changed).
+      compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, {x: 4, y: 3, z: 2}, {x: 0, y: 90, z: 0})
+      // Resonance Source in world coordinates (changed).
+      compareMatrixtoPosAndRot(component1.getMatrixWorld(), {x: 4, y: 3, z: 2}, {x: 0, y: 90, z: 0})
+      // Resonance Source in room coordinates (changed).
+      compareMatrixtoPosAndRot(createMatrixFromResonanceSource(component1.resonance), {x: 2, y: 2, z: 2}, {x: 0, y: 90, z: 0})
+      // Visualization in world coordinates (changed).
+      compareMatrixtoPosAndRot(srcEl1.getObject3D('audio-src').matrixWorld, {x: 4, y: 3, z: 2}, {x: 0, y: 90, z: 0})
+    })
+  })
+
   suite('audio source updating', () => {
     test('disconnect', () => {
       srcEl1.setAttribute(cs, 'src', null)

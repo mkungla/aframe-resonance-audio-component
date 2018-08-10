@@ -205,9 +205,6 @@ AFRAME.registerComponent('resonance-audio-src', {
     if (evt.detail.name !== 'position' && evt.detail.name !== 'rotation') { return }
 
     this.el.sceneEl.object3D.updateMatrixWorld(true)
-    if (this.room) {
-      this.room.updatePosition()
-    }
     this.updateResonancePosition().updateVisualization()
   },
 
