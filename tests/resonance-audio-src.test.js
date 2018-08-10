@@ -43,8 +43,8 @@ suite(`component ${cs} default`, () => {
     expect(el.getAttribute(cs).autoplay).to.equal(true)
   })
   test('custom position and orientation', () => {
-    expect(el.getAttribute(cs).position).to.deep.equal({})
-    expect(el.getAttribute(cs).rotation).to.deep.equal({})
+    expect(el.getAttribute(cs).position).to.deep.equal(new THREE.Vector3(Infinity, Infinity, Infinity))
+    expect(el.getAttribute(cs).rotation).to.deep.equal(new THREE.Vector3(Infinity, Infinity, Infinity))
   })
   test('acoustic parameters', () => {
     expect(component.resonance).to.equal(null)

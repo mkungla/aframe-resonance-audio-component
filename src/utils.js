@@ -5,9 +5,9 @@
  */
 module.exports.isVec3Set = function isVec3Set (v) {
   return typeof v === 'object' &&
-       typeof v.x !== 'undefined' &&
-       typeof v.y !== 'undefined' &&
-       typeof v.z !== 'undefined'
+       !isNaN(parseFloat(v.x)) && isFinite(v.x) &&
+       !isNaN(parseFloat(v.y)) && isFinite(v.y) &&
+       !isNaN(parseFloat(v.z)) && isFinite(v.z)
 }
 
 /**

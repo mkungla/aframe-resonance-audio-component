@@ -25,8 +25,8 @@ AFRAME.registerComponent('resonance-audio-src', {
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
-    position: {type: 'vec3', default: {}},
-    rotation: {type: 'vec3', default: {}},
+    position: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
+    rotation: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
 
     visualize: {type: 'boolean', default: false}
   },
