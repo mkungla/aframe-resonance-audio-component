@@ -201,7 +201,7 @@ The audio seems to continue to propagate to infinity outside of an audio room wh
 
 The bounding box feature isn't perfect yet. It currently takes the dimensions of the entity's bounding box and assumes the center point of the entity is the same as the center point of the audio room. This is correct for simple shapes, but might not be correct for more complex models.
 
-Audio rooms (entities with component resonance-audio-room) and audio sources (entities with component resonance-audio-src) have a one to many relationship, and only that relationship. Rooms do not have any influence on eachother. The same goes for audio sources and rooms that they are not descendants of, even if they are physically positioned within another audio room. Do not nest rooms. Furthermore, source entities don't have to be immediate room childs, but can be deeper descendants (except when dynamically adding entities with the resonance-audio-src component).
+Audio rooms (entities with component resonance-audio-room) and audio sources (entities with component resonance-audio-src) have a one to many relationship, and only that relationship. Rooms do not have any influence on eachother. The same goes for audio sources and rooms that they are not descendants of, even if they are physically positioned within another audio room. Do not nest rooms. Furthermore, source entities don't have to be immediate room childs: in that case use the `room` property to point to the audio room.
 
 Dynamically changing positioning and rotation of audio source or room container elements is not fully supported.
 
@@ -209,7 +209,6 @@ Dynamically changing positioning and rotation of audio source or room container 
 ### Future work
 - Hook the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
 - Take scaling into account.
-- Add event that emits when an audio source is attached to an audio room.
 - Find a better method of calculating the bounding box in `resonance-audio-room-bb`.
 
 ***
