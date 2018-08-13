@@ -1,14 +1,20 @@
 /* global AFRAME, THREE, MediaStream, HTMLMediaElement */
 const { ResonanceAudio } = require('resonance-audio')
+const { isVec3Set, onceWhenLoaded } = require('./utils')
 
-const log = AFRAME.utils.debug
-const warn = log('components:resonance-audio-src:warn')
+const warn = AFRAME.utils.debug('components:resonance-audio-src:warn')
+
+/**
+ * The Object3D name of the visualization.
+ */
+const visName = 'audio-src'
 
 AFRAME.registerComponent('resonance-audio-src', {
   dependencies: ['position', 'rotation'],
 
   schema: {
     src: {type: 'string'}, // asset parsing is taken over from A-Frame.
+    room: {type: 'string'},
     loop: {type: 'boolean', default: true},
     autoplay: {type: 'boolean', default: true},
 
@@ -19,11 +25,9 @@ AFRAME.registerComponent('resonance-audio-src', {
     sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
     rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
 
-    position: {type: 'vec3', default: {}},
-    rotation: {type: 'vec3', default: {}},
+    position: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
+    rotation: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
 
-    // Whether to show a visualization of the audio source. This shows a sphere wireframe of the
-    // source with its radius set to the minDistance.
     visualize: {type: 'boolean', default: false}
   },
 
@@ -41,73 +45,67 @@ AFRAME.registerComponent('resonance-audio-src', {
     // The Resonance audio source.
     this.resonance = null
 
-    // Visualization entity of the audio source.
-    this.visualization = null
+    // The default audio element used when src is set to a resource string.
+    this.defaultAudioEl = null
 
     // A mapping of elements and stream to their source AudioNode objects.
-    // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode objects can be reused.
+    // We use a mapping so the created MediaElementAudioSourceNode and MediaStreamAudioSourceNode
+    // objects can be reused.
     this.mediaAudioSourceNodes = new Map()
 
-    // Update audio source position and orientation on position or rotation component change.
-    this.el.addEventListener('componentchanged', (e) => {
-      if (e.detail.name === 'position' || e.detail.name === 'rotation') {
-        this.room.updatePosition()
-        this.updatePosition()
-        this.updateVisualization()
-      }
-    })
-
-    // When the scene has loaded and all world positions are calculated, place the visualization.
-    this.el.sceneEl.addEventListener('loaded', (e) => this.updateVisualization())
+    // Update on entity change.
+    this.onEntityChange = this.onEntityChange.bind(this)
+    this.el.addEventListener('componentchanged', this.onEntityChange)
   },
 
-  /**
-   * Initiate this audio source as a source attached to the passed room.
-   * @param {resonance-audio-room} room
-   */
-  initAudioSrc (room) {
-    if (this.room) {
-      throw new Error('audio src can only be initiated once')
-    }
-    this.room = room
-
-    // Create Resonance source.
-    this.resonance = this.room.resonanceAudioScene.createSource()
-
-    // Update sound values.
-    this.updateSoundSettings()
-
-    // Handle position.
-    this.room.updatePosition()
-    this.updatePosition()
-
-    // Prepare default audio element.
-    this.defaultAudioEl = document.createElement('audio')
-    this.mediaAudioSourceNodes.set(this.defaultAudioEl, this.room.audioContext.createMediaElementSource(this.defaultAudioEl))
-
-    // Set the src declared in the html.
-    this.setSrc(this.data.src)
-
-    // The room is known, so also update the visualization of this audio source.
-    this.updateVisualization()
-  },
-
-  /**
-   * Update with new properties.
-   * @param {object} oldData
-   */
   update (oldData) {
     if (this.room && oldData.src !== this.data.src) {
-      this.setSrc(this.data.src)
+      this.connectSrc(this.data.src)
     }
+    this.el.sceneEl.object3D.updateMatrixWorld(true)
     this.updateSoundSettings()
     this.updatePlaybackSettings()
-    this.updatePosition()
-    this.updateVisualization(oldData)
+    this.toggleShowVisualization(oldData.visualize, this.data.visualize)
+    this.updateResonancePosition().updateVisualization()
+
+    const roomEl = this.getRoomChoice()
+    if ((roomEl && roomEl.components && roomEl.components['resonance-audio-room']) !== this.room) {
+      /**
+       * Yes, this looks ugly. And this approach has a reason. The audio source needs the audio
+       * room's matrixWorld to calculate the audio source's position relative to the room. This
+       * means scene and the audio room have to be loaded (which they havent on the initial
+       * update).
+       */
+      onceWhenLoaded(this.el.sceneEl, () => {
+        const roomLeft = this.leaveRoom()
+        const roomEntered = this.enter(roomEl)
+        this.connectSrc(this.data.src)
+        this.updateSoundSettings()
+        this.el.sceneEl.object3D.updateMatrixWorld(true)
+        this.updateResonancePosition().updateVisualization()
+        if (roomLeft) {
+          this.el.emit('audioroom-left', {src: this.el, room: roomLeft.el})
+        }
+        if (roomEntered) {
+          this.el.emit('audioroom-entered', {src: this.el, room: roomEntered.el})
+        }
+      })
+    }
+  },
+
+  remove () {
+    this.el.removeEventListener('componentchanged', this.onEntityChange)
+    this.disconnect()
+    const roomLeft = this.leaveRoom()
+    this.toggleShowVisualization(this.data.visualize, false)
+
+    if (roomLeft) {
+      this.el.emit('audioroom-left', {src: this.el, room: roomLeft.el})
+    }
   },
 
   /**
-   * Update the Resonance sound settings based on the properties.
+   * Update the Resonance sound settings.
    */
   updateSoundSettings () {
     const s = this.resonance
@@ -124,7 +122,6 @@ AFRAME.registerComponent('resonance-audio-src', {
    * Update the playback settings.
    */
   updatePlaybackSettings () {
-    // If no element is connected, do nothing.
     if (!this.connected.element) { return }
 
     // Update loop.
@@ -145,111 +142,201 @@ AFRAME.registerComponent('resonance-audio-src', {
    * Update the position in Google Resonance of this audio source, so relative to the audio room.
    * @returns {this}
    */
-  updatePosition () {
-    if (!this.resonance) { return }
-    this.resonance.setFromMatrix(this.getMatrixRoom())
+  updateResonancePosition () {
+    if (this.resonance) {
+      this.resonance.setFromMatrix(this.getMatrixRoom())
+    }
     return this
   },
 
   /**
+   * Toggle showing the visualization.
+   * @param {boolean} previous - the previous setting
+   * @param {boolean} current - the new setting
+   */
+  toggleShowVisualization (previous, current) {
+    if (!previous && current) {
+      this.el.setObject3D(
+        visName,
+        new THREE.Mesh(
+          new THREE.SphereBufferGeometry(this.data.minDistance, 36, 18),
+          new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            metalness: 0,
+            wireframe: true,
+            visible: true
+          })
+        )
+      )
+    } else if (previous && !current && this.el.getObject3D(visName)) {
+      this.el.removeObject3D(visName)
+    }
+  },
+
+  /**
+   * Update the visualization's position, orientation and shape.
+   * @returns {this}
+   */
+  updateVisualization () {
+    const d = this.data
+    let v = this.el.getObject3D(visName)
+    if (d.visualize && v) {
+      // If appearance changed, redraw.
+      if (v.geometry.parameters.radius !== this.data.minDistance) {
+        this.toggleShowVisualization(true, false)
+        this.toggleShowVisualization(false, true)
+        v = this.el.getObject3D(visName)
+      }
+      const m = this.getMatrixLocal()
+      v.position.setFromMatrixPosition(m)
+      v.quaternion.setFromRotationMatrix(m)
+      v.material.color.setHex(this.room ? 0xffffff : 0xff0000)
+      v.matrixWorldNeedsUpdate = true
+    }
+    return this
+  },
+
+  /**
+   * When the entity's position or rotation is changed, update the Resonance audio position and
+   * visualization accordingly.
+   * @param {Event} evt
+   */
+  onEntityChange (evt) {
+    if (evt.detail.name !== 'position' && evt.detail.name !== 'rotation') { return }
+
+    this.el.sceneEl.object3D.updateMatrixWorld(true)
+    this.updateResonancePosition().updateVisualization()
+  },
+
+  /**
+   * Get the choice of audio Room. Checking order of room property:
+   * - value is falsey: parent node is returned. This prevents using an empty string as query selector.
+   * - value is an A-Frame entity: entity is returned.
+   * - value is a string: document.querySelector result is returned. This might be null.
+   * - else: parent node is returned.
+   * @returns {HTMLElement|null}
+   */
+  getRoomChoice () {
+    const ar = this.data.room
+    return !ar
+      ? this.el.parentNode
+      : ar instanceof AFRAME.AEntity
+        ? ar
+        : typeof ar === 'string'
+          ? document.querySelector(ar)
+          : this.el.parentNode
+  },
+
+  /**
    * Get a copy of the matrixWorld of the audio source, taking into account any custom set position
-   * or rotation. The matrixWorld contains the audio source's position and rotation in world
-   * coordinates.
+   * or rotation, in world coordinates.
    * @return {THREE.Matrix4}
    */
   getMatrixWorld () {
-    // Update all world matrices.
-    this.el.sceneEl.object3D.updateMatrixWorld()
-
     if (!isVec3Set(this.data.position) && !isVec3Set(this.data.rotation)) {
       // No custom position or rotation was set, so simply return a copy of the matrixWorld of the
       // current entity.
       return new THREE.Matrix4().copy(this.el.object3D.matrixWorld)
     } else {
-      const localPosition = isVec3Set(this.data.position)
-        ? new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
-        : this.el.object3D.position
-      const localRotation = isVec3Set(this.data.rotation)
-        ? new THREE.Euler()
-          .reorder('YXZ')
-          .fromArray([
-            this.data.rotation.x,
-            this.data.rotation.y,
-            this.data.rotation.z].map(THREE.Math.degToRad)
-          )
-        : this.el.object3D.rotation
-      // Return matirxWorld calculated by multiplying the parent's matrixWorld and the local
+      // Return matrixWorld calculated by multiplying the parent's matrixWorld and the local
       // matrix, as Three.js's Object3D.updateMatrixWorld() basically does.
       return new THREE.Matrix4().multiplyMatrices(
-        this.el.object3D.parent.matrixWorld,
-        new THREE.Matrix4().compose(
-          localPosition,
-          new THREE.Quaternion().setFromEuler(localRotation),
-          {x: 1, y: 1, z: 1}
-        )
+        this.el.parentNode.object3D.matrixWorld,
+        this.getMatrixLocalCustom()
       )
     }
   },
 
   /**
+   * Get the matrix in local coordinates. The position and rotation attributes (individually)
+   * take precedence over any position and rotation components set on the current entity. The
+   * scale is 1.
+   * @returns {THREE.Matrix4}
+   */
+  getMatrixLocalCustom () {
+    let localPosition, localQuaternion
+
+    if (isVec3Set(this.data.position)) {
+      localPosition = new THREE.Vector3(this.data.position.x, this.data.position.y, this.data.position.z)
+    } else {
+      localPosition = this.el.object3D.position
+    }
+
+    if (isVec3Set(this.data.rotation)) {
+      let radians = [this.data.rotation.x, this.data.rotation.y, this.data.rotation.z].map(THREE.Math.degToRad)
+      localQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler().reorder('YXZ').fromArray(radians))
+    } else {
+      localQuaternion = this.el.object3D.quaternion
+    }
+
+    return new THREE.Matrix4().compose(localPosition, localQuaternion, {x: 1, y: 1, z: 1})
+  },
+
+  /**
    * Get a matrix of the audio source's position and rotation relative to the audio room, taking
    * into account any custom set position or rotation.
-   * @return {THREE.Matrix4}
+   * @returns {THREE.Matrix4}
    */
   getMatrixRoom () {
-    return this.getMatrixWorld().premultiply(new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld))
+    return this.getMatrixWorld().premultiply(
+      new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld)
+    )
   },
 
   /**
-   * Update the visualization of this audio room according to the properties set.
-   * @returns {this}
+   * Get a matrix of position and rotation relative to its owner entity, taking into account any
+   * custom set position or rotation.
+   * @returns {THREE.Matrix4}
    */
-  updateVisualization (oldData) {
-    const d = this.data
-
-    // Add or remove visualization to or from the DOM. This is done to the root so it is not
-    // affected by the current entity.
-    if (oldData) {
-      if (!oldData.visualize && d.visualize) {
-        // Create entity if it didn't exist yet.
-        if (!this.visualization) {
-          this.visualization = document.createElement('a-sphere')
-          this.visualization.audioSrc = this.el
-          this.visualization.setAttribute('material', 'wireframe', true)
-        }
-        this.el.sceneEl.appendChild(this.visualization)
-      } else if (oldData.visualize && !d.visualize) {
-        this.el.sceneEl.removeChild(this.visualization)
-        this.visualization = null
-      }
-    }
-
-    // Update the visualized entity.
-    if (d.visualize) {
-      const p = new THREE.Vector3()
-      const q = new THREE.Quaternion()
-      const s = new THREE.Vector3()
-      this.getMatrixWorld().decompose(p, q, s)
-      const r = new THREE.Euler().setFromQuaternion(q, 'YXZ')
-      const r2d = THREE.Math.radToDeg
-
-      this.visualization.setAttribute('position', p)
-      this.visualization.setAttribute('rotation', {x: r2d(r.x), y: r2d(r.y), z: r2d(r.z)})
-      this.visualization.setAttribute('radius', d.minDistance)
-    }
-    return this
+  getMatrixLocal () {
+    return this.getMatrixWorld().premultiply(
+      new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld)
+    )
   },
 
   /**
-   * Disconnect HTMLMediaElement or MediaStream from this resonance-audio-src.
+   * Enter an audio room. If the passed audio room has no resonance-audio-room component, show a
+   * warning and return false.
+   * @param {AFRAME.AEntity} roomEl - the room element
+   * @returns {AFRAME.AComponent|boolean} the entered room component or false if it couldn't be
+   *                                      entered
    */
-  disconnect () {
-    if (this.sound) {
-      this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonance.input)
-      this.sound = null
+  enter (roomEl) {
+    if (!roomEl || !roomEl.components || !('resonance-audio-room' in roomEl.components)) {
+      warn("can't enter audio room because it is no audio room")
+      return false
     }
-    this.connected.element = false
-    this.connected.stream = false
+
+    // Store references to each other.
+    this.room = roomEl.components['resonance-audio-room']
+    this.room.store(this.el)
+
+    // Create Resonance source.
+    this.resonance = this.room.resonanceAudioScene.createSource()
+
+    // Prepare default audio element.
+    this.defaultAudioEl = document.createElement('audio')
+    this.mediaAudioSourceNodes.set(
+      this.defaultAudioEl, this.room.audioContext.createMediaElementSource(this.defaultAudioEl)
+    )
+    return this.room
+  },
+
+  /**
+   * Leave the audio room if this audio source is in one.
+   * @returns {AFRAME.AComponent|boolean} the room that was left or false if there was no room to leave
+   */
+  leaveRoom () {
+    if (!this.room) { return false }
+    const room = this.room
+    this.room.forget(this.el)
+    this.room = null
+
+    this.resonance = null
+    this.mediaAudioSourceNodes.delete(this.defaultAudioEl)
+    this.defaultAudioEl = null
+
+    return room
   },
 
   /**
@@ -258,9 +345,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    * @param {function} createSourceFn - the function that creates an AudioSourceNode based on the passed source
    * @returns {boolean} false if there was not source to connect
    */
-  _connect (source, createSourceFn) {
-    this.disconnect()
-
+  connect (source, createSourceFn) {
     // Don't connect a new source if there is none.
     if (!source) { return false }
 
@@ -281,7 +366,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    * @param {HTMLMediaElement} el - the media element
    */
   connectWithElement (el) {
-    this.connected.element = this._connect(el, this.room.audioContext.createMediaElementSource)
+    this.connected.element = this.connect(el, this.room.audioContext.createMediaElementSource)
 
     if (!this.connected.element) { return }
     // Warn when an element with a stream was connected.
@@ -289,7 +374,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       warn("can't use a HTMLMediaElement that contains a stream. Connect the stream itself.")
     }
     // Apply playback settings.
-    this.updatePlaybackSettings()
+    this.updatePlaybackSettings() // TODO this shouldn't be here
     // Play the audio.
     if (this.sound.getAttribute('autoplay')) {
       this.sound.play()
@@ -301,7 +386,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    * @param {MediaStream} stream - the stream
    */
   connectWithStream (stream) {
-    this.connected.stream = this._connect(stream, this.room.audioContext.createMediaStreamSource)
+    this.connected.stream = this.connect(stream, this.room.audioContext.createMediaStreamSource)
 
     if (!this.connected.stream) { return }
     // Add play/pause API to sound that give a warning when accessed.
@@ -311,15 +396,28 @@ AFRAME.registerComponent('resonance-audio-src', {
   },
 
   /**
+   * Disconnect HTMLMediaElement or MediaStream from this resonance-audio-src.
+   */
+  disconnect () {
+    if (this.sound && this.resonance) {
+      this.mediaAudioSourceNodes.get(this.sound).disconnect(this.resonance.input)
+      this.sound = null
+    }
+    this.connected.element = false
+    this.connected.stream = false
+  },
+
+  /**
    * Set a new source.
    * @param {string|HTMLMediaElement|MediaStream|null} src
    */
-  setSrc (src) {
+  connectSrc (src) {
     const errorMsg = 'invalid src value. Must be element id string, resource string, HTMLMediaElement or MediaStream'
 
+    this.disconnect()
     let el
     if (!src) {
-      this.disconnect()
+      // Do nothing, because we've already disconnected.
     } else if (src instanceof MediaStream) {
       this.connectWithStream(src)
     } else if (src instanceof HTMLMediaElement) {
@@ -337,18 +435,6 @@ AFRAME.registerComponent('resonance-audio-src', {
       throw new TypeError(errorMsg)
     }
     this.data.src = el || src
-  },
-
-  /**
-   * Clean up when this component is removed.
-   */
-  remove () {
-    this.disconnect()
-    this.defaultAudioEl.remove()
-    if (this.visualization) {
-      this.el.sceneEl.removeChild(this.visualization)
-      this.visualization = null
-    }
   }
 })
 
@@ -358,6 +444,7 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
   },
   mappings: {
     src: 'resonance-audio-src.src',
+    room: 'resonance-audio-src.room',
     loop: 'resonance-audio-src.loop',
     autoplay: 'resonance-audio-src.autoplay',
 
@@ -372,14 +459,3 @@ AFRAME.registerPrimitive('a-resonance-audio-src', {
     visualize: 'resonance-audio-src.visualize'
   }
 })
-
-/**
- * Check if x, y and z properties are set.
- * @param {boolean}
- */
-function isVec3Set (v) {
-  return typeof v === 'object' &&
-      typeof v.x !== 'undefined' &&
-      typeof v.y !== 'undefined' &&
-      typeof v.z !== 'undefined'
-}

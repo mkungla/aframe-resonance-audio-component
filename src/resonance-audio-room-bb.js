@@ -1,5 +1,6 @@
-/* global AFRAME, THREE */
+/* global AFRAME */
 require('./resonance-audio-room')
+const { getBoundingBox } = require('./utils.js')
 
 /**
  * Composite bounding box component. Use this one if the room should be the bounding box of the
@@ -10,19 +11,24 @@ AFRAME.registerComponent('resonance-audio-room-bb', {
   schema: AFRAME.components['resonance-audio-room'].schema,
   init () {
     if (this.el.components['obj-model'] && !this.el.components['obj-model'].model) {
-      // If bounded by a loaded model.
-      this.el.addEventListener('model-loaded', (e) => this.loadAudioRoom())
+      // If bounded by a model.
+      this.setRoom(this.data)
+      this.el.addEventListener('model-loaded', () => {
+        this.setFromBB()
+        this.el.emit('bounded-audioroom-loaded', {room: this.el})
+      })
     } else {
       // If bounded by a different geometry.
-      this.loadAudioRoom()
+      this.setFromBB(this.data)
+      this.el.emit('bounded-audioroom-loaded', {room: this.el})
     }
   },
-  loadAudioRoom () {
+  setFromBB (base = {}) {
     // TODO: make a better bounding box, taking into account the centrepoint position of the entity.
-    const bb = new THREE.Box3().setFromObject(this.el.object3D)
-    this.data.width = bb.getSize().x
-    this.data.height = bb.getSize().y
-    this.data.depth = bb.getSize().z
-    this.el.setAttribute('resonance-audio-room', this.data)
+    const size = getBoundingBox(this.el.object3D).getSize()
+    this.setRoom({...base, width: size.x, height: size.y, depth: size.z})
+  },
+  setRoom (values) {
+    this.el.setAttribute('resonance-audio-room', values)
   }
 })
