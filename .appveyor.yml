@@ -3,22 +3,27 @@ version: 0.x.{branch}.{build}
 clone_depth: 10
 shallow_clone: true
 
-cache: '%LOCALAPPDATA%\\Yarn'
+cache:
+  - '%APPDATA%\npm-cache'
+  - node_modules
 build:
   verbosity: minimal
 
 environment:
-  nodejs_version: "9"
+  nodejs_version: "11"
 
 install:
+  - choco install firefox
+  - choco install googlechrome
   - ps: Install-Product node $env:nodejs_version
-  - yarn install
+  - npm install
 
 build_script:
-  - yarn run lint
-  - yarn run build
+  - npm run lint
+  - npm run build
 
 test_script:
-  - cmd: echo "run test on win"
+  - npm run test:firefox -- --single-run
+  - npm run test:chrome -- --single-run
 
 deploy: off
