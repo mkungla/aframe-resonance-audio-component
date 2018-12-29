@@ -1,0 +1,109 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+
+# Workflow configuration
+workflows:
+  version: 2
+  macos-build:
+    jobs:
+      - lint
+      - build:
+          requires:
+            - lint
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - /.*-dev$/
+                - /hotfix-.*/
+jobs:
+  lint:
+    macos:
+      xcode: "10.1.0"
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            npm --version
+            node --version
+            cp example.app-dev.json app-dev.json && cp example.app.json app.json
+            npm install
+      - run:
+          name: lint (standard)
+          command: npm run lint
+  build:
+    macos:
+      xcode: "10.1.0"
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            npm --version
+            node --version
+            cp example.app-dev.json app-dev.json && cp example.app.json app.json
+            npm install
+      - run:
+          name: build
+          command: npm run build
+  test:
+    macos:
+      xcode: "10.1.0"
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            npm --version
+            node --version
+            cp example.app-dev.json app-dev.json && cp example.app.json app.json
+            yarn install
+      - run:
+          name: run tests
+          command: npm run lint
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  build:
+    docker:
+      macos: "10.1.0"
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      # run tests!
+      - run: yarn test
