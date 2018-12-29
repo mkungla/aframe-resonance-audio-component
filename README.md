@@ -5,7 +5,7 @@
 | --- | --- | --- |
 | **Linux** | `Firefox, Chrome` | [![TravisCI Build Status][travis-img]][travis-link] |
 | **macOS** | `Safari` | [![CircleCI][circleci-img]][circleci-link] |
-| **Windows** | `Firefox, Chrome, IE` | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+| **Windows** | `IE` | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 
 [![Project License][license-img]][license-link]
