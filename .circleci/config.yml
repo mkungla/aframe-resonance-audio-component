@@ -9,9 +9,7 @@ workflows:
   version: 2
   macos-build:
     jobs:
-      - build:
-          requires:
-            - lint
+      - build
       - test:
           requires:
             - build
