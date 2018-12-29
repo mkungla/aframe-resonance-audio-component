@@ -92,4 +92,5 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: run tests
-          command: npm run lint
+          command: |
+            npm run test:safari -- --single-run

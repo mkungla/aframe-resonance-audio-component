@@ -30,7 +30,8 @@
     "lint": "./node_modules/.bin/eslint tests/ src/ config/",
     "test": "karma start ./tests/karma.conf.js",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
-    "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome"
+    "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
+    "test:safari": "karma start ./tests/karma.conf.js --browsers Safari"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
@@ -55,6 +56,7 @@
     "karma-firefox-launcher": "^1.1.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
+    "karma-safari-launcher": "^1.0.0",
     "karma-sinon-chai": "^2.0.2",
     "mocha": "^5.2.0",
     "mozilla-download": "^1.1.1",

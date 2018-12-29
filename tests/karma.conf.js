@@ -6,7 +6,8 @@ module.exports = function (config) {
       debug: true,
       paths: ['./']
     },
-    browsers: ['Firefox', 'Chrome'],
+    // Default use firefox only
+    browsers: ['Firefox'],
     client: {
       captureConsole: true,
       mocha: { ui: 'tdd' }
