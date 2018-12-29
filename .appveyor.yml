@@ -29,8 +29,8 @@ for:
       - ps: Install-Product node $env:nodejs_version
       - choco install firefox
       - npm install
-      - npm build
-
+    build_script:
+      - npm run build
   -
     matrix:
       only:
@@ -39,7 +39,7 @@ for:
       - ps: Install-Product node $env:nodejs_version
       - choco install firefox
       - npm install
-    test_script:
+    build_script:
       - npm run test:firefox -- --single-run
 
   -
@@ -50,7 +50,7 @@ for:
       - ps: Install-Product node $env:nodejs_version
       - choco install googlechrome
       - npm install
-    test_script:
+    build_script:
       - npm run test:chrome -- --single-run
 
   -
@@ -60,5 +60,5 @@ for:
     install:
       - ps: Install-Product node $env:nodejs_version
       - npm install
-    test_script:
+    build_script:
       - npm run test:ie -- --single-run
