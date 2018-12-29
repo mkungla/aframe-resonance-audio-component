@@ -31,7 +31,8 @@
     "test": "karma start ./tests/karma.conf.js",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
     "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
-    "test:safari": "karma start ./tests/karma.conf.js --browsers Safari"
+    "test:safari": "karma start ./tests/karma.conf.js --browsers Safari",
+    "test:ie": "karma start ./tests/karma.conf.js --browsers IE"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
@@ -54,6 +55,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-env-preprocessor": "^0.1.1",
     "karma-firefox-launcher": "^1.1.0",
+    "karma-ie-launcher": "^1.0.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
     "karma-safari-launcher": "^1.0.0",

@@ -1,10 +1,12 @@
 # A-Frame Resonance Audio Component
 **Rich, Immersive, Audio [👉 Live demo 👈][gh-pages-link]**  
 
-
-| Linux | macOS | Windows |
+| OS | Browsers | Status |
 | --- | --- | --- |
-| [![TravisCI Build Status][travis-img]][travis-link] | [![CircleCI][circleci-img]][circleci-link] | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+| **Linux** | `Firefox, Chrome` | [![TravisCI Build Status][travis-img]][travis-link] |
+| **macOS** | `Safari` | [![CircleCI][circleci-img]][circleci-link] |
+| **Windows** | `Firefox, Chrome, IE` | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+
 
 [![Project License][license-img]][license-link]
 [![Grade Badge][codacy-grade-img]][codacy-grade-link]
@@ -266,15 +268,15 @@ Dynamically changing positioning and rotation of audio source or room container 
 [gh-pages-link]: https://digaverse.github.io/aframe-resonance-audio-component/
 
 <!-- travis-ci -->
-[travis-img]: https://travis-ci.org/digaverse/aframe-resonance-audio-component.svg?branch=master
+[travis-img]: https://img.shields.io/travis/digaverse/aframe-resonance-audio-component/master.svg
 [travis-link]: https://travis-ci.org/digaverse/aframe-resonance-audio-component
 
 <!-- appveyor -->
-[appveyor-img]: https://ci.appveyor.com/api/projects/status/44hwcfb3i05mhq7f/branch/master?svg=true
-[appveyor-link]: https://ci.appveyor.com/project/mkungla/aframe-resonance-audio-component
+[appveyor-img]: https://img.shields.io/appveyor/ci/digaverse/aframe-resonance-audio-component/master.svg
+[appveyor-link]: https://ci.appveyor.com/project/digaverse/aframe-resonance-audio-component
 
 <!-- circleci -->
-[circleci-img]: https://circleci.com/gh/digaverse/aframe-resonance-audio-component.svg?style=svg
+[circleci-img]: https://img.shields.io/circleci/project/github/digaverse/aframe-resonance-audio-component/master.svg
 [circleci-link]: https://circleci.com/gh/digaverse/aframe-resonance-audio-component
 
 <!-- License -->
