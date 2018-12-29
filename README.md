@@ -4,7 +4,7 @@
 
 | Linux | macOS | Windows |
 | --- | --- | --- |
-| [![TravisCI Build Status][travis-img]][travis-link] | - | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+| [![TravisCI Build Status][travis-img]][travis-link] | [![CircleCI][circleci-img]][circleci-link] | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 [![Project License][license-img]][license-link]
 [![Grade Badge][codacy-grade-img]][codacy-grade-link]
@@ -272,6 +272,10 @@ Dynamically changing positioning and rotation of audio source or room container 
 <!-- appveyor -->
 [appveyor-img]: https://ci.appveyor.com/api/projects/status/44hwcfb3i05mhq7f/branch/master?svg=true
 [appveyor-link]: https://ci.appveyor.com/project/mkungla/aframe-resonance-audio-component
+
+<!-- circleci -->
+[circleci-img]: https://circleci.com/gh/digaverse/aframe-resonance-audio-component.svg?style=svg
+[circleci-link]: https://circleci.com/gh/digaverse/aframe-resonance-audio-component
 
 <!-- License -->
 [license-img]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
