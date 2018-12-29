@@ -9,7 +9,6 @@ workflows:
   version: 2
   macos-build:
     jobs:
-      - lint
       - build:
           requires:
             - lint
@@ -23,29 +22,6 @@ workflows:
                 - /.*-dev$/
                 - /hotfix-.*/
 jobs:
-  lint:
-    macos:
-      xcode: "10.1.0"
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: |
-            npm --version
-            node --version
-            npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: lint (standard)
-          command: npm run lint
   build:
     macos:
       xcode: "10.1.0"
