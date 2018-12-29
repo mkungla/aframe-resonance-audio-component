@@ -8,3 +8,7 @@ tests
 .gitattributes
 .gitignore
 .mailmap
+**/*.gitkeep
+.appveyor.yml
+.travis.yml
+.circleci/config.yml
