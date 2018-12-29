@@ -18,7 +18,7 @@ suite(`component ${cs} default`, () => {
     */
     putOnPageAndWaitForLoad(
       sceneFactory(
-        entityFactory({[cs]: {}})
+        entityFactory({ [cs]: {} })
       ),
       done
     )
@@ -29,7 +29,7 @@ suite(`component ${cs} default`, () => {
     // Src and room relation.
     expect(el.getAttribute(cs).src).to.equal('')
     expect(component.sound).to.equal(null)
-    expect(component.connected).to.deep.equal({element: false, stream: false})
+    expect(component.connected).to.deep.equal({ element: false, stream: false })
     expect(el.getAttribute(cs).room).to.equal('')
     expect(component.room).to.equal(null)
     expect(component.resonance).to.equal(null)
@@ -51,7 +51,7 @@ suite(`component ${cs} default`, () => {
     expect(el.getAttribute(cs).gain).to.equal(ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN)
     expect(el.getAttribute(cs).maxDistance).to.equal(ResonanceAudio.Utils.DEFAULT_MAX_DISTANCE)
     expect(el.getAttribute(cs).minDistance).to.equal(ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE)
-    expect(el.getAttribute(cs).directivityPattern).to.deep.equal({x: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS})
+    expect(el.getAttribute(cs).directivityPattern).to.deep.equal({ x: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS })
     expect(el.getAttribute(cs).sourceWidth).to.equal(ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH)
     expect(el.getAttribute(cs).rolloff).to.equal(ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF)
   })
@@ -76,11 +76,11 @@ suite(`component ${cs} without entering an audio room`, () => {
     */
     putOnPageAndWaitForLoad(
       sceneFactory(
-        entityFactory({position: '2 1 0'},
+        entityFactory({ position: '2 1 0' },
           entityFactory({
             position: '1 1 1',
             rotation: '0 45 0',
-            [cs]: {visualize: true}
+            [cs]: { visualize: true }
           })
         )
       ),
@@ -108,21 +108,21 @@ suite(`component ${cs} without entering an audio room`, () => {
     el.setAttribute(cs, 'position', '4 4 4')
     document.querySelector('a-scene').object3D.updateMatrixWorld(true)
     // Audio source entity in world coordinates (unchanged).
-    compareMatrixtoPosAndRot(el.object3D.matrixWorld, {x: 3, y: 2, z: 1}, {x: 0, y: 45, z: 0})
+    compareMatrixtoPosAndRot(el.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
     // Resonance Source in world coordinates (changed).
-    compareMatrixtoPosAndRot(component.getMatrixWorld(), {x: 6, y: 5, z: 4}, {x: 0, y: 45, z: 0})
+    compareMatrixtoPosAndRot(component.getMatrixWorld(), { x: 6, y: 5, z: 4 }, { x: 0, y: 45, z: 0 })
     // Visualization in world coordinates (changed).
-    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, {x: 6, y: 5, z: 4}, {x: 0, y: 45, z: 0})
+    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, { x: 6, y: 5, z: 4 }, { x: 0, y: 45, z: 0 })
   })
   test('update audio src rotation', () => {
     el.setAttribute(cs, 'rotation', '0 90 0')
     document.querySelector('a-scene').object3D.updateMatrixWorld(true)
     // Audio source entity in world coordinates (unchanged).
-    compareMatrixtoPosAndRot(el.object3D.matrixWorld, {x: 3, y: 2, z: 1}, {x: 0, y: 45, z: 0})
+    compareMatrixtoPosAndRot(el.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
     // Resonance Source in world coordinates (changed).
-    compareMatrixtoPosAndRot(component.getMatrixWorld(), {x: 3, y: 2, z: 1}, {x: 0, y: 90, z: 0})
+    compareMatrixtoPosAndRot(component.getMatrixWorld(), { x: 3, y: 2, z: 1 }, { x: 0, y: 90, z: 0 })
     // Visualization in world coordinates (changed).
-    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, {x: 3, y: 2, z: 1}, {x: 0, y: 90, z: 0})
+    compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 90, z: 0 })
   })
 
   test('visualization', () => {

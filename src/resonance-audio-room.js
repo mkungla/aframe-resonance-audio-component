@@ -14,24 +14,24 @@ AFRAME.registerComponent('resonance-audio-room', {
 
   schema: {
     // Room dimensions. The position is the center point of this box.
-    width: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.width},
-    height: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.height},
-    depth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.depth},
+    width: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.width },
+    height: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.height },
+    depth: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_ROOM_DIMENSIONS.depth },
 
     // Resonance audio parameters.
-    ambisonicOrder: {type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER},
-    speedOfSound: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SPEED_OF_SOUND},
+    ambisonicOrder: { type: 'int', default: ResonanceAudio.Utils.DEFAULT_AMBISONIC_ORDER },
+    speedOfSound: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_SPEED_OF_SOUND },
 
     // Room wall materials.
-    left: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    right: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    front: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    back: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    down: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
-    up: {default: 'brick-bare', oneOf: RESONANCE_MATERIAL},
+    left: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
+    right: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
+    front: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
+    back: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
+    down: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
+    up: { default: 'brick-bare', oneOf: RESONANCE_MATERIAL },
 
     // Whether to show a visualization of the room. This shows a wireframe of the box that is considered as the room.
-    visualize: {type: 'boolean', default: false}
+    visualize: { type: 'boolean', default: false }
   },
 
   init () {

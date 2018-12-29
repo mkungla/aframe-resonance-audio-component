@@ -19,8 +19,8 @@ suite(`component ${crbb}`, () => {
     putOnPage(
       sceneFactory(
         entityFactory({
-          geometry: {primitive: 'box', width: w, height: h, depth: d},
-          [crbb]: {visualize: true}
+          geometry: { primitive: 'box', width: w, height: h, depth: d },
+          [crbb]: { visualize: true }
         })
       )
     )
@@ -29,7 +29,7 @@ suite(`component ${crbb}`, () => {
       expect(component.data.width).to.equal(w)
       expect(component.data.height).to.equal(h)
       expect(component.data.depth).to.equal(d)
-      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: w / 2, height: h / 2, depth: d / 2})
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: w / 2, height: h / 2, depth: d / 2 })
       const visualizationSize = new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize()
       expect(visualizationSize.x).to.equal(w)
       expect(visualizationSize.y).to.equal(h)
@@ -51,8 +51,8 @@ suite(`component ${crbb}`, () => {
     putOnPage(
       sceneFactory(
         entityFactory({
-          geometry: {primitive: 'sphere', radius: r},
-          [crbb]: {visualize: true}
+          geometry: { primitive: 'sphere', radius: r },
+          [crbb]: { visualize: true }
         })
       )
     )
@@ -61,7 +61,7 @@ suite(`component ${crbb}`, () => {
       expect(component.data.width).to.equal(r * 2)
       expect(component.data.height).to.equal(r * 2)
       expect(component.data.depth).to.equal(r * 2)
-      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: r, height: r, depth: r})
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: r, height: r, depth: r })
       const visualizationSize = new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize()
       expect(visualizationSize.x).to.equal(r * 2)
       expect(visualizationSize.y).to.equal(r * 2)

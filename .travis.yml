@@ -22,7 +22,6 @@ cache:
   directories:
     - node_modules
   timeout: 180
-  yarn: true
 
 ################################################################################
 # Templates
@@ -35,7 +34,7 @@ templates:
     node_js:
       - node
     install:
-      - yarn install
+      - npm install
       # Firefox.
       - ./node_modules/.bin/mozilla-download ./firefox/ --product firefox --branch mozilla-aurora
       - export FIREFOX_NIGHTLY_BIN="./firefox/firefox/firefox-bin"
@@ -86,22 +85,22 @@ jobs:
       language: node_js
       node_js:
         - node
-      install: yarn install
-      script: yarn run lint
+      install: npm install
+      script: npm run lint
 
     - stage: test
       <<: *tmpl-common-setup
       env: JOB=firefox
-      script: yarn run test:firefox -- --single-run
+      script: npm run test:firefox -- --single-run
 
     - <<: *tmpl-common-setup
       env: JOB=chrome
-      script: yarn run test:chrome -- --single-run
+      script: npm run test:chrome -- --single-run
 
     - stage: build
       <<: *tmpl-common-setup
       env: JOB=build
-      script: yarn run build
+      script: npm run build
 
     - stage: deploy
       install: skip

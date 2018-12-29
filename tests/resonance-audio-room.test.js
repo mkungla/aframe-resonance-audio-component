@@ -18,7 +18,7 @@ suite(`component ${cr} default`, () => {
     */
     putOnPageAndWaitForLoad(
       sceneFactory(
-        entityFactory({[cr]: {}})
+        entityFactory({ [cr]: {} })
       ),
       done
     )
@@ -64,7 +64,7 @@ suite(`component ${cr}`, () => {
     putOnPageAndWaitForLoad(
       sceneFactory(
         entityFactory(
-          {position: '-1 -2 -3'},
+          { position: '-1 -2 -3' },
           entityFactory({
             position: '3 3 3',
             rotation: '0 -45 0',
@@ -96,12 +96,12 @@ suite(`component ${cr}`, () => {
     test('position and rotation', () => {
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       // Audio room in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, {x: 2, y: 1, z: 0}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, {x: 2, y: 1, z: 0}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -45, z: 0 })
     })
     test('dimensions', () => {
-      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({width: 0.5, height: 1, depth: 1.5})
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: 0.5, height: 1, depth: 1.5 })
       const visualizationSize = getBoundingBox(roomEl.getObject3D('audio-room')).getSize()
       expect(visualizationSize.x).to.equal(1)
       expect(visualizationSize.y).to.equal(2)
@@ -127,45 +127,45 @@ suite(`component ${cr}`, () => {
       containerEl.setAttribute('position', '-10 -20 -30')
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       // Audio room in world coordinates (changed).
-      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, {x: -7, y: -17, z: -27}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -7, y: -17, z: -27 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates (changed).
-      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, {x: -7, y: -17, z: -27}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, { x: -7, y: -17, z: -27 }, { x: 0, y: -45, z: 0 })
     })
     test('container rotation', () => {
       containerEl.setAttribute('rotation', '0 -90 0')
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       // Audio room in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, {x: -4, y: 1, z: 0}, {x: 0, y: -45 - 90, z: 0})
+      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -4, y: 1, z: 0 }, { x: 0, y: -45 - 90, z: 0 })
       // Visualization in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, {x: -4, y: 1, z: 0}, {x: 0, y: -45 - 90, z: 0})
+      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, { x: -4, y: 1, z: 0 }, { x: 0, y: -45 - 90, z: 0 })
     })
     test('room position', () => {
       roomEl.setAttribute('position', '-10 -20 -30')
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       // Audio room in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, {x: -11, y: -22, z: -33}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -11, y: -22, z: -33 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, {x: -11, y: -22, z: -33}, {x: 0, y: -45, z: 0})
+      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, { x: -11, y: -22, z: -33 }, { x: 0, y: -45, z: 0 })
     })
     test('room rotation', () => {
       roomEl.setAttribute('rotation', '0 -90 0')
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       // Audio room in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, {x: 2, y: 1, z: 0}, {x: 0, y: -90, z: 0})
+      compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -90, z: 0 })
       // Visualization in world coordinates.
-      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, {x: 2, y: 1, z: 0}, {x: 0, y: -90, z: 0})
+      compareMatrixtoPosAndRot(roomEl.getObject3D('audio-room').matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -90, z: 0 })
     })
     test('dimensions', () => {
-      const d = {width: 2, height: 3, depth: 4}
+      const d = { width: 2, height: 3, depth: 4 }
       roomEl.setAttribute(cr, d)
-      expect(component.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({width: d.width / 2, height: d.height / 2, depth: d.depth / 2})
+      expect(component.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({ width: d.width / 2, height: d.height / 2, depth: d.depth / 2 })
       const visualizationSize = getBoundingBox(roomEl.getObject3D('audio-room')).getSize()
       expect(visualizationSize.x).to.equal(d.width)
       expect(visualizationSize.y).to.equal(d.height)
       expect(visualizationSize.z).to.equal(d.depth)
     })
     test('acoustic parameters', () => {
-      roomEl.setAttribute(cr, {ambisonicOrder: 3, speedOfSound: 100})
+      roomEl.setAttribute(cr, { ambisonicOrder: 3, speedOfSound: 100 })
       expect(component.resonanceAudioScene._ambisonicOrder).to.equal(3)
       expect(component.resonanceAudioScene._room.speedOfSound).to.equal(100)
     })

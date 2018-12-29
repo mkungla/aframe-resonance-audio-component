@@ -13,22 +13,29 @@ AFRAME.registerComponent('resonance-audio-src', {
   dependencies: ['position', 'rotation'],
 
   schema: {
-    src: {type: 'string'}, // asset parsing is taken over from A-Frame.
-    room: {type: 'string'},
-    loop: {type: 'boolean', default: true},
-    autoplay: {type: 'boolean', default: true},
-
-    gain: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN},
-    maxDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MAX_DISTANCE},
-    minDistance: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE},
-    directivityPattern: {type: 'vec2', default: {x: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA, y: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS}},
-    sourceWidth: {type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH},
-    rolloff: {type: 'string', oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS, default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF},
-
-    position: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
-    rotation: {type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity)},
-
-    visualize: {type: 'boolean', default: false}
+    src: { type: 'string' }, // asset parsing is taken over from A-Frame.
+    room: { type: 'string' },
+    loop: { type: 'boolean', default: true },
+    autoplay: { type: 'boolean', default: true },
+    gain: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN },
+    maxDistance: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_MAX_DISTANCE },
+    minDistance: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_MIN_DISTANCE },
+    directivityPattern: {
+      type: 'vec2',
+      default: {
+        x: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_ALPHA,
+        y: ResonanceAudio.Utils.DEFAULT_DIRECTIVITY_SHARPNESS
+      }
+    },
+    sourceWidth: { type: 'number', default: ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH },
+    rolloff: {
+      type: 'string',
+      oneOff: ResonanceAudio.Utils.ATTENUATION_ROLLOFFS,
+      default: ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF
+    },
+    position: { type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity) },
+    rotation: { type: 'vec3', default: new THREE.Vector3(Infinity, Infinity, Infinity) },
+    visualize: { type: 'boolean', default: false }
   },
 
   init () {
@@ -84,10 +91,10 @@ AFRAME.registerComponent('resonance-audio-src', {
         this.el.sceneEl.object3D.updateMatrixWorld(true)
         this.updateResonancePosition().updateVisualization()
         if (roomLeft) {
-          this.el.emit('audioroom-left', {src: this.el, room: roomLeft.el})
+          this.el.emit('audioroom-left', { src: this.el, room: roomLeft.el })
         }
         if (roomEntered) {
-          this.el.emit('audioroom-entered', {src: this.el, room: roomEntered.el})
+          this.el.emit('audioroom-entered', { src: this.el, room: roomEntered.el })
         }
       })
     }
@@ -100,7 +107,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.toggleShowVisualization(this.data.visualize, false)
 
     if (roomLeft) {
-      this.el.emit('audioroom-left', {src: this.el, room: roomLeft.el})
+      this.el.emit('audioroom-left', { src: this.el, room: roomLeft.el })
     }
   },
 
@@ -269,7 +276,7 @@ AFRAME.registerComponent('resonance-audio-src', {
       localQuaternion = this.el.object3D.quaternion
     }
 
-    return new THREE.Matrix4().compose(localPosition, localQuaternion, {x: 1, y: 1, z: 1})
+    return new THREE.Matrix4().compose(localPosition, localQuaternion, { x: 1, y: 1, z: 1 })
   },
 
   /**

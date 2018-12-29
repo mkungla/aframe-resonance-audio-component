@@ -15,18 +15,18 @@ AFRAME.registerComponent('resonance-audio-room-bb', {
       this.setRoom(this.data)
       this.el.addEventListener('model-loaded', () => {
         this.setFromBB()
-        this.el.emit('bounded-audioroom-loaded', {room: this.el})
+        this.el.emit('bounded-audioroom-loaded', { room: this.el })
       })
     } else {
       // If bounded by a different geometry.
       this.setFromBB(this.data)
-      this.el.emit('bounded-audioroom-loaded', {room: this.el})
+      this.el.emit('bounded-audioroom-loaded', { room: this.el })
     }
   },
   setFromBB (base = {}) {
     // TODO: make a better bounding box, taking into account the centrepoint position of the entity.
     const size = getBoundingBox(this.el.object3D).getSize()
-    this.setRoom({...base, width: size.x, height: size.y, depth: size.z})
+    this.setRoom({ ...base, width: size.x, height: size.y, depth: size.z })
   },
   setRoom (values) {
     this.el.setAttribute('resonance-audio-room', values)

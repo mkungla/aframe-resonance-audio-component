@@ -35,16 +35,31 @@ Example with basic usage with primitives:
     <audio id="track" src="assets/audio/track.mp3"></audio>
   </a-assets>
   <a-resonance-audio-room
-    visualize="true"    position="0 0 -5"          width="40" height="4" depth="4"
-    ambisonic-order="3" speed-of-sound="343"
-    left="brick-bare"   right="curtain-heavy"      front="plywood-panel"
-    back="glass-thin"   down="parquet-on-concrete" up="acoustic-ceiling-tiles">
+    position="0 0 -5"
+    width="40"
+    height="4"
+    depth="4"
+    ambisonic-order="3"
+    speed-of-sound="343"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles"
+    visualize="true">
     <a-resonance-audio-src
-      visualize="true"  position="-10 0 0"
-      src="#track"      loop="true"        autoplay="true"></a-resonance-audio-src>
+      position="-10 0 0"
+      src="#track"
+      loop="true"
+      autoplay="true"
+      visualize="true"></a-resonance-audio-src>
     <a-resonance-audio-src
-      visualize="true"  position="10 0 0"
-      src="#track"      loop="true"        autoplay="true"></a-resonance-audio-src>
+      position="10 0 0"
+      src="#track"
+      loop="true"
+      autoplay="true"
+      visualize="true"></a-resonance-audio-src>
   </a-resonance-audio-room>
 </a-scene>
 ```
@@ -62,13 +77,19 @@ Example with entities, models and a bounding box room:
     position="0 1 -0.5"
     resonance-audio-room-bb="
       visualize: true;
-      left: brick-bare; right: transparent;        front: transparent;
-      back: brick-bare; down: parquet-on-concrete; up: transparent">
+      left: brick-bare;
+      right: transparent;
+      front: transparent;
+      back: brick-bare;
+      down: parquet-on-concrete;
+      up: transparent">
     <a-entity
       position="-1.5 -0.5 1.8"
       resonance-audio-src="
         visualize: true;
-        src: #track; loop: true; autoplay: true;"></a-entity>
+        src: #track;
+        loop: true;
+        autoplay: true;"></a-entity>
   </a-entity>
 </a-scene>
 ```
@@ -77,23 +98,39 @@ Example with entities, models and a bounding box room:
 All properties can be changed dynamically. This allows for [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream)s to be set as audio sources.
 
 Take the following example. A more comprehensive version is available in [examples/primitives-using-mediastream/](examples/primitives-using-mediastream/index.html).
+
 ```html
 <a-scene>
   <a-assets>
     <audio id="track" src="assets/audio/track.mp3"></audio>
   </a-assets>
   <a-resonance-audio-room
-    visualize="true"    position="0 0 -5"          width="4" height="4" depth="4"
-    ambisonic-order="3" speed-of-sound="343"
-    left="brick-bare"   right="curtain-heavy"      front="plywood-panel"
-    back="glass-thin"   down="parquet-on-concrete" up="acoustic-ceiling-tiles">
+    position="0 0 -5"
+    width="4"
+    height="4"
+    depth="4"
+    ambisonic-order="3"
+    speed-of-sound="343"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles"
+    visualize="true">
     <a-resonance-audio-src
-      id="audioSource"  visualize="true"   position="0 0 0"
-      src="#track"      loop="true"        autoplay="true"></a-resonance-audio-src>
+      id="audioSource"
+      position="0 0 0"
+      src="#track"
+      loop="true"
+      autoplay="true"
+      visualize="true"></a-resonance-audio-src>
   </a-resonance-audio-room>
 </a-scene>
 ```
+
 When this is loaded, `track.mp3` plays indefinitely. Running the following javascript changes the source from `#track` to the passed [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream). A practical example of `stream` is a WebRTC stream.
+
 ```js
 document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src', stream)
 ```
@@ -122,28 +159,29 @@ yarn add @digaverse/aframe-resonance-audio-component
 ### Properties
 | Property | Description | Default value | Values |
 | -------- | ----------- | ------------- | ------ |
-| `width`    | Width of the audio room (in meters). | [0](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L182)
-| `height`   | Height of the audio room (in meters). | [0](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L182)
-| `depth`    | Depth of the audio room (in meters). | [0](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L182)
-| `ambisonicOrder` | Ambisonic order of the audio room. | [1](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L136)
-| `speedOfSound` | Speed of sound within the audio room (in meters per second). | [343](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L80)
-| `left`     | Material of the left room wall.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `right`     | Material of the right room wall.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `front`     | Material of the front room wall.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `back`     | Material of the back room wall.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `left`     | Material of the room floor.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `up`     | Material of the room ceiling.  | `brick-bare` | [room materials](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260)
-| `visualize` | Show a wireframe box visualization of the audio room. Access using `el.getObject3D('audio-room')`. | false
+| `width`           | Width of the audio room (in meters). | [0][DEFAULT_ROOM_DIMENSIONS] | |
+| `height`          | Height of the audio room (in meters). | [0][DEFAULT_ROOM_DIMENSIONS] | |
+| `depth`           | Depth of the audio room (in meters). | [0][DEFAULT_ROOM_DIMENSIONS] | |
+| `ambisonicOrder`  | Ambisonic order of the audio room. | 1 | |
+| `speedOfSound`    | Speed of sound within the audio room (in meters per second). | [343][DEFAULT_SPEED_OF_SOUND] | |
+| `left`            | Material of the left room wall.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `right`           | Material of the right room wall.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `front`           | Material of the front room wall.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `back`            | Material of the back room wall.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `down`            | Material of the room floor.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `up`              | Material of the room ceiling.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
+| `visualize`       | Show a wireframe box visualization of the audio room. Access using `el.getObject3D('audio-room')` | false | `true` |
+
 ### Members
 Accessible via `entity.components['resonance-audio-room'].<member>`.
 
 | Name | Description | Type |
 | - | - | - |
-| `audioContext` | The audio context used by Google Resonance. | [AudioContext](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)
-| `resonanceAudioScene` | The reference to the Google Resonance instance managing the audio in this room. | [ResonanceAudio](https://developers.google.com/resonance-audio/reference/web/ResonanceAudio)
+| `audioContext` | The audio context used by Google Resonance. | [AudioContext] |
+| `resonanceAudioScene` | The reference to the Google Resonance instance managing the audio in this room. | [ResonanceAudio] |
 | `sources` | A collection of the attached audio source components. | array of resonance-audio-src component instances |
 | `el.audioSources` | Returns sources. | array of resonance-audio-src component instances |
-| `el.sounds` | A collection of the origins of the attached audio sources. | array of [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) and/or [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) objects |
+| `el.sounds` | A collection of the origins of the attached audio sources. | array of [HTMLMediaElement] and/or [MediaStream] objects |
 
 ## resonance-audio-room-bb
 This component's only purpose is to instantiate a resonance-audio-room component with the dimensions of the bounded object. For any interaction, use the resonance-audio-room component after it has been fully loaded.
@@ -156,32 +194,32 @@ This component's only purpose is to instantiate a resonance-audio-room component
 ### Properties
 | Property | Description | Default value | Values |
 | -------- | ----------- | ------------- | ------ |
-| `src` | The source of the audio. This can be a [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) (`<audio />` or `<video />`), [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream), an ID string pointing to a [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) or a resouce string. If a resource string is passed, the resource is loaded in the `<audio />` element accessible via the `defaultAudioEl` member. Note that you can not set the same [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) on multiple entities with the `resonance-audio-src` component (globally!). | |
-| `room` | The audio room of this audio source. Use this if the room and source aren't parent and child, respectively. This can be a string selector (used with `document.querySelector` or a [HTMLElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)). | el.parentNode | |
-| `loop` | Whether to loop the element source. Overwrites the value set by the input element. | true |
-| `autoplay` | Whether to autoplay the element source. Overwrites the value set by the input element. | true |
-| [`gain`](https://developers.google.com/resonance-audio/reference/web/Source#setGain) | Source's gain (linear). | [1](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L37)
-| [`maxDistance`](https://developers.google.com/resonance-audio/reference/web/Source#setMaxDistance) | Source's maximum distance (in meters). | [1000](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L100)
-| [`minDistance`](https://developers.google.com/resonance-audio/reference/web/Source#setMinDistance) | Source's minimum distance (in meters). | [1](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L96)
-| [`directivityPattern`](https://developers.google.com/resonance-audio/reference/web/Source#setDirectivityPattern) | Source's directivity pattern where the [first number is the alpha](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L107) and [the second is the sharpness](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L114). An alpha of 0 is an omnidirectional pattern, 1 is a bidirectional pattern, 0.5 is a cardiod pattern. The sharpness of the pattern is increased exponentially. | `0 1` <br> or in [Vector3](https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js) format: `{x:0, y:1}`
-| [`sourceWidth`](https://developers.google.com/resonance-audio/reference/web/Source#setSourceWidth) | The source width (in degrees), where 0 degrees is a point source and 360 degrees is an omnidirectional source. | [0](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L143)
-| [`rolloff`](https://developers.google.com/resonance-audio/reference/web/Source#setRolloff) | Source's rolloff model. | [`logarithmic`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L92) | [`logarithmic` \| `linear` \| `none`](https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L86)
-| `position` | The position in local coordinates. If set, this position will be used instead of the entity's position component. Revert to the entity's position by setting this property to any invalid position (such as `null`). | { }
-| `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { }
-| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. Access using `el.getObject3D('audio-src')`. | false
+| `src` | The source of the audio. This can be a [HTMLMediaElement] (`<audio />` or `<video />`), [MediaStream], an ID string pointing to a [HTMLMediaElement] or a resouce string. If a resource string is passed, the resource is loaded in the `<audio />` element accessible via the `defaultAudioEl` member. Note that you can not set the same [HTMLMediaElement] on multiple entities with the `resonance-audio-src` component (globally!). | | |
+| `room` | The audio room of this audio source. Use this if the room and source aren't parent and child, respectively. This can be a string selector (used with `document.querySelector` or a [HTMLElement]). | el.parentNode | |
+| `loop` | Whether to loop the element source. Overwrites the value set by the input element. | true | |
+| `autoplay` | Whether to autoplay the element source. Overwrites the value set by the input element. | true | |
+| [`gain`][ra_setGain] | Source's gain (linear). | [1][DEFAULT_SOURCE_GAIN] | |
+| [`maxDistance`][ra_setMaxDistance] | Source's maximum distance (in meters). | [1000][DEFAULT_MAX_DISTANCE] | |
+| [`minDistance`][ra_setMinDistance] | Source's minimum distance (in meters). | [1][DEFAULT_MIN_DISTANCE] | |
+| [`directivityPattern`][ra_setDirectivityPattern] | Source's directivity pattern where the [first number is the alpha][DEFAULT_DIRECTIVITY_ALPHA] and [the second is the sharpness][DEFAULT_DIRECTIVITY_SHARPNESS]. An alpha of 0 is an omnidirectional pattern, 1 is a bidirectional pattern, 0.5 is a cardiod pattern. The sharpness of the pattern is increased exponentially. | `0 1` <br> or in [THREE.Vector3][THREE_Vector3] format: `{x:0, y:1}` | |
+| [`sourceWidth`][ra_setSourceWidth] | The source width (in degrees), where 0 degrees is a point source and 360 degrees is an omnidirectional source. | [0][DEFAULT_SOURCE_WIDTH] | |
+| [`rolloff`][ra_setRolloff] | Source's rolloff model. | [`logarithmic`][DEFAULT_ATTENUATION_ROLLOFF] | [oneOf(`logarithmic`, `linear`, `none`)][ATTENUATION_ROLLOFFS]
+| `position` | The position in local coordinates. If set, this position will be used instead of the entity's position component. Revert to the entity's position by setting this property to any invalid position (such as `null`). | { } | |
+| `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { } | |
+| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. Access using `el.getObject3D('audio-src')`. | false | true|
 
 ### Members
 Accessible via `entity.components['resonance-audio-src'].<member>`.
 
 | Name | Description | Type |
 | - | - | - |
-| `room` | The audio room component. | [AComponent](https://github.com/aframevr/aframe/blob/master/src/core/component.js)
-| `connected.element` | Whether the audio of this source comes from an [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement). | boolean
-| `connected.stream` | Whether the audio of this source comes from a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream). | boolean
-| `sound` | The current connected [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) or [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) instance. | [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) \| [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream)
-| `resonance` | Reference to the Google Resonance audio source | [Source](https://developers.google.com/resonance-audio/reference/web/Source)
-| `defaultAudioEl` | The audio element used when a resource string is set as the source. | [HTMLAudioElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement)
-| `mediaAudioSourceNodes` | A collection of references to sources (so they can be reused). | mapping of [HTMLMediaElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement) to [MediaElementAudioSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/MediaElementAudioSourceNode) and [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) to [MediaStreamAudioSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamAudioSourceNode)
+| `room` | The audio room component. | [AComponent] |
+| `connected.element` | Whether the audio of this source comes from an [HTMLMediaElement]. | boolean |
+| `connected.stream` | Whether the audio of this source comes from a [MediaStream]. | boolean |
+| `sound` | The current connected [HTMLMediaElement] or [MediaStream] instance. | [HTMLMediaElement] or [MediaStream] |
+| `resonance` | Reference to the Google Resonance audio source | [Source][ra_Source] |
+| `defaultAudioEl` | The audio element used when a resource string is set as the source. | [HTMLAudioElement] |
+| `mediaAudioSourceNodes` | A collection of references to sources (so they can be reused). | mapping of [HTMLMediaElement] to [MediaElementAudioSourceNode] and [MediaStream] to [MediaStreamAudioSourceNode]
 
 ### Events
 | Event | `evt.detail` property | Description |
@@ -249,3 +287,35 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 [devdep-status-img]: https://david-dm.org/digaverse/aframe-resonance-audio-component/dev-status.svg
 [devdep-status-link]: https://david-dm.org/digaverse/aframe-resonance-audio-component?type=dev
+
+<!-- Links to resonance-audio -->
+[DEFAULT_ROOM_DIMENSIONS]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L182
+[DEFAULT_SPEED_OF_SOUND]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L80
+[ROOM_MATERIAL_COEFFICIENTS]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L260
+[DEFAULT_SOURCE_GAIN]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L37
+[DEFAULT_MAX_DISTANCE]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L100
+[DEFAULT_MIN_DISTANCE]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L96
+[DEFAULT_DIRECTIVITY_ALPHA]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L107
+[DEFAULT_DIRECTIVITY_SHARPNESS]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L114
+[DEFAULT_SOURCE_WIDTH]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L143
+[DEFAULT_ATTENUATION_ROLLOFF]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L92
+[ATTENUATION_ROLLOFFS]: https://github.com/resonance-audio/resonance-audio-web-sdk/blob/master/src/utils.js#L86
+[ra_setGain]: https://developers.google.com/resonance-audio/reference/web/Source#setGain
+[ra_setMaxDistance]: https://developers.google.com/resonance-audio/reference/web/Source#setMaxDistance
+[ra_setMinDistance]: https://developers.google.com/resonance-audio/reference/web/Source#setMinDistance
+[ra_setDirectivityPattern]: https://developers.google.com/resonance-audio/reference/web/Source#setDirectivityPattern
+[ra_setSourceWidth]: https://developers.google.com/resonance-audio/reference/web/Source#setSourceWidth
+[ra_setRolloff]: https://developers.google.com/resonance-audio/reference/web/Source#setRolloff
+[ra_Source]: https://developers.google.com/resonance-audio/reference/web/Source
+
+<!-- other -->
+[HTMLMediaElement]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+[HTMLAudioElement]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement
+[MediaElementAudioSourceNode]: https://developer.mozilla.org/en-US/docs/Web/API/MediaElementAudioSourceNode
+[MediaStreamAudioSourceNode]: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamAudioSourceNode
+[MediaStream]: https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
+[AudioContext]: https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
+[ResonanceAudio]: https://developers.google.com/resonance-audio/reference/web/ResonanceAudio
+[HTMLElement]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+[THREE_Vector3]: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
+[AComponent]: https://github.com/aframevr/aframe/blob/master/src/core/component.js
