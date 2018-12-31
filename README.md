@@ -3,11 +3,9 @@
 
 **Build Status**
 
-| OS | Status |
+| Linux | OS X | Windows |
 | --- | --- | --- |
-| **Linux** | [![TravisCI Build Status][travis-img]][travis-link] |
-| **OS X** | [![CircleCI][circleci-img]][circleci-link] |
-| **Windows** | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+| [![TravisCI Build Status][travis-img]][travis-link] | [![CircleCI][circleci-img]][circleci-link] | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 
 [![Project License][license-img]][license-link]
