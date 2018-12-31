@@ -5,7 +5,7 @@ shallow_clone: true
 
 configuration:
   - Build
-  - IE
+  - Edge
   # - Firefox
   # - Chrome
 
@@ -39,7 +39,7 @@ for:
       - ps: Install-Product node $env:nodejs_version
       - npm install
     build_script:
-      - npm run test:ie -- --single-run
+      - npm run test:edge -- --single-run
   # -
   #   matrix:
   #     only:
