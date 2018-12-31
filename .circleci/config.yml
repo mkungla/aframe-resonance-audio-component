@@ -10,15 +10,15 @@ workflows:
   macos-build:
     jobs:
       - build
-      - test:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - master
-                - /.*-dev$/
-                - /hotfix-.*/
+      # - test:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      #           - /.*-dev$/
+      #           - /hotfix-.*/
 jobs:
   build:
     macos:
@@ -44,27 +44,27 @@ jobs:
       - run:
           name: build
           command: npm run build
-  test:
-    macos:
-      xcode: "10.1.0"
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: |
-            npm --version
-            node --version
-            npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: run tests
-          command: |
-            npm run test:safari -- --single-run
+  # test:
+  #   macos:
+  #     xcode: "10.1.0"
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys:
+  #           - v1-dependencies-{{ checksum "package.json" }}
+  #           # fallback to using the latest cache if no exact match is found
+  #           - v1-dependencies-
+  #     - run:
+  #         name: install dependencies
+  #         command: |
+  #           npm --version
+  #           node --version
+  #           npm install
+  #     - save_cache:
+  #         paths:
+  #           - node_modules
+  #         key: v1-dependencies-{{ checksum "package.json" }}
+  #     - run:
+  #         name: run tests
+  #         command: |
+  #           npm run test:safari -- --single-run

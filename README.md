@@ -1,11 +1,13 @@
 # A-Frame Resonance Audio Component
 **Rich, Immersive, Audio [👉 Live demo 👈][gh-pages-link]**  
 
-| OS | Browsers | Status |
+**Build Status**
+
+| OS | Status |
 | --- | --- | --- |
-| **Linux** | `Firefox, Chrome` | [![TravisCI Build Status][travis-img]][travis-link] |
-| **macOS** | `Safari` | [![CircleCI][circleci-img]][circleci-link] |
-| **Windows** | `IE` | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
+| **Linux** | [![TravisCI Build Status][travis-img]][travis-link] |
+| **OS X** | [![CircleCI][circleci-img]][circleci-link] |
+| **Windows** | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 
 [![Project License][license-img]][license-link]

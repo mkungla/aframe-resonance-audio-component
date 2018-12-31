@@ -31,15 +31,15 @@ for:
       - npm install
     build_script:
       - npm run build
-  -
-    matrix:
-      only:
-        - configuration: Edge
-    install:
-      - ps: Install-Product node $env:nodejs_version
-      - npm install
-    build_script:
-      - npm run test:edge -- --single-run
+  # -
+  #   matrix:
+  #     only:
+  #       - configuration: Edge
+  #   install:
+  #     - ps: Install-Product node $env:nodejs_version
+  #     - npm install
+  #   build_script:
+  #     - npm run test:edge -- --single-run
   # -
   #   matrix:
   #     only:
