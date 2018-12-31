@@ -98,10 +98,6 @@ jobs:
         - sh -e /etc/init.d/xvfb start
       script: npm run test:chrome -- --single-run
 
-    - <<: *tmpl-common-setup
-      env: JOB=chrome
-      script: npm run test:chrome -- --single-run
-
     - stage: build
       <<: *tmpl-common-setup
       env: JOB=build
