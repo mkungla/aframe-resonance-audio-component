@@ -55,7 +55,7 @@
     "karma-chai-shallow-deep-equal": "0.0.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-env-preprocessor": "^0.1.1",
-    "karma-firefox-launcher": "^1.1.0",
+    "karma-firefox-launcher": "^2.0.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-safari-launcher": "^1.0.0",
