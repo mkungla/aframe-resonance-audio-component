@@ -51,7 +51,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "karma": "^6.1.0",
-    "karma-browserify": "^6.0.0",
+    "karma-browserify": "^8.0.0",
     "karma-chai-shallow-deep-equal": "0.0.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-env-preprocessor": "^0.1.1",
