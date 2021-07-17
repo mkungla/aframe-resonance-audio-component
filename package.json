@@ -1,6 +1,6 @@
 {
   "name": "aframe-resonance-audio-component",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "main": "src/index.js",
   "repository": {
