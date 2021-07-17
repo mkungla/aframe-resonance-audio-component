@@ -63,9 +63,9 @@ stages:
     # if: (type = pull_request) AND (branch = master)
     if: type IN (push, pull_request) AND (branch = master) AND (NOT tag IS present)
 
-  # deploy digaverse.github.io (only on tags on upstream)
+  # deploy mkungla.github.io (only on tags on upstream)
   - name: deploy
-    if: (repo = digaverse/aframe-resonance-audio-component) AND (NOT type = pull_request) AND (tag IS present)
+    if: (repo = mkungla/aframe-resonance-audio-component) AND (NOT type = pull_request) AND (tag IS present)
 
 ################################################################################
 # jobs
