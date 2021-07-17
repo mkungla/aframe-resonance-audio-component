@@ -1,5 +1,5 @@
 {
-  "name": "aframe-resonance-audio-component",
+  "name": "@digaverse/aframe-resonance-audio-component",
   "version": "0.3.4",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "main": "src/index.js",
