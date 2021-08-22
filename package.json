@@ -64,7 +64,7 @@
     "sinon": "^11.1.2",
     "sinon-chai": "^3.2.0",
     "standard": "^16.0.3",
-    "watchify": "^3.11.0",
+    "watchify": "^4.0.0",
     "webpack": "^5.24.3",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^4.0.0"
