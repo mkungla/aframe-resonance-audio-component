@@ -1,5 +1,8 @@
 # A-Frame Resonance Audio Component
+
 **Rich, Immersive, Audio [👉 Live demo 👈][gh-pages-link]**  
+
+> With Resonance Audio, bring dynamic spatial sound into your A-Frame VR, AR experiences at scale.
 
 **Build Status**
 
@@ -8,13 +11,14 @@
 | [![TravisCI Build Status][travis-img]][travis-link] | [![CircleCI][circleci-img]][circleci-link] | [![AppveyorCI Build Status][appveyor-img]][appveyor-link] |
 
 
+[![CodeQL][workflow-codeql-img]][workflow-codeql-link]
+
 [![Project License][license-img]][license-link]
 [![Grade Badge][codacy-grade-img]][codacy-grade-link]
 [![Dependencies][dep-status-img]][dep-status-link]
 [![Dev Dependencies][devdep-status-img]][devdep-status-link]
 
 
-> With Resonance Audio, bring dynamic spatial sound into your A-Frame VR, AR experiences at scale.
 
 [Google Resonance](https://developers.google.com/resonance-audio/) works with audio rooms and audio sources. The acoustics of each source are affected by the room it is in. For that purpose, this package provides three components:
 - resonance-audio-room
@@ -262,6 +266,9 @@ Dynamically changing positioning and rotation of audio source or room container 
 <sup>aframe-resonance-audio-component is based on [Google Resonance Audio project][resonance-audio-link]</sub>
 
 <!-- links -->
+[workflow-codeql-img]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/codeql-analysis.yml/badge.svg
+[workflow-codeql-link]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/codeql-analysis.yml
+
 [etiennepinchon/aframe-resonance]: https://github.com/etiennepinchon/aframe-resonance
 [resonance-audio-link]: https://developers.google.com/resonance-audio/
 
