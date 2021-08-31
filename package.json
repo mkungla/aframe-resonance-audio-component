@@ -1,18 +1,24 @@
 {
   "name": "aframe-resonance-audio-component",
-  "version": "0.3.6",
+  "version": "0.4.0",
+  "type": "module",
+  "title": "A-Frame Resonance Audio Component",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
-  "main": "src/index.js",
+  "license": "MIT",
+  "homepage": "https://mkungla.github.io/aframe-resonance-audio-component/",
+  "readme": "https://github.com/mkungla/aframe-resonance-audio-component#readme",
+  "bugs": {
+    "url": "https://github.com/mkungla/aframe-resonance-audio-component/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mkungla/aframe-resonance-audio-component.git"
   },
-  "bugs": {
-    "url": "https://github.com/mkungla/aframe-resonance-audio-component/issues"
+  "author": {
+    "email": "marko.kungla+opensource@gmail.com",
+    "name": "mkungla",
+    "url": "https://github.com/mkungla"
   },
-  "homepage": "https://github.com/mkungla/aframe-resonance-audio-component#readme",
-  "author": "Marko Kungla <marko.kungla@gmail.com>",
-  "license": "MIT",
   "keywords": [
     "aframe",
     "a-frame",
@@ -23,49 +29,27 @@
     "webvr",
     "mozvr"
   ],
+  "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --config ./config/webpack-dev.js --mode development --progress --colors",
-    "build": "webpack --config ./config/webpack-prod.js --mode production",
-    "gh-pages": "git subtree push --prefix examples github/mkungla gh-pages",
-    "lint": "./node_modules/.bin/eslint tests/ src/ config/",
-    "test": "karma start ./tests/karma.conf.js",
-    "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
-    "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
-    "test:safari": "karma start ./tests/karma.conf.js --browsers Safari",
-    "test:edge": "karma start ./tests/karma.conf.js --browsers Edge"
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode development",
+    "lint": "eslint"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
   },
   "devDependencies": {
-    "aframe": "^1.2.0",
-    "browserify": "^17.0.0",
-    "chai": "^4.3.4",
-    "chai-shallow-deep-equal": "^1.4.6",
+    "aframe": "1.2.0",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
-    "eslint": "^7.30.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "karma": "^6.1.0",
-    "karma-browserify": "^8.0.0",
-    "karma-chai-shallow-deep-equal": "0.0.4",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-env-preprocessor": "^0.1.1",
-    "karma-firefox-launcher": "^2.1.1",
-    "karma-mocha": "^2.0.1",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-safari-launcher": "^1.0.0",
-    "karma-sinon-chai": "^2.0.2",
-    "mocha": "^9.0.3",
-    "sinon": "^11.1.2",
-    "sinon-chai": "^3.2.0",
-    "standard": "^16.0.3",
-    "watchify": "^4.0.0",
-    "webpack": "^5.24.3",
-    "webpack-cli": "^4.5.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^6.2.0",
+    "eslint": "^7.32.0",
+    "html-webpack-plugin": "^5.3.2",
+    "sass": "^1.38.2",
+    "sass-loader": "^12.1.0",
+    "style-loader": "^3.2.1",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.0.0"
   }
 }
