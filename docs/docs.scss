@@ -1,0 +1,110 @@
+@use "sass:math";
+
+$font-size: 1em;
+$header-height: 30px;
+$footer-height: 18px;
+$main-height: calc(100vh - (#{$header-height} + #{$footer-height}));
+$left-padding: 5px;
+$primary-color: #373e47;
+$accent-color: #33425B;
+
+body {
+  overflow-y: hidden;
+  background: $primary-color;
+  color: #FAFAFA;
+  font-family: monospace;
+  font-size: $font-size;
+  margin: 0;
+}
+
+a {
+  color: #FAFAFA;
+  display: inline-block;
+  padding: 2px 0;
+  text-decoration: none;
+}
+
+header, footer {
+  white-space: nowrap;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+
+  h1 {
+    font-weight: 300;
+    font-size: $font-size;
+    display: inline-block;
+    margin: 0;
+    padding: 0 0 0 10px;
+  }
+}
+
+header {
+  height: $header-height;
+  line-height: $header-height;
+  font-weight: bold;
+  padding-left: $left-padding;
+  span {
+    line-height: $header-height;
+    padding-left: $left-padding;
+  }
+  .back {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 70px;
+    height: math.div($header-height, 1.5);
+    line-height: math.div($header-height, 1.5);
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: math.div($header-height, 2);
+    background: $accent-color;
+  background: linear-gradient(45deg, rgba(255,255,255,0) 5%, rgba(255,255,255,.5) 6%, rgba(255,255,255,0) 9%, rgba(255,255,255,.5) 10%, rgba(255,255,255,0) 17%, rgba(255,255,255,.5) 19%, rgba(255,255,255,0) 21%);
+    background-size: 150%;
+    background-position: right;
+    transition: 1s;
+    font-weight: bold;
+    &:hover {
+      background-position: left;
+      color: white;
+      box-shadow: inset 0px 3px 5px rgba(255,255,255,1), 0px 0px 10px rgba(0,0,0,0.25);
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+footer {
+  height: $footer-height;
+  line-height: $footer-height;
+  font-size: math.div($footer-height, 1.2);
+  padding-left: 5px
+}
+
+main {
+  flex: 1;
+  background-color: $accent-color;
+  height: $main-height;
+  display: flex;
+  /* Direction of the items, can be row or column */
+  flex-direction: column;
+}
+
+h1 {
+  padding-left: math.div($font-size, 2);
+}
+
+.links {
+  display: block;
+  padding-left: math.div($font-size, 2);
+  font-size: 2em;
+}
+
+.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}
