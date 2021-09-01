@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= htmlWebpackPlugin.options.title % - Usage with primitives and multiple sources></title>
+<meta charset=utf-8 />
+<link rel="icon" sizes="192x192" href="https://aframe.io/images/aframe-logo-192.png">
+<body>
+<script src="assets/aframe/aframe.min.js"></script>
+<body>
+<header is="example-header" title="Usage with primitives and multiple sources"></header>
+<main>
+<!-- EXAMPLE -->
+<a-scene embedded>
+  <a-assets>
+    <audio id="track-left" src="assets/static/audio/track.mp3"></audio>
+    <audio id="track-right" src="assets/static/audio/track.mp3"></audio>
+  </a-assets>
+  <a-resonance-audio-room
+    visualize="true"
+    position="0 0 -5"
+    width="40"
+    height="4"
+    depth="4"
+    ambisonic-order="3"
+    speed-of-sound="343"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles">
+    <a-resonance-audio-src
+      visualize="true"
+      position="-10 0 0"
+      src="#track-left"
+      loop="true"
+      autoplay="true"></a-resonance-audio-src>
+    <a-resonance-audio-src
+      visualize="true"
+      position="10 0 0"
+      src="#track-right"
+      loop="true"
+      autoplay="true"></a-resonance-audio-src>
+  </a-resonance-audio-room>
+  <a-sky color="#6EBAA7"></a-sky>
+</a-scene>
+<!-- / EXAMPLE -->
+</main>
+<footer is="docs-footer"/></footer>
+<a is="github-corner"></a>

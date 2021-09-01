@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= htmlWebpackPlugin.options.title % - Usage with primitives and MediaStream></title>
+<meta charset=utf-8 />
+<link rel="icon" sizes="192x192" href="https://aframe.io/images/aframe-logo-192.png">
+<body>
+<script src="assets/aframe/aframe.min.js"></script>
+<body>
+<header is="example-header" title="Usage with primitives and MediaStream"></header>
+<main>
+<!-- EXAMPLE -->
+<audio id="streamSrcFile" src="assets/static/audio/track.mp3"></audio>
+<a-scene embedded>
+  <a-resonance-audio-room
+    visualize="true"
+    position="0 0 -5"
+    width="4"
+    height="4"
+    depth="4"
+    ambisonic-order="3"
+    speed-of-sound="343"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles">
+    <a-resonance-audio-src
+      visualize="true"
+      position="0 0 0"
+      src=""></a-resonance-audio-src>
+  </a-resonance-audio-room>
+  <a-sky color="#6EBAA7"></a-sky>
+
+</a-scene>
+<!-- / EXAMPLE -->
+</main>
+<footer is="docs-footer"/></footer>
+<a is="github-corner"></a>
+<script>
+window.setTimeout(function(){
+
+  // This is only to show that the component works with streams, by turning an audio file into a stream.
+  const srcEl = document.querySelector('#streamSrcFile')
+
+  // Turn audio element into stream.
+  const captureStream = srcEl.mozCaptureStream || 
+    srcEl.captureStream || 
+    function() {throw new Error('browser does not support capture into stream')}
+
+  const stream = captureStream.call(srcEl)
+
+  // Set resonance audio src to stream.
+  document.querySelector('a-resonance-audio-src').setAttribute('resonance-audio-src', 'src', stream)
+
+  // Start stream.
+  srcEl.play()
+
+}, 3000);
+</script>

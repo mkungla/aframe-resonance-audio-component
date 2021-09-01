@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= htmlWebpackPlugin.options.title % - Using obj-model as room></title>
+<meta charset=utf-8 />
+<link rel="icon" sizes="192x192" href="https://aframe.io/images/aframe-logo-192.png">
+<body>
+<script src="assets/aframe/aframe.min.js"></script>
+<body>
+<header is="example-header" title="Using obj-model as room"></header>
+<main>
+<!-- EXAMPLE -->
+<a-scene embedded>
+  <a-assets>
+    <a-asset-item id="room-obj" src="assets/static/models/room/room-model.obj"></a-asset-item>
+    <a-asset-item id="room-mtl" src="assets/static/models/room/room-materials.mtl"></a-asset-item>
+    <audio id="track" src="assets/static/audio/track.mp3"></audio>
+  </a-assets>
+  <!-- ENVIRONMENT -->
+  <a-entity
+    obj-model="obj: #room-obj; mtl: #room-mtl "
+    position="0 1 -0.5"
+    resonance-audio-room-bb="
+      visualize: false;
+      left: brick-bare;
+      right: transparent;
+      front: transparent;
+      back: brick-bare;
+      down: parquet-on-concrete;
+      up: transparent">
+    <a-entity
+      position="-1.5 -0.5 1.8"
+      resonance-audio-src="
+        visualize: false;
+        src: #track;
+        loop: true;
+        autoplay: true;"></a-entity>
+  </a-entity>
+  <a-camera position="5 1.6 4" rotation="0 45 0"></a-camra>
+</a-scene>
+<!-- / EXAMPLE -->
+</main>
+<footer is="docs-footer"/></footer>
+<a is="github-corner"></a>

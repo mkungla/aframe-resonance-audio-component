@@ -1,5 +1,6 @@
 /* 
 global
+window
 document
 customElements
 HTMLAnchorElement
@@ -50,4 +51,26 @@ class DocsFooter extends HTMLElement {
 customElements.define('github-corner', GitHubCorner, { extends: 'a' })
 customElements.define('example-header', ExamplesHeader, { extends: 'header' })
 customElements.define('docs-footer', DocsFooter, { extends: 'footer' })
+
+if (typeof AFRAME !== 'undefined') {
+  const error = AFRAME.utils.debug('components:resonance-audio-src:error')
+  AFRAME.registerComponent('docs-autolplay-helper', {
+    dependencies: ['resonance-audio-src'],
+    init: function () {
+      this.onClick = this.onClick.bind(this);
+    },
+    play: function () {
+      window.addEventListener('click', this.onClick);
+    },
+    pause: function () {
+      window.removeEventListener('click', this.onClick);
+    },
+    onClick: function () {
+      const src = this.el.components['resonance-audio-src']
+      if (src && src.sound.getAttribute('autoplay') && src.sound.currentTime === 0) {
+        src.sound.play().then().catch(e => error(e))
+      }
+    },
+  })
+}
 
