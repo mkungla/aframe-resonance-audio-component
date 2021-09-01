@@ -3,11 +3,11 @@
  * Check if x, y and z properties are set.
  * @param {boolean}
  */
-module.exports.isVec3Set = function isVec3Set (v) {
+export const isVec3Set = (v) => {
   return typeof v === 'object' &&
-       !isNaN(parseFloat(v.x)) && isFinite(v.x) &&
-       !isNaN(parseFloat(v.y)) && isFinite(v.y) &&
-       !isNaN(parseFloat(v.z)) && isFinite(v.z)
+    !isNaN(parseFloat(v.x)) && isFinite(v.x) &&
+    !isNaN(parseFloat(v.y)) && isFinite(v.y) &&
+    !isNaN(parseFloat(v.z)) && isFinite(v.z)
 }
 
 /**
@@ -16,7 +16,7 @@ module.exports.isVec3Set = function isVec3Set (v) {
  * @param {AFRAME.ANode} entity
  * @param {function} cb
  */
-module.exports.onceWhenLoaded = function onceWhenLoaded (entity, cb) {
+ export const onceWhenLoaded = (entity, cb) => {
   if (entity.hasLoaded) {
     cb()
   } else {
@@ -35,7 +35,7 @@ module.exports.onceWhenLoaded = function onceWhenLoaded (entity, cb) {
  * @param {THREE.Object3D} object3D
  * @returns {THREE.Box3}
  */
-module.exports.getBoundingBox = function getBoundingBox (object3D) {
+ export const getBoundingBox = (object3D) => {
   object3D.updateMatrix()
   const oldMatrix = object3D.matrix
   const oldMatrixAutoUpdate = object3D.matrixAutoUpdate
