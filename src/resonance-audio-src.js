@@ -76,6 +76,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updateResonancePosition().updateVisualization()
 
     const roomEl = this.getRoomChoice()
+  
     if ((roomEl && roomEl.components && roomEl.components['resonance-audio-room']) !== this.room) {
       /**
        * Yes, this looks ugly. And this approach has a reason. The audio source needs the audio
@@ -286,7 +287,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    */
   getMatrixRoom () {
     return this.getMatrixWorld().premultiply(
-      new THREE.Matrix4().getInverse(this.room.el.object3D.matrixWorld)
+      new THREE.Matrix4().copy(this.room.el.object3D.matrixWorld).invert()
     )
   },
 
@@ -297,7 +298,7 @@ AFRAME.registerComponent('resonance-audio-src', {
    */
   getMatrixLocal () {
     return this.getMatrixWorld().premultiply(
-      new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld)
+      new THREE.Matrix4().copy(this.el.object3D.matrixWorld).invert()
     )
   },
 
@@ -384,7 +385,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updatePlaybackSettings() // TODO this shouldn't be here
     // Play the audio.
     if (this.sound.getAttribute('autoplay')) {
-      this.sound.play()
+      this.sound.play().then().catch(w => warn(w))
     }
   },
 

@@ -68,7 +68,7 @@ AFRAME.registerComponent('resonance-audio-room', {
     // Calculate camera position relative to room.
     this.resonanceAudioScene.setListenerFromMatrix(
       new THREE.Matrix4().multiplyMatrices(
-        new THREE.Matrix4().getInverse(this.el.object3D.matrixWorld),
+        new THREE.Matrix4().copy(this.el.object3D.matrixWorld).invert(),
         this.el.sceneEl.camera.el.object3D.matrixWorld
       )
     )
