@@ -1,14 +1,9 @@
 .git
 .github
-config
-examples
+docs
 tests
 .editorconfig
-.eslintrc.js
+.eslintignore
+.eslintrc.json
 .gitattributes
 .gitignore
-.mailmap
-**/*.gitkeep
-.appveyor.yml
-.travis.yml
-.circleci/config.yml
