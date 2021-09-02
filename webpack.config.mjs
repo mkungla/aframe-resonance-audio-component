@@ -96,7 +96,6 @@ const pkgconfig = {
         }
       ],
     }),
-    
     new webpack.DefinePlugin({
       pkginfo: (() => {
         const defs = {}
@@ -105,7 +104,7 @@ const pkgconfig = {
         })
         return defs
       })(),
-    }),    
+    }),
     new HtmlWebpackPlugin({
       ...docsmetaopts,
       filename: 'index.html',
@@ -140,16 +139,4 @@ const pkgconfig = {
   },
 }
 
-// const docsconfig = {
-//   mode: 'development',
-//   devServer: {
-//     hot: true,
-//     port: 8080,
-//     // watch: true,
-//     static: {
-//       directory: path.join(__dirname, 'dist'),
-//       serveIndex: true,
-//     },
-//   },
-// }
 export default pkgconfig
