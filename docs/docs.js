@@ -1,4 +1,4 @@
-/* 
+/*
 global
 window
 document
@@ -26,7 +26,7 @@ class ExamplesHeader extends HTMLElement {
   constructor() {
     super()
     const a = document.createElement('a')
-    a.setAttribute('href', '../');
+    a.setAttribute('href', 'https://mkungla.github.io/aframe-resonance-audio-component/');
     a.classList.add('back')
     a.innerHTML = 'back'
     this.appendChild(a)
