@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm install
-      - run: npm build
+      - run: npm ci
+      - run: npm run build
       - run: git fetch origin gh-pages
       - run: git switch gh-pages
       - run: ls -la
