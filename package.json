@@ -35,7 +35,8 @@
     "lint": "eslint . --ext js,mjs",
     "test": "karma start ./tests/karma.conf.js",
     "preversion": "npm run lint && npm test",
-    "version": "npm run build && git add -A",
+    "dist:jsdelivr": "node ./docs/dist-to-jsdelivr.js",
+    "version": "npm run build && npm run dist:jsdelivr && git add -A",
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
@@ -63,6 +64,7 @@
     "karma-sourcemap-loader": "^0.3.8",
     "karma-webpack": "^5.0.0",
     "mocha": "^9.1.1",
+    "replace-in-file": "^6.2.0",
     "sass": "^1.38.2",
     "sass-loader": "^12.1.0",
     "sinon": "^11.1.2",

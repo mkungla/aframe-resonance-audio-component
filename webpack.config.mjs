@@ -54,8 +54,8 @@ const examples = [
     filename: example,
     template: path.resolve(__dirname, `./docs/examples/${example}`),
     chunks: [
-      'assets/css',
-      'assets/js',
+      'assets/docscss',
+      'assets/docsjs',
       'aframe-resonance-audio-component',
     ],
   })
@@ -68,8 +68,8 @@ const pkgconfig = {
   entry: {
     'aframe-resonance-audio-component': './src/index.js',
     'aframe-resonance-audio-component.min': './src/index.js',
-    'assets/js': './docs/docs.js',
-    'assets/css': './docs/docs.scss',
+    'assets/docsjs': './docs/docs.js',
+    'assets/docscss': './docs/docs.scss',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -115,8 +115,8 @@ const pkgconfig = {
       filename: 'index.html',
       template: path.resolve(__dirname, './docs/index.html'),
       chunks: [
-        'assets/css',
-        'assets/js',
+        'assets/docscss',
+        'assets/docsjs',
       ],
     }),
     ...examples,
