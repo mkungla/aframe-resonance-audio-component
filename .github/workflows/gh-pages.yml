@@ -18,7 +18,7 @@ jobs:
       - run: git fetch origin gh-pages
       - run: git switch gh-pages
       - run: |
-          rm -rf !(dist/*)
+          shopt -s extglob && rm -rf !(dist/*)
           mv -f dist/* . && rm -rf dist
       - run: ls -la
       # - name: Get the version
