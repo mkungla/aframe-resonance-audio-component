@@ -1,8 +1,13 @@
-/* global setup, suite, test, expect, THREE */
-require('aframe')
+/* global setup, suite, test, expect, document, THREE */
+
 require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
-const { sceneFactory, entityFactory, putOnPageAndWaitForLoad, compareMatrixtoPosAndRot } = require('./helpers')
+const {
+  sceneFactory,
+  entityFactory,
+  putOnPageAndWaitForLoad,
+  compareMatrixtoPosAndRot
+} = require('./helpers')
 const cs = 'resonance-audio-src'
 
 suite(`component ${cs} default`, () => {
@@ -10,12 +15,11 @@ suite(`component ${cs} default`, () => {
   let component
 
   setup(done => {
-    /*
-    HTML:
-      <a-scene>
-        <a-entity resonance-audio-src></a-entity> <!-- el -->
-      </a-scene>
-    */
+    // ```html
+    // <a-scene>
+    //   <a-entity resonance-audio-src></a-entity>
+    // </a-scene>
+    // ```
     putOnPageAndWaitForLoad(
       sceneFactory(
         entityFactory({ [cs]: {} })
@@ -25,6 +29,7 @@ suite(`component ${cs} default`, () => {
     el = document.querySelector(`[${cs}]`)
     component = el.components[cs]
   })
+
   test('playback', () => {
     // Src and room relation.
     expect(el.getAttribute(cs).src).to.equal('')
@@ -42,10 +47,12 @@ suite(`component ${cs} default`, () => {
     expect(el.getAttribute(cs).loop).to.equal(true)
     expect(el.getAttribute(cs).autoplay).to.equal(true)
   })
+
   test('custom position and orientation', () => {
     expect(el.getAttribute(cs).position).to.deep.equal(new THREE.Vector3(Infinity, Infinity, Infinity))
     expect(el.getAttribute(cs).rotation).to.deep.equal(new THREE.Vector3(Infinity, Infinity, Infinity))
   })
+
   test('acoustic parameters', () => {
     expect(component.resonance).to.equal(null)
     expect(el.getAttribute(cs).gain).to.equal(ResonanceAudio.Utils.DEFAULT_SOURCE_GAIN)
@@ -55,6 +62,7 @@ suite(`component ${cs} default`, () => {
     expect(el.getAttribute(cs).sourceWidth).to.equal(ResonanceAudio.Utils.DEFAULT_SOURCE_WIDTH)
     expect(el.getAttribute(cs).rolloff).to.equal(ResonanceAudio.Utils.DEFAULT_ATTENUATION_ROLLOFF)
   })
+
   test('visualization', () => {
     expect(el.getAttribute(cs).visualize).to.equal(false)
     expect(el.getObject3D('audio-src')).to.equal(undefined)
@@ -66,14 +74,13 @@ suite(`component ${cs} without entering an audio room`, () => {
   let component
 
   setup(done => {
-    /*
-    HTML:
-      <a-scene>
-        <a-entity position="1 1 1">
-          <a-entity resonance-audio-src="..."></a-entity> <!-- el -->
-        </a-entity>
-      </a-scene>
-    */
+    // ```html
+    // <a-scene>
+    //   <a-entity position="1 1 1">
+    //     <a-entity resonance-audio-src="..."></a-entity> <!-- el -->
+    //   </a-entity>
+    // </a-scene>
+    // ```
     putOnPageAndWaitForLoad(
       sceneFactory(
         entityFactory({ position: '2 1 0' },
@@ -114,6 +121,7 @@ suite(`component ${cs} without entering an audio room`, () => {
     // Visualization in world coordinates (changed).
     compareMatrixtoPosAndRot(el.getObject3D('audio-src').matrixWorld, { x: 6, y: 5, z: 4 }, { x: 0, y: 45, z: 0 })
   })
+
   test('update audio src rotation', () => {
     el.setAttribute(cs, 'rotation', '0 90 0')
     document.querySelector('a-scene').object3D.updateMatrixWorld(true)
@@ -129,6 +137,7 @@ suite(`component ${cs} without entering an audio room`, () => {
     expect(el.getObject3D('audio-src')).to.be.an.instanceof(THREE.Object3D)
     expect(el.getObject3D('audio-src').material.color.getHex()).to.equal(0xff0000)
   })
+
   test('remove and re-add visualization', () => {
     const currentObject3Dcount = el.object3D.children.length
     expect(el.getObject3D('audio-src')).to.be.an.instanceOf(THREE.Object3D)

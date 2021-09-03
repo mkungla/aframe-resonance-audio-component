@@ -1,26 +1,51 @@
+const path = require('path')
 // Karma configuration.
 module.exports = function (config) {
   config.set({
     basePath: '../',
-    browserify: {
-      debug: true,
-      paths: ['./']
-    },
     // Default use firefox only
-    browsers: ['Firefox'],
+    browsers: ['ChromeHeadless'],
+    singleRun: true,
+    concurrency: Infinity,
+    port: 9999,
     client: {
       captureConsole: true,
       mocha: { ui: 'tdd' }
     },
-    envPreprocessor: ['TEST_ENV'],
+    exclude: [
+      'node_modules'
+    ],
     files: [
-      // Define test files.
-      { pattern: 'tests/**/*.test.js' },
+      { pattern: 'tests/setup.js', watched: true },
       // Serve test assets.
       { pattern: 'tests/assets/**/*', included: false, served: true }
     ],
-    frameworks: ['mocha', 'sinon-chai', 'chai-shallow-deep-equal', 'browserify'],
-    preprocessors: { 'tests/**/*.js': ['browserify', 'env'] },
-    reporters: ['mocha']
+    frameworks: ['mocha', 'sinon-chai', 'chai-shallow-deep-equal', 'webpack'],
+    preprocessors: { 
+      'tests/setup.js': ['webpack', 'sourcemap'],
+    },
+    reporters: ['mocha', 'coverage'],
+    webpack: {
+      devtool: 'inline-source-map',
+      module: {
+        rules: [
+          // instrument only testing sources with Istanbul
+          {
+            test: /\.js$/,
+            use: { loader: 'istanbul-instrumenter-loader' },
+            include: path.resolve('src/')
+          }
+        ]
+      }
+    },
+    webpackMiddleware: {
+      noInfo: true
+    },
+    coverageReporter: {
+      type: 'text'
+    },
+    coverageIstanbulReporter: {
+      reports: [ 'text-summary' ],
+    },
   })
 }

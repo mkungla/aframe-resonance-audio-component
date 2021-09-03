@@ -1,9 +1,9 @@
-/* global THREE */
+/* global THREE, AFRAME */
 /**
  * Check if x, y and z properties are set.
  * @param {boolean}
  */
-export const isVec3Set = (v) => {
+ module.exports.isVec3Set = (v) => {
   return typeof v === 'object' &&
     !isNaN(parseFloat(v.x)) && isFinite(v.x) &&
     !isNaN(parseFloat(v.y)) && isFinite(v.y) &&
@@ -16,7 +16,7 @@ export const isVec3Set = (v) => {
  * @param {AFRAME.ANode} entity
  * @param {function} cb
  */
- export const onceWhenLoaded = (entity, cb) => {
+ module.exports.onceWhenLoaded = (entity, cb) => {
   if (entity.hasLoaded) {
     cb()
   } else {
@@ -35,7 +35,7 @@ export const isVec3Set = (v) => {
  * @param {THREE.Object3D} object3D
  * @returns {THREE.Box3}
  */
- export const getBoundingBox = (object3D) => {
+ module.exports.getBoundingBox = (object3D) => {
   object3D.updateMatrix()
   const oldMatrix = object3D.matrix
   const oldMatrixAutoUpdate = object3D.matrixAutoUpdate
@@ -61,4 +61,8 @@ export const isVec3Set = (v) => {
   object3D.updateMatrixWorld()
 
   return bounds
+}
+
+module.exports.aframeVersion = () => {
+  return AFRAME.version
 }

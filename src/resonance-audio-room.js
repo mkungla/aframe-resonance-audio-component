@@ -1,6 +1,6 @@
 /* global AFRAME, THREE, AudioContext */
-import { ResonanceAudio } from 'resonance-audio'
-import { onceWhenLoaded, getBoundingBox } from './utils'
+const { ResonanceAudio } = require('resonance-audio')
+const { onceWhenLoaded, getBoundingBox } = require('./utils')
 
 const RESONANCE_MATERIAL = Object.keys(ResonanceAudio.Utils.ROOM_MATERIAL_COEFFICIENTS)
 

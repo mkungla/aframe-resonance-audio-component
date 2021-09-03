@@ -1,6 +1,6 @@
 /* global document, AFRAME, THREE, MediaStream, HTMLMediaElement */
-import { ResonanceAudio } from 'resonance-audio'
-import { isVec3Set, onceWhenLoaded } from './utils'
+const { ResonanceAudio } = require('resonance-audio')
+const { isVec3Set, onceWhenLoaded } = require('./utils')
 
 const warn = AFRAME.utils.debug('components:resonance-audio-src:warn')
 

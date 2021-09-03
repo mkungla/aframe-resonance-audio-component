@@ -74,6 +74,9 @@ const pkgconfig = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
   },
+  resolve: {
+    extensions: ['.js'],
+  },
   plugins: [
     new webpack.ProgressPlugin(),
     new CleanWebpackPlugin({
