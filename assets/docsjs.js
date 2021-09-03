@@ -3,7 +3,7 @@ var __webpack_exports__ = {};
 /*!**********************!*\
   !*** ./docs/docs.js ***!
   \**********************/
-/* 
+/*
 global
 window
 document
@@ -31,7 +31,7 @@ class ExamplesHeader extends HTMLElement {
   constructor() {
     super()
     const a = document.createElement('a')
-    a.setAttribute('href', '../');
+    a.setAttribute('href', 'https://mkungla.github.io/aframe-resonance-audio-component/');
     a.classList.add('back')
     a.innerHTML = 'back'
     this.appendChild(a)
@@ -45,7 +45,7 @@ class ExamplesHeader extends HTMLElement {
 class DocsFooter extends HTMLElement {
   constructor() {
     super()
-    let footer = `${"aframe-resonance-audio-component"}@v${"0.4.4"}`
+    let footer = `${"aframe-resonance-audio-component"}@v${"0.4.5"}`
     if (typeof AFRAME !== 'undefined') {
       footer += ` - aframe@v${AFRAME.version}`
     }
