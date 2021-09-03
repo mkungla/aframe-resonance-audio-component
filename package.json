@@ -1,6 +1,6 @@
 {
   "name": "aframe-resonance-audio-component",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "title": "A-Frame Resonance Audio Component",
   "description": "Google Resonance component for A-Frame (https://aframe.io).",
   "license": "MIT",
