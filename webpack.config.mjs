@@ -10,9 +10,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin'
 const require = createRequire(import.meta.url)
 const pkgjson = require('./package.json')
 
-const { 
+const {
   name,
-  title, 
+  title,
   description,
   version,
   readme,
@@ -49,6 +49,7 @@ const examples = [
   'using-obj-model-as-room.html',
 ].map(example => {
   return new HtmlWebpackPlugin({
+    inject: false,
     ...docsmetaopts,
     filename: example,
     template: path.resolve(__dirname, `./docs/examples/${example}`),
@@ -61,7 +62,7 @@ const examples = [
 })
 
 const pkgconfig = {
-  mode: 'development',
+  mode: 'production',
   target: ['web', 'es2020'],
   devtool: 'source-map',
   entry: {
@@ -92,7 +93,7 @@ const pkgconfig = {
           from: path.resolve(__dirname, 'node_modules/aframe/dist/aframe.*'),
           to: path.resolve(__dirname, 'dist/assets/aframe/[name][ext]'),
         },
-        { 
+        {
           context: 'docs/static/',
           from: './**',
           to: 'assets/static/',
@@ -109,12 +110,13 @@ const pkgconfig = {
       })(),
     }),
     new HtmlWebpackPlugin({
+      inject: false,
       ...docsmetaopts,
       filename: 'index.html',
       template: path.resolve(__dirname, './docs/index.html'),
       chunks: [
         'assets/css',
-        'assets/js', 
+        'assets/js',
       ],
     }),
     ...examples,

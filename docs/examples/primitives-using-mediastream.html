@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><%= htmlWebpackPlugin.options.title % - Usage with primitives and MediaStream></title>
+<title><%= htmlWebpackPlugin.options.title %> - Usage with primitives and MediaStream</title>
 <meta charset=utf-8 />
 <link rel="icon" sizes="192x192" href="https://aframe.io/images/aframe-logo-192.png">
-<body>
 <script src="assets/aframe/aframe.min.js"></script>
+<%= htmlWebpackPlugin.tags.headTags %>
 <body>
+
 <header is="example-header" title="Usage with primitives and MediaStream"></header>
 <main>
 <!-- EXAMPLE -->
@@ -45,8 +46,8 @@ window.setTimeout(function(){
   const srcEl = document.querySelector('#streamSrcFile')
 
   // Turn audio element into stream.
-  const captureStream = srcEl.mozCaptureStream || 
-    srcEl.captureStream || 
+  const captureStream = srcEl.mozCaptureStream ||
+    srcEl.captureStream ||
     function() {throw new Error('browser does not support capture into stream')}
 
   const stream = captureStream.call(srcEl)
