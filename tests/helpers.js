@@ -1,4 +1,4 @@
-/* global THREE, expect, HTMLElement */
+/* global THREE, expect, HTMLElement, document */
 
 /**
  * Create a scene.

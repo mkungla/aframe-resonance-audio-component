@@ -409,9 +409,9 @@ suite(`component ${cs} in a ${cr}`, () => {
 })
 
 suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
-  let roomEl1, roomEl2
-  let srcEl0, srcEl1, srcEl2, srcEl3
-  let component0, component1, component2, component3
+  // let roomEl1, roomEl2
+  let srcEl2, srcEl3 // srcEl0, srcEl1
+  let component2 //component0, component1, , component3
 
   setup(done => {
     // ```html
@@ -462,17 +462,17 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
       ])
     )
 
-    roomEl1 = document.querySelector('#roomEl1')
-    roomEl2 = document.querySelector('#roomEl2')
-    srcEl1 = document.querySelectorAll(`[${cs}]`)[0]
+    // roomEl1 = document.querySelector('#roomEl1')
+    // roomEl2 = document.querySelector('#roomEl2')
+    // srcEl1 = document.querySelectorAll(`[${cs}]`)[0]
     srcEl2 = document.querySelectorAll(`[${cs}]`)[1]
-    srcEl0 = document.querySelectorAll(`[${cs}]`)[2]
+    // srcEl0 = document.querySelectorAll(`[${cs}]`)[2]
     srcEl3 = document.querySelectorAll(`[${cs}]`)[3]
-    component0 = srcEl0.components[cs]
-    component1 = srcEl1.components[cs]
+    // component0 = srcEl0.components[cs]
+    // component1 = srcEl1.components[cs]
     component2 = srcEl2.components[cs]
-    component3 = srcEl3.components[cs]
-    srcEl3.addEventListener('audioroom-entered', evt => {
+    // component3 = srcEl3.components[cs]
+    srcEl3.addEventListener('audioroom-entered', () => {
       done()
     })
   })
@@ -540,6 +540,9 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
   //   })
   //   srcEl1.setAttribute(cs, 'room', '#nonexistent-room')
   // })
+
+  teardown(() => {
+  })
 })
 
 suite(`component ${crbb}`, () => {

@@ -1,4 +1,4 @@
-/* global sinon, setup, teardown */
+/* global sinon, setup, teardown, console, window, document */
 /**
  * __init.test.js is run before every test case.
  */
@@ -13,9 +13,8 @@ const AScene = require('aframe').AScene
 
 setup(function () {
   this.sinon = sinon.createSandbox()
-  // Stubs to not create a WebGL context since Travis CI runs headless.
-  // this.sinon.stub(AScene.prototype, 'render')
-  // this.sinon.stub(AScene.prototype, 'resize')
+  this.sinon.stub(AScene.prototype, 'render')
+  this.sinon.stub(AScene.prototype, 'resize')
   // this.sinon.stub(AScene.prototype, 'setupRenderer')
 })
 
