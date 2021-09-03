@@ -25,7 +25,9 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
-      - run: git -c user.name=github-actions \
+      - name: "git commit"
+        run: |
+          git -c user.name=github-actions \
           -c user.email=github-actions[bot]@users.noreply.github.com \
           -c http.https://github.com/.extraheader= \
           commit -am "✨ ${{ steps.get_version.outputs.VERSION }}"
