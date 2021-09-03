@@ -33,7 +33,10 @@
     "start": "webpack serve --mode development",
     "build": "webpack --mode development",
     "lint": "eslint . --ext js,mjs",
-    "test": "karma start ./tests/karma.conf.js"
+    "test": "karma start ./tests/karma.conf.js",
+    "preversion": "npm run lint && npm test",
+    "version": "npm run build && git add -A",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "resonance-audio": "^1.0.0"
