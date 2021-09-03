@@ -27,8 +27,9 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: "git commit"
         run: |
+          git add -A
           git -c user.name=github-actions \
           -c user.email=github-actions[bot]@users.noreply.github.com \
           -c http.https://github.com/.extraheader= \
-          commit -am "✨ ${{ steps.get_version.outputs.VERSION }}"
+          commit -m "✨ ${{ steps.get_version.outputs.VERSION }}"
       - run: git push origin gh-pages
