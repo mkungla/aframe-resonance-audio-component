@@ -7,3 +7,7 @@ tests
 .eslintrc.json
 .gitattributes
 .gitignore
+
+dist/assets/*
+dist/*.html
+dist/src_resonance-audio-src_js.*
