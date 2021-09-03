@@ -82,4 +82,4 @@ if (typeof AFRAME !== 'undefined') {
 
 /******/ })()
 ;
-//# sourceMappingURL=js.js.map
+//# sourceMappingURL=docsjs.js.map
