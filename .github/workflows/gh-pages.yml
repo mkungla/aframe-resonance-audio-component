@@ -19,11 +19,11 @@ jobs:
       - run: git switch gh-pages
       - run: |
           shopt -s extglob
-          rm -rf !(dist/*)
+          rm -rf !(dist)
           mv -f dist/* . && rm -rf dist
       - run: ls -la
       # - name: Get the version
       #   id: get_version
       #   run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
-      # - run: git -am "${{ steps.get_version.outputs.VERSION }}"
+      # - run: git commit -am "${{ steps.get_version.outputs.VERSION }}"
       # - run: git push origin gh-pages
