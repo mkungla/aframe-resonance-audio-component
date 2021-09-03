@@ -1,8 +1,8 @@
-name: "CodeQL"
+name: "gh-pages"
 
 on:
   push:
-    branches: [ main ].
+    branches: [ main ]
 
 jobs:
   deploy:
