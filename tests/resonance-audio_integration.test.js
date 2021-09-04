@@ -145,7 +145,7 @@ suite(`component ${cs} in a ${cr}`, () => {
     })
 
     test('visualization', () => {
-      expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(0xffffff)
+      expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(16777215)
     })
   })
 
@@ -585,7 +585,8 @@ suite(`component ${crbb}`, () => {
   })
 
   test('model loading, src entering the room, and bounded-audioroom-loaded event', () => {
-    const delta = 0.000001
+    const delta = 0.0000010000000
+
     expect(roomComponent.data.width).to.be.closeTo(w, delta)
     expect(roomComponent.data.height).to.be.closeTo(h, delta)
     expect(roomComponent.data.depth).to.be.closeTo(d, delta)
