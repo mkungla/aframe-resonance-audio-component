@@ -1,4 +1,8 @@
+/* global process */
 const path = require('path')
+
+const cover = process.env.COVERAGE || false
+
 // Karma configuration.
 module.exports = function (config) {
   config.set({
@@ -24,7 +28,7 @@ module.exports = function (config) {
     preprocessors: {
       'tests/setup.js': ['webpack', 'sourcemap'],
     },
-    reporters: ['mocha', 'coverage'],
+    reporters: ['mocha', 'coverage-istanbul'],
     webpack: {
       devtool: 'inline-source-map',
       module: {
@@ -41,12 +45,8 @@ module.exports = function (config) {
     webpackMiddleware: {
       noInfo: true
     },
-    coverageReporter: {
-      type: 'text',
-      dir : 'coverage/',
-    },
     coverageIstanbulReporter: {
-      reports: [ 'text-summary' ],
+      reports: [ cover ? 'lcov' : 'text-summary' ],
     },
   })
 }
