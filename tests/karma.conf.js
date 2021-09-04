@@ -21,7 +21,7 @@ module.exports = function (config) {
       { pattern: 'tests/assets/**/*', included: false, served: true }
     ],
     frameworks: ['mocha', 'sinon-chai', 'chai-shallow-deep-equal', 'webpack'],
-    preprocessors: { 
+    preprocessors: {
       'tests/setup.js': ['webpack', 'sourcemap'],
     },
     reporters: ['mocha', 'coverage'],
@@ -42,7 +42,8 @@ module.exports = function (config) {
       noInfo: true
     },
     coverageReporter: {
-      type: 'text'
+      type: 'text',
+      dir : 'coverage/',
     },
     coverageIstanbulReporter: {
       reports: [ 'text-summary' ],
