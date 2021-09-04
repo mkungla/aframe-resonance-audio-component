@@ -111,7 +111,8 @@ suite(`component ${cr}`, () => {
 
     test('dimensions', () => {
       expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: 0.5, height: 1, depth: 1.5 })
-      const visualizationSize = getBoundingBox(roomEl.getObject3D('audio-room')).getSize()
+      const visualizationSize = new THREE.Vector3()
+      getBoundingBox(roomEl.getObject3D('audio-room')).getSize(visualizationSize)
       expect(visualizationSize.x).to.equal(1)
       expect(visualizationSize.y).to.equal(2)
       expect(visualizationSize.z).to.equal(3)
@@ -175,7 +176,8 @@ suite(`component ${cr}`, () => {
       const d = { width: 2, height: 3, depth: 4 }
       roomEl.setAttribute(cr, d)
       expect(component.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({ width: d.width / 2, height: d.height / 2, depth: d.depth / 2 })
-      const visualizationSize = getBoundingBox(roomEl.getObject3D('audio-room')).getSize()
+      const visualizationSize = new THREE.Vector3()
+      getBoundingBox(roomEl.getObject3D('audio-room')).getSize(visualizationSize)
       expect(visualizationSize.x).to.equal(d.width)
       expect(visualizationSize.y).to.equal(d.height)
       expect(visualizationSize.z).to.equal(d.depth)
@@ -285,7 +287,8 @@ suite(`component ${crbb}`, () => {
       expect(component.data.height).to.equal(h)
       expect(component.data.depth).to.equal(d)
       expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: w / 2, height: h / 2, depth: d / 2 })
-      const visualizationSize = new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize()
+      const visualizationSize = new THREE.Vector3()
+      new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize(visualizationSize)
       expect(visualizationSize.x).to.equal(w)
       expect(visualizationSize.y).to.equal(h)
       expect(visualizationSize.z).to.equal(d)
@@ -317,7 +320,9 @@ suite(`component ${crbb}`, () => {
       expect(component.data.height).to.equal(r * 2)
       expect(component.data.depth).to.equal(r * 2)
       expect(component.resonanceAudioScene._room.early._halfDimensions).to.include({ width: r, height: r, depth: r })
-      const visualizationSize = new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize()
+      const visualizationSize = new THREE.Vector3()
+      new THREE.Box3().setFromObject(component.el.getObject3D('audio-room')).getSize(visualizationSize)
+
       expect(visualizationSize.x).to.equal(r * 2)
       expect(visualizationSize.y).to.equal(r * 2)
       expect(visualizationSize.z).to.equal(r * 2)

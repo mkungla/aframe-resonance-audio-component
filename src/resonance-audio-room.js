@@ -214,7 +214,8 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
   setFromBB (base = {}) {
     // TODO: make a better bounding box, taking into account the centrepoint position of the entity.
-    const size = getBoundingBox(this.el.object3D).getSize()
+    const size = new THREE.Vector3()
+    getBoundingBox(this.el.object3D).getSize(size)
     this.setRoom({ ...base, width: size.x, height: size.y, depth: size.z })
   },
   setRoom (values) {
