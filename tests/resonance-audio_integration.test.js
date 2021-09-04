@@ -1,4 +1,13 @@
-/* global setup, teardown, suite, test, expect, THREE, HTMLElement, HTMLMediaElement, document */
+/* global
+setup,
+teardown,
+suite,
+test,
+expect,
+THREE,
+HTMLElement,
+HTMLMediaElement,
+document */
 require('aframe')
 require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
@@ -145,7 +154,7 @@ suite(`component ${cs} in a ${cr}`, () => {
     })
 
     test('visualization', () => {
-      expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(16777215)
+      expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(0xffffff)
     })
   })
 
@@ -337,14 +346,17 @@ suite(`component ${cs} in a ${cr}`, () => {
   })
 
   suite('addition and removal of source to room', () => {
-    // test('statically add src to room and exposeAPI', () => {
-    //   expect(roomComponent.sources).to.be.an('array').that.includes(component1)
-    //   expect(roomComponent.sources).to.be.an('array').that.includes(component2)
-    //   expect(roomEl.sounds).to.be.an('array').that.includes(component1.sound)
-    //   expect(roomEl.sounds).to.be.an('array').that.includes(component2.sound)
-    //   expect(roomEl.audioSources).to.be.an('array').that.includes(component1)
-    //   expect(roomEl.audioSources).to.be.an('array').that.includes(component2)
-    // })
+    test('statically add src to room and exposeAPI', () => {
+      expect(roomComponent.sources).to.be.an('array')
+      // console.log(roomComponent.sources)
+      // expect(roomComponent.sources).to.deep.include(component2)
+
+      // expect(roomComponent.sources).to.be.an('array').that.includes(component2)
+      // expect(roomEl.sounds).to.be.an('array').that.includes(component1.sound)
+      // expect(roomEl.sounds).to.be.an('array').that.includes(component2.sound)
+      // expect(roomEl.audioSources).to.be.an('array').that.includes(component1)
+      // expect(roomEl.audioSources).to.be.an('array').that.includes(component2)
+    })
 
     // test('dynamically add src to room', done => {
     //   const srcEl3 = entityFactory({ [cs]: {} })
@@ -585,8 +597,7 @@ suite(`component ${crbb}`, () => {
   })
 
   test('model loading, src entering the room, and bounded-audioroom-loaded event', () => {
-    const delta = 0.0000010000000
-
+    const delta = 0.000001
     expect(roomComponent.data.width).to.be.closeTo(w, delta)
     expect(roomComponent.data.height).to.be.closeTo(h, delta)
     expect(roomComponent.data.depth).to.be.closeTo(d, delta)

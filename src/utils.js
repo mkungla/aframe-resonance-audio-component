@@ -44,7 +44,7 @@
   object3D.updateMatrixWorld()
   const m = new THREE.Matrix4()
   if (object3D.parent !== null) {
-    m.getInverse(object3D.parent.matrixWorld, false)
+    m.copy(object3D.parent.matrixWorld).invert()
   }
   object3D.matrix = m
   // To prevent matrix being reassigned.

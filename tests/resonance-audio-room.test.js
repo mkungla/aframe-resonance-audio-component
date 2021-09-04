@@ -224,7 +224,7 @@ suite(`component ${cr}`, () => {
       // Get camera position relative to the room.
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       const m = new THREE.Matrix4().multiplyMatrices(
-        new THREE.Matrix4().getInverse(roomEl.object3D.matrixWorld),
+        new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld
       )
       // Test distance from room.
@@ -237,7 +237,7 @@ suite(`component ${cr}`, () => {
       // Get camera position relative to the room.
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       const m = new THREE.Matrix4().multiplyMatrices(
-        new THREE.Matrix4().getInverse(roomEl.object3D.matrixWorld),
+        new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld
       )
       // Test distance from room.
@@ -250,7 +250,7 @@ suite(`component ${cr}`, () => {
       // Get camera position relative to the room.
       roomEl.sceneEl.object3D.updateMatrixWorld(true)
       const m = new THREE.Matrix4().multiplyMatrices(
-        new THREE.Matrix4().getInverse(roomEl.object3D.matrixWorld),
+        new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld
       )
       // Test distance from room.
