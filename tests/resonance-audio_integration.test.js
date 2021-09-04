@@ -8,8 +8,7 @@ THREE,
 HTMLElement,
 HTMLMediaElement,
 document */
-require('aframe')
-require('../src/index.js')
+
 const { ResonanceAudio } = require('resonance-audio')
 const {
   sceneFactory,

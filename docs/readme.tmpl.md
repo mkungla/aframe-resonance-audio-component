@@ -61,6 +61,7 @@ JS**DELIVR**
 [![A-Frame Version][img-aframe-badge]][link-aframe]
 [![Codacy Badge][img-codacy-badge]][link-codacy]
 [![CodeQL][img-codeql-badge]][link-codeql]
+[![Coverage Status](https://coveralls.io/repos/github/mkungla/aframe-resonance-audio-component/badge.svg?branch=main)](https://coveralls.io/github/mkungla/aframe-resonance-audio-component?branch=main)
 
 ---
 

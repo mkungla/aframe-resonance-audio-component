@@ -1,6 +1,5 @@
 /* global setup, suite, test, expect, document, THREE */
 
-require('../src/index.js')
 const { ResonanceAudio } = require('resonance-audio')
 const {
   sceneFactory,
