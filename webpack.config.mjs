@@ -144,6 +144,7 @@ const pkgconfig = {
           'npm-package': 'https://www.npmjs.com/package/aframe-resonance-audio-component',
           'resonance-audio': 'https://developers.google.com/resonance-audio/',
           'web-api-mediastream': 'https://developer.mozilla.org/en-US/docs/Web/API/MediaStream',
+          'primitives-using-mediastream example': './docs/examples/primitives-using-mediastream.html'
         },
         images: {
           'aframe-badge': `https://img.shields.io/badge/a--frame-${aframe}-FC3164.svg?style=flat-square`,

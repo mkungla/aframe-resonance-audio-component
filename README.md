@@ -48,11 +48,17 @@ JS**DELIVR**
   - [Declarative usage](#declarative-usage)
     - [Example with basic usage with primitives](#example-with-basic-usage-with-primitives)
     - [Example with entities, models and a bounding box room](#example-with-entities-models-and-a-bounding-box-room)
+  - [Dynamic usage](#dynamic-usage)
+
 - [Notes](#notes)
   - [Future work](#future-work)
 - [Credits](#credits)
 
+---
+
 [![Codacy Badge][img-codacy-badge]][link-codacy]
+
+---
 
 ## Usage
 
@@ -71,6 +77,7 @@ Audio rooms and audio sources don't necessarily have to have a parent-child rela
 Basic usage is quite simple and works just like any other A-Frame component. Don't forget to point the `src` attribute to the correct element or resource.
 
 #### Example with basic usage with primitives
+
 ```html
 <a-scene>
   <a-assets>
@@ -136,6 +143,47 @@ Basic usage is quite simple and works just like any other A-Frame component. Don
 </a-scene>
 ```
 
+### Dynamic usage
+All properties can be changed dynamically. This allows for [MediaStreams][link-web-api-mediastream] to be set as audio sources.
+
+Take the following example. A more comprehensive version is available in [examples/primitives-using-mediastream/][link-primitives-using-mediastream example].
+
+```html
+<a-scene>
+  <a-assets>
+    <audio id="track" src="assets/audio/track.mp3"></audio>
+  </a-assets>
+  <a-resonance-audio-room
+    position="0 0 -5"
+    width="4"
+    height="4"
+    depth="4"
+    ambisonic-order="3"
+    speed-of-sound="343"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles"
+    visualize="true">
+    <a-resonance-audio-src
+      id="audioSource"
+      position="0 0 0"
+      src="#track"
+      loop="true"
+      autoplay="true"
+      visualize="true"></a-resonance-audio-src>
+  </a-resonance-audio-room>
+</a-scene>
+```
+
+When this is loaded, `track.mp3` plays indefinitely. Running the following javascript changes the source from `#track` to the passed [MediaStream][link-web-api-mediastream]. A practical example of `stream` is a WebRTC stream.
+
+```js
+document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src', stream)
+```
+
 ## Notes
 Support for custom positioning and rotation for the audio room is omitted due to the necessity to propagate positioning and rotation calculations to its audio source children and the complexities involved with that.
 
@@ -194,3 +242,4 @@ Dynamically changing positioning and rotation of audio source or room container 
 [link-npm-package]: https://www.npmjs.com/package/aframe-resonance-audio-component
 [link-resonance-audio]: https://developers.google.com/resonance-audio/
 [link-web-api-mediastream]: https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
+[link-primitives-using-mediastream example]: ./docs/examples/primitives-using-mediastream.html
