@@ -347,43 +347,39 @@ suite(`component ${cs} in a ${cr}`, () => {
 
   suite('addition and removal of source to room', () => {
     test('statically add src to room and exposeAPI', () => {
-      expect(roomComponent.sources).to.be.an('array')
-      // console.log(roomComponent.sources)
-      // expect(roomComponent.sources).to.deep.include(component2)
-
-      // expect(roomComponent.sources).to.be.an('array').that.includes(component2)
-      // expect(roomEl.sounds).to.be.an('array').that.includes(component1.sound)
-      // expect(roomEl.sounds).to.be.an('array').that.includes(component2.sound)
-      // expect(roomEl.audioSources).to.be.an('array').that.includes(component1)
-      // expect(roomEl.audioSources).to.be.an('array').that.includes(component2)
+      expect(roomComponent.sources).to.be.an('array').that.includes(component2)
+      expect(roomEl.sounds).to.be.an('array').that.includes(component1.sound)
+      expect(roomEl.sounds).to.be.an('array').that.includes(component2.sound)
+      expect(roomEl.audioSources).to.be.an('array').that.includes(component1)
+      expect(roomEl.audioSources).to.be.an('array').that.includes(component2)
     })
 
-    // test('dynamically add src to room', done => {
-    //   const srcEl3 = entityFactory({ [cs]: {} })
-    //   srcEl3.addEventListener('componentinitialized', evt => {
-    //     if (evt.detail.name !== cs) { return }
-    //     expect(roomComponent.sources).to.be.an('array').that.includes(srcEl3.components[cs])
-    //     expect(roomEl.sounds).to.be.an('array').that.includes(srcEl3.components[cs].sound)
-    //     expect(roomEl.audioSources).to.be.an('array').that.includes(srcEl3.components[cs])
-    //     done()
-    //   })
-    //   roomEl.appendChild(srcEl3)
-    // })
+    test('dynamically add src to room', done => {
+      const srcEl3 = entityFactory({ [cs]: {} })
+      srcEl3.addEventListener('componentinitialized', evt => {
+        if (evt.detail.name !== cs) { return }
+        expect(roomComponent.sources).to.be.an('array').that.includes(srcEl3.components[cs])
+        expect(roomEl.sounds).to.be.an('array').that.includes(srcEl3.components[cs].sound)
+        expect(roomEl.audioSources).to.be.an('array').that.includes(srcEl3.components[cs])
+        done()
+      })
+      roomEl.appendChild(srcEl3)
+    })
 
-    // test('remove src from room', done => {
-    //   expect(roomComponent.sources).to.be.an('array').that.includes(component1)
-    //   roomEl.addEventListener('child-detached', evt => {
-    //     if (evt.detail.el !== srcEl1) { return }
-    //     // room has no src anymore.
-    //     expect(roomComponent.sources).to.be.an('array').that.does.not.include(component1)
-    //     // src has no room anymore.
-    //     expect(component1.room).to.equal(null)
-    //     // src has no audio source anymore (because this is connected to the room's AudioContext).
-    //     expect(component1.connected).to.deep.equal({ element: false, stream: false })
-    //     done()
-    //   })
-    //   roomEl.removeChild(srcEl1)
-    // })
+    test('remove src from room', done => {
+      expect(roomComponent.sources).to.be.an('array').that.includes(component1)
+      roomEl.addEventListener('child-detached', evt => {
+        if (evt.detail.el !== srcEl1) { return }
+        // room has no src anymore.
+        expect(roomComponent.sources).to.be.an('array').that.does.not.include(component1)
+        // src has no room anymore.
+        expect(component1.room).to.equal(null)
+        // src has no audio source anymore (because this is connected to the room's AudioContext).
+        expect(component1.connected).to.deep.equal({ element: false, stream: false })
+        done()
+      })
+      roomEl.removeChild(srcEl1)
+    })
 
     test("src's audioroom-entered event", done => {
       const srcEl3 = entityFactory({ [cs]: {} })
@@ -404,26 +400,26 @@ suite(`component ${cs} in a ${cr}`, () => {
       roomEl.removeChild(srcEl1)
     })
 
-    // test(`remove component ${cr}`, done => {
-    //   expect(roomEl.getObject3D('audio-room')).to.be.an.instanceOf(THREE.Object3D)
-    //   expect(roomComponent.sources).to.be.an('array').that.includes(component1)
-    //   roomEl.addEventListener('componentremoved', evt => {
-    //     if (evt.detail.name !== cr) { return }
-    //     expect(roomEl.getObject3D('audio-room')).to.equal(undefined)
-    //     expect(roomComponent.sources).to.be.an('array').that.does.not.include(component1)
-    //     expect(component1.room).to.equal(null)
-    //     expect(component2.room).to.equal(null)
-    //     done()
-    //   })
-    //   roomEl.removeAttribute(cr)
-    // })
+    test(`remove component ${cr}`, done => {
+      expect(roomEl.getObject3D('audio-room')).to.be.an.instanceOf(THREE.Object3D)
+      expect(roomComponent.sources).to.be.an('array').that.includes(component1)
+      roomEl.addEventListener('componentremoved', evt => {
+        if (evt.detail.name !== cr) { return }
+        expect(roomEl.getObject3D('audio-room')).to.equal(undefined)
+        expect(roomComponent.sources).to.be.an('array').that.does.not.include(component1)
+        expect(component1.room).to.equal(null)
+        expect(component2.room).to.equal(null)
+        done()
+      })
+      roomEl.removeAttribute(cr)
+    })
   })
 })
 
 suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
-  // let roomEl1, roomEl2
-  let srcEl2, srcEl3 // srcEl0, srcEl1
-  let component2 //component0, component1, , component3
+  let roomEl1, roomEl2
+  let srcEl0, srcEl1, srcEl2, srcEl3
+  let component0, component1, component3, component2
 
   setup(done => {
     // ```html
@@ -474,84 +470,84 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
       ])
     )
 
-    // roomEl1 = document.querySelector('#roomEl1')
-    // roomEl2 = document.querySelector('#roomEl2')
-    // srcEl1 = document.querySelectorAll(`[${cs}]`)[0]
+    roomEl1 = document.querySelector('#roomEl1')
+    roomEl2 = document.querySelector('#roomEl2')
+    srcEl1 = document.querySelectorAll(`[${cs}]`)[0]
     srcEl2 = document.querySelectorAll(`[${cs}]`)[1]
-    // srcEl0 = document.querySelectorAll(`[${cs}]`)[2]
+    srcEl0 = document.querySelectorAll(`[${cs}]`)[2]
     srcEl3 = document.querySelectorAll(`[${cs}]`)[3]
-    // component0 = srcEl0.components[cs]
-    // component1 = srcEl1.components[cs]
+    component0 = srcEl0.components[cs]
+    component1 = srcEl1.components[cs]
     component2 = srcEl2.components[cs]
-    // component3 = srcEl3.components[cs]
+    component3 = srcEl3.components[cs]
     srcEl3.addEventListener('audioroom-entered', () => {
       done()
     })
   })
 
-  // test('nonhierarchical attachment', () => {
-  //   // src to room.
-  //   expect(component2.room.el).to.equal(roomEl2)
-  //   expect(component3.room.el).to.equal(roomEl1)
-  //   // room to src.
-  //   expect(roomEl2.components[cr].sources).to.be.an('array').and.to.include(component2)
-  //   expect(roomEl1.components[cr].sources).to.be.an('array').and.to.include(component3)
-  // })
-
-  // test('nonhierarchical attachment prioritization', () => {
-  //   // src to room.
-  //   expect(component1.room.el).to.equal(roomEl1)
-  //   expect(component2.room.el).to.not.equal(roomEl1)
-  //   expect(component0.room).to.equal(null)
-
-  //   // room to src.
-  //   expect(roomEl1.components[cr].sources).to.be.an('array').and.to.include(component1)
-  //   expect(roomEl1.components[cr].sources).to.be.an('array').and.to.not.include(component2)
-  //   expect(roomEl1.components[cr].sources).to.be.an('array').and.to.not.include(component0)
-  // })
-
-  test('position', () => {
-    // document.querySelector('a-scene').object3D.updateMatrixWorld(true)
-    // Audio source entity in world coordinates.
-    // compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-    // // Resonance Source in world coordinates.
-    // compareMatrixtoPosAndRot(component2.getMatrixWorld(), { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-    // // Resonance Source in room coordinates.
-    // compareMatrixtoPosAndRot(createMatrixFromResonanceSource(component2.resonance), { x: -4, y: -4, z: -4 }, { x: 0, y: 0, z: 0 })
-    // // Visualization in world coordinates.
-    // compareMatrixtoPosAndRot(srcEl2.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+  test('nonhierarchical attachment', () => {
+    // src to room.
+    expect(component2.room.el).to.equal(roomEl2)
+    expect(component3.room.el).to.equal(roomEl1)
+    // room to src.
+    expect(roomEl2.components[cr].sources).to.be.an('array').and.to.include(component2)
+    expect(roomEl1.components[cr].sources).to.be.an('array').and.to.include(component3)
   })
 
-  // test('switch rooms', done => {
-  //   srcEl1.addEventListener('audioroom-entered', evt => {
-  //     document.querySelector('a-scene').object3D.updateMatrixWorld(true)
-  //     expect(evt.detail.room).to.equal(roomEl2)
-  //     expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
-  //     // Audio source entity in world coordinates (unchanged).
-  //     compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-  //     // Resonance Source in world coordinates (unchanged).
-  //     compareMatrixtoPosAndRot(component1.getMatrixWorld(), { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-  //     // Resonance Source in room coordinates (changed).
-  //     compareMatrixtoPosAndRot(createMatrixFromResonanceSource(component1.resonance), { x: -4, y: -4, z: -4 }, { x: 0, y: 0, z: 0 })
-  //     // Visualization in world coordinates (unchanged).
-  //     compareMatrixtoPosAndRot(srcEl1.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-  //     done()
-  //   })
-  //   srcEl1.setAttribute(cs, 'room', document.querySelector('#roomEl2'))
-  // })
+  test('nonhierarchical attachment prioritization', () => {
+    // src to room.
+    expect(component1.room.el).to.equal(roomEl1)
+    expect(component2.room.el).to.not.equal(roomEl1)
+    expect(component0.room).to.equal(null)
 
-  // test('leave room', done => {
-  //   srcEl1.addEventListener('audioroom-left', evt => {
-  //     expect(evt.detail.room).to.equal(roomEl1)
-  //     expect(component1.room).to.equal(null)
-  //     expect(component1.resonance).to.equal(null)
-  //     expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
-  //     compareMatrixtoPosAndRot(srcEl1.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
-  //     expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(0xff0000)
-  //     done()
-  //   })
-  //   srcEl1.setAttribute(cs, 'room', '#nonexistent-room')
-  // })
+    // room to src.
+    expect(roomEl1.components[cr].sources).to.be.an('array').and.to.include(component1)
+    expect(roomEl1.components[cr].sources).to.be.an('array').and.to.not.include(component2)
+    expect(roomEl1.components[cr].sources).to.be.an('array').and.to.not.include(component0)
+  })
+
+  test('position', () => {
+    document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+    // Audio source entity in world coordinates.
+    compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+    // Resonance Source in world coordinates.
+    compareMatrixtoPosAndRot(component2.getMatrixWorld(), { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+    // Resonance Source in room coordinates.
+    compareMatrixtoPosAndRot(createMatrixFromResonanceSource(component2.resonance), { x: -4, y: -4, z: -4 }, { x: 0, y: 0, z: 0 })
+    // Visualization in world coordinates.
+    compareMatrixtoPosAndRot(srcEl2.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+  })
+
+  test('switch rooms', done => {
+    srcEl1.addEventListener('audioroom-entered', evt => {
+      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      expect(evt.detail.room).to.equal(roomEl2)
+      expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
+      // Audio source entity in world coordinates (unchanged).
+      compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+      // Resonance Source in world coordinates (unchanged).
+      compareMatrixtoPosAndRot(component1.getMatrixWorld(), { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+      // Resonance Source in room coordinates (changed).
+      compareMatrixtoPosAndRot(createMatrixFromResonanceSource(component1.resonance), { x: -4, y: -4, z: -4 }, { x: 0, y: 0, z: 0 })
+      // Visualization in world coordinates (unchanged).
+      compareMatrixtoPosAndRot(srcEl1.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+      done()
+    })
+    srcEl1.setAttribute(cs, 'room', document.querySelector('#roomEl2'))
+  })
+
+  test('leave room', done => {
+    srcEl1.addEventListener('audioroom-left', evt => {
+      expect(evt.detail.room).to.equal(roomEl1)
+      expect(component1.room).to.equal(null)
+      expect(component1.resonance).to.equal(null)
+      expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
+      compareMatrixtoPosAndRot(srcEl1.getObject3D('audio-src').matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
+      expect(srcEl1.getObject3D('audio-src').material.color.getHex()).to.equal(0xff0000)
+      done()
+    })
+    srcEl1.setAttribute(cs, 'room', '#nonexistent-room')
+  })
 
   teardown(() => {
   })

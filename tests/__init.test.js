@@ -9,12 +9,17 @@ if (typeof console.log === 'function') {
 }
 
 window.debug = true
-const AScene = require('aframe').AScene
+const aframe = require('aframe')
+const AScene = aframe.AScene
+
+AFRAME.INSPECTOR = { open: () => {}}
 
 setup(function () {
   this.sinon = sinon.createSandbox()
   this.sinon.stub(AScene.prototype, 'render')
   this.sinon.stub(AScene.prototype, 'resize')
+  this.sinon.stub(AFRAME.INSPECTOR, 'open')
+
   // this.sinon.stub(AScene.prototype, 'setupRenderer')
 })
 
