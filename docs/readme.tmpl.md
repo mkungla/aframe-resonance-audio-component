@@ -43,32 +43,34 @@ JS**DELIVR**
 
 ## Table of contents
 
-- [Usage](#usage)
-  - [Declarative usage](#declarative-usage)
-    - [Example with basic usage with primitives](#example-with-basic-usage-with-primitives)
-    - [Example with entities, models and a bounding box room](#example-with-entities-models-and-a-bounding-box-room)
-  - [Dynamic usage](#dynamic-usage)
-- [API](#api)
-  - [resonance-audio-room](#resonance-audio-room)
-  - [resonance-audio-room-bb](#resonance-audio-room-bb)
-  - [resonance-audio-room-bb](#resonance-audio-room-src)
-- [Notes](#notes)
-  - [Future work](#future-work)
-- [Credits](#credits)
+  - [Usage](#usage)
+    - [Declarative usage](#declarative-usage)
+      - [Example with basic usage with primitives](#example-with-basic-usage-with-primitives)
+      - [Example with entities, models and a bounding box room](#example-with-entities-models-and-a-bounding-box-room)
+    - [Dynamic usage](#dynamic-usage)
+  - [API](#api)
+    - [resonance-audio-room](#resonance-audio-room)
+    - [resonance-audio-room-bb](#resonance-audio-room-bb)
+    - [resonance-audio-room-bb](#resonance-audio-room-src)
+  - [Notes](#notes)
+    - [Future work](#future-work)
+  - [Credits](#credits)
 
 ---
 
 [![A-Frame Version][img-aframe-badge]][link-aframe]
 [![Codacy Badge][img-codacy-badge]][link-codacy]
+[![CodeQL][img-codeql-badge]][link-codeql]
 
 ---
 
 ## Usage
 
 [Google Resonance][link-resonance-audio] works with audio rooms and audio sources. The acoustics of each source are affected by the room it is in. For that purpose, this package provides three components:
-- resonance-audio-room
-- resonance-audio-room-bb
-- resonance-audio-src
+
+  - resonance-audio-room
+  - resonance-audio-room-bb
+  - resonance-audio-src
 
 These can be used as primitives (using the `a-` prefix) or as attributes, except `resonance-audio-room-bb`: it calculates the bounding box of an entity and considers that as the room. It can thus not be used as a primitive.
 
@@ -193,7 +195,8 @@ document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src'
 
 ### resonance-audio-room
 
-#### properties
+**properties**
+
 | Property | Description | Default value | Values |
 | -------- | ----------- | ------------- | ------ |
 | `width`           | Width of the audio room (in meters). | [0][DEFAULT_ROOM_DIMENSIONS] | |
@@ -209,7 +212,8 @@ document.getElementById('audioSource').setAttribute('resonance-audio-src', 'src'
 | `up`              | Material of the room ceiling.  | `brick-bare` | [room materials][ROOM_MATERIAL_COEFFICIENTS] |
 | `visualize`       | Show a wireframe box visualization of the audio room. Access using `el.getObject3D('audio-room')` | false | `true` |
 
-#### Members
+**members**
+
 Accessible via `entity.components['resonance-audio-room'].<member>`.
 
 | Name | Description | Type |
@@ -223,7 +227,8 @@ Accessible via `entity.components['resonance-audio-room'].<member>`.
 ### resonance-audio-room-bb
 This component's only purpose is to instantiate a resonance-audio-room component with the dimensions of the bounded object. For any interaction, use the resonance-audio-room component after it has been fully loaded.
 
-#### Events
+**events**
+
 | Event                    | `evt.detail` property | Description             |
 | ------------------------ | --------------------- | ----------------------- |
 | bounded-audioroom-loaded | `room`                | The audio room element. |
@@ -232,7 +237,8 @@ This component's only purpose is to instantiate a resonance-audio-room component
 
 ### resonance-audio-src
 
-#### Properties
+**properties**
+
 | Property | Description | Default value | Values |
 | -------- | ----------- | ------------- | ------ |
 | `src` | The source of the audio. This can be a [HTMLMediaElement] (`<audio />` or `<video />`), [MediaStream], an ID string pointing to a [HTMLMediaElement] or a resouce string. If a resource string is passed, the resource is loaded in the `<audio />` element accessible via the `defaultAudioEl` member. Note that you can not set the same [HTMLMediaElement] on multiple entities with the `resonance-audio-src` component (globally!). | | |
@@ -249,7 +255,8 @@ This component's only purpose is to instantiate a resonance-audio-room component
 | `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { } | |
 | `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. Access using `el.getObject3D('audio-src')`. | false | true|
 
-#### Members
+**members**
+
 Accessible via `entity.components['resonance-audio-src'].<member>`.
 
 | Name | Description | Type |
@@ -263,7 +270,8 @@ Accessible via `entity.components['resonance-audio-src'].<member>`.
 | `mediaAudioSourceNodes` | A collection of references to sources (so they can be reused). | mapping of [HTMLMediaElement] to [MediaElementAudioSourceNode] and [MediaStream] to [MediaStreamAudioSourceNode]
 
 
-#### Events
+**events**
+
 | Event | `evt.detail` property | Description |
 | - | - | - |
 | audioroom-entered | `room` | The audio room element that was entered. |
@@ -274,6 +282,7 @@ Accessible via `entity.components['resonance-audio-src'].<member>`.
 ---
 
 ## Notes
+
 Support for custom positioning and rotation for the audio room is omitted due to the necessity to propagate positioning and rotation calculations to its audio source children and the complexities involved with that.
 
 The visuals are now a simple box wireframe for the audio room and a simple sphere wireframe for the audio source. The box is how Google Resonance actually considers the room and all involved calculations, so other or more complex shapes are not possible (yet). Future work for the audio source visualization might take into account its parameters, such as the directivity pattern and source width.
@@ -287,9 +296,10 @@ Audio rooms (entities with component `resonance-audio-room`) and audio sources (
 Dynamically changing positioning and rotation of audio source or room container elements is not fully supported.
 
 ### Future work
-- [] Hook the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
-- [] Take scaling into account.
-- [] Find a better method of calculating the bounding box in `resonance-audio-room-bb`.
+
+- [ ] Hook the `HTMLMediaElement.srcObject` interface so no changes to original code are necessary (except for adding the components).
+- [ ] Take scaling into account.
+- [ ] Find a better method of calculating the bounding box in `resonance-audio-room-bb`.
 
 ## Credits
 
@@ -308,11 +318,14 @@ Dynamically changing positioning and rotation of audio source or room container 
 [img-bundle-size-min-badge]: https://img.shields.io/bundlephobia/min/aframe-resonance-audio-component?style=flat-square
 [img-bundle-size-minzip-badge]: https://img.shields.io/bundlephobia/minzip/aframe-resonance-audio-component?style=flat-square
 [img-codacy-badge]: https://app.codacy.com/project/badge/Grade/22954e84e25844d4bc615cfc0c298638
+[img-codeql-badge]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/codeql-analysis.yml/badge.svg
 [img-contributors-badge]: https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square
 [img-jsdelivr-badge]: https://img.shields.io/jsdelivr/npm/hy/aframe-resonance-audio-component?style=flat-square
 [img-license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
 [img-npm-download-badge]: https://img.shields.io/npm/dt/aframe-resonance-audio-component?style=flat-square
 [img-npm-version-badge]: https://img.shields.io/npm/v/aframe-resonance-audio-component?style=flat-square
+
+
 <% for (var image in images) { %>
 [img-<%= image %>]: <%= images[image] %><% } %>
 
@@ -322,6 +335,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 [link-build-macos]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/macos.yml
 [link-build-windows]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml
 [link-codacy]: https://www.codacy.com/gh/mkungla/aframe-resonance-audio-component/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mkungla/aframe-resonance-audio-component&amp;utm_campaign=Badge_Grade
+[link-codeql]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/codeql-analysis.yml
 [link-contributors]: https://github.com/mkungla/aframe-resonance-audio-component/graphs/contributors
 [link-etiennepinchon/aframe-resonance]: https://github.com/etiennepinchon/aframe-resonance
 [link-gh-pages]: https://mkungla.github.io/aframe-resonance-audio-component/
