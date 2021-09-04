@@ -21,7 +21,6 @@ jobs:
 
   coverage:
     needs: lint
-    name: test coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,3 +36,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
