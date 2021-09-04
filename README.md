@@ -59,15 +59,13 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 ## Credits
 
-![[GitHub contributors][img-contributors-badge]][link-contributors]
+[![GitHub contributors][img-contributors-badge]][link-contributors]
 
 <sub>**Original author Etienne Pinchon.**</sub>  
 <sup>aframe-resonance-audio-component was forked from [etiennepinchon/aframe-resonance]</sup>
 
 <sub>**Google Resonance Audio project.**</sub>  
 <sup>aframe-resonance-audio-component is based on [Google Resonance Audio project][link-resonance-audio]</sub>
-
-
 
 <!-- images -->
 
@@ -77,7 +75,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 [img-build-windows-badge]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml/badge.svg
 [img-codacy-badge]: https://app.codacy.com/project/badge/Grade/22954e84e25844d4bc615cfc0c298638
 [img-contributors-badge]: https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square
-[img-jsdelivr-badge]: https://img.shields.io/jsdelivr/npm/hy/aframe-resonance-audio-component?style=flat-square
+[img-jsdelivr-badge]: https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square
 [img-license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
 [img-npm-download-badge]: https://img.shields.io/npm/dt/aframe-resonance-audio-component?style=flat-square
 [img-npm-version-badge]: https://img.shields.io/npm/v/aframe-resonance-audio-component?style=flat-square

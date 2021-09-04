@@ -151,7 +151,7 @@ const pkgconfig = {
           'build-windows-badge': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml/badge.svg',
           'codacy-badge': 'https://app.codacy.com/project/badge/Grade/22954e84e25844d4bc615cfc0c298638',
           'contributors-badge': 'https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square',
-          'jsdelivr-badge': 'https://img.shields.io/jsdelivr/npm/hy/aframe-resonance-audio-component?style=flat-square',
+          'jsdelivr-badge': 'https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square',
           'license-badge': 'https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square',
           'npm-download-badge': 'https://img.shields.io/npm/dt/aframe-resonance-audio-component?style=flat-square',
           'npm-version-badge': 'https://img.shields.io/npm/v/aframe-resonance-audio-component?style=flat-square',

@@ -59,7 +59,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 ## Credits
 
-![[GitHub contributors][img-contributors-badge]][link-contributors]
+[![GitHub contributors][img-contributors-badge]][link-contributors]
 
 <sub>**Original author Etienne Pinchon.**</sub>  
 <sup>aframe-resonance-audio-component was forked from [etiennepinchon/aframe-resonance]</sup>
