@@ -34,7 +34,7 @@
     "build": "webpack --mode development",
     "lint": "eslint . --ext js,mjs",
     "test": "karma start ./tests/karma.conf.js",
-    "test:coverage": "karma start ./tests/karma.conf.js --coverageReporter.type lcov ",
+    "test:coverage": "karma start ./tests/karma.conf.js --coverageReporter.type lcov",
     "preversion": "npm run lint && npm test",
     "dist:jsdelivr": "node ./docs/dist-to-jsdelivr.js",
     "version": "npm run build && npm run dist:jsdelivr && git add -A",
