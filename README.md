@@ -22,9 +22,9 @@ yarn add aframe-resonance-audio-component
 JS**DELIVR**  
 [![A free CDN for Open Source][img-jsdelivr-badge]][link-jsdelivr]
 
-**Use in version v0.4.5**
+**Use in version v0.4.6**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@0.4.5/dist/aframe-resonance-audio-component.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@0.4.6/dist/aframe-resonance-audio-component.min.js"></script>
 ```
 **Use in browser latest version** *(not recommended for production usage)*
 ```html
@@ -51,6 +51,7 @@ JS**DELIVR**
 - [API](#api)
   - [resonance-audio-room](#resonance-audio-room)
   - [resonance-audio-room-bb](#resonance-audio-room-bb)
+  - [resonance-audio-room-bb](#resonance-audio-room-src)
 - [Notes](#notes)
   - [Future work](#future-work)
 - [Credits](#credits)
@@ -219,17 +220,58 @@ Accessible via `entity.components['resonance-audio-room'].<member>`.
 | `el.audioSources` | Returns sources. | array of resonance-audio-src component instances |
 | `el.sounds` | A collection of the origins of the attached audio sources. | array of [HTMLMediaElement] and/or [MediaStream] objects |
 
----
-
 ### resonance-audio-room-bb
 This component's only purpose is to instantiate a resonance-audio-room component with the dimensions of the bounded object. For any interaction, use the resonance-audio-room component after it has been fully loaded.
 
----
-
-### Events
+#### Events
 | Event                    | `evt.detail` property | Description             |
 | ------------------------ | --------------------- | ----------------------- |
 | bounded-audioroom-loaded | `room`                | The audio room element. |
+
+---
+
+### resonance-audio-src
+
+#### Properties
+| Property | Description | Default value | Values |
+| -------- | ----------- | ------------- | ------ |
+| `src` | The source of the audio. This can be a [HTMLMediaElement] (`<audio />` or `<video />`), [MediaStream], an ID string pointing to a [HTMLMediaElement] or a resouce string. If a resource string is passed, the resource is loaded in the `<audio />` element accessible via the `defaultAudioEl` member. Note that you can not set the same [HTMLMediaElement] on multiple entities with the `resonance-audio-src` component (globally!). | | |
+| `room` | The audio room of this audio source. Use this if the room and source aren't parent and child, respectively. This can be a string selector (used with `document.querySelector` or a [HTMLElement]). | el.parentNode | |
+| `loop` | Whether to loop the element source. Overwrites the value set by the input element. | true | |
+| `autoplay` | Whether to autoplay the element source. Overwrites the value set by the input element. | true | |
+| [`gain`][ra_setGain] | Source's gain (linear). | [1][DEFAULT_SOURCE_GAIN] | |
+| [`maxDistance`][ra_setMaxDistance] | Source's maximum distance (in meters). | [1000][DEFAULT_MAX_DISTANCE] | |
+| [`minDistance`][ra_setMinDistance] | Source's minimum distance (in meters). | [1][DEFAULT_MIN_DISTANCE] | |
+| [`directivityPattern`][ra_setDirectivityPattern] | Source's directivity pattern where the [first number is the alpha][DEFAULT_DIRECTIVITY_ALPHA] and [the second is the sharpness][DEFAULT_DIRECTIVITY_SHARPNESS]. An alpha of 0 is an omnidirectional pattern, 1 is a bidirectional pattern, 0.5 is a cardiod pattern. The sharpness of the pattern is increased exponentially. | `0 1` <br> or in [THREE.Vector3][THREE_Vector3] format: `{x:0, y:1}` | |
+| [`sourceWidth`][ra_setSourceWidth] | The source width (in degrees), where 0 degrees is a point source and 360 degrees is an omnidirectional source. | [0][DEFAULT_SOURCE_WIDTH] | |
+| [`rolloff`][ra_setRolloff] | Source's rolloff model. | [`logarithmic`][DEFAULT_ATTENUATION_ROLLOFF] | [oneOf(`logarithmic`, `linear`, `none`)][ATTENUATION_ROLLOFFS]
+| `position` | The position in local coordinates. If set, this position will be used instead of the entity's position component. Revert to the entity's position by setting this property to any invalid position (such as `null`). | { } | |
+| `rotation` | The rotation in local degrees. If set, this rotation will be used instead of the entity's rotation component. Revert to the entity's rotation by setting this property to any invalid rotation (such as `null`). | { } | |
+| `visualize` | Show a wireframe sphere visualization of the audio source. Its radius equals the minDistance. If this audio source is not in an audio room, the sphere turns red. Access using `el.getObject3D('audio-src')`. | false | true|
+
+#### Members
+Accessible via `entity.components['resonance-audio-src'].<member>`.
+
+| Name | Description | Type |
+| - | - | - |
+| `room` | The audio room component. | [AComponent] |
+| `connected.element` | Whether the audio of this source comes from an [HTMLMediaElement]. | boolean |
+| `connected.stream` | Whether the audio of this source comes from a [MediaStream]. | boolean |
+| `sound` | The current connected [HTMLMediaElement] or [MediaStream] instance. | [HTMLMediaElement] or [MediaStream] |
+| `resonance` | Reference to the Google Resonance audio source | [Source][ra_Source] |
+| `defaultAudioEl` | The audio element used when a resource string is set as the source. | [HTMLAudioElement] |
+| `mediaAudioSourceNodes` | A collection of references to sources (so they can be reused). | mapping of [HTMLMediaElement] to [MediaElementAudioSourceNode] and [MediaStream] to [MediaStreamAudioSourceNode]
+
+
+#### Events
+| Event | `evt.detail` property | Description |
+| - | - | - |
+| audioroom-entered | `room` | The audio room element that was entered. |
+|                   | `src`  | The audio source element that entered the room. |
+| audioroom-left    | `room` | The audio room element that was left. |
+|                   | `src`  | The audio source element that left the room. |
+
+---
 
 ## Notes
 Support for custom positioning and rotation for the audio room is omitted due to the necessity to propagate positioning and rotation calculations to its audio source children and the complexities involved with that.
