@@ -18,9 +18,9 @@ npm i -S aframe-resonance-audio-component
 JS**DELIVR**  
 [![A free CDN for Open Source][img-jsdelivr-badge]][link-jsdelivr]
 
-**Use in version v0.4.5**
+**Use in version v<%= version %>**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@0.4.5/dist/aframe-resonance-audio-component.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@<%= version %>/dist/aframe-resonance-audio-component.min.js"></script>
 ```
 **Use in browser latest version** *(not recommended for production usage)*
 ```html
@@ -70,29 +70,9 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 
 <!-- images -->
-
-[img-aframe-badge]: https://img.shields.io/badge/a--frame-1.2.0-FC3164.svg?style=flat-square
-[img-build-linux-badge]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/linux.yml/badge.svg
-[img-build-macos-badge]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/macos.yml/badge.svg
-[img-build-windows-badge]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml/badge.svg
-[img-codacy-badge]: https://app.codacy.com/project/badge/Grade/22954e84e25844d4bc615cfc0c298638
-[img-contributors-badge]: https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square
-[img-jsdelivr-badge]: https://img.shields.io/jsdelivr/npm/hy/aframe-resonance-audio-component?style=flat-square
-[img-license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
-[img-npm-download-badge]: https://img.shields.io/npm/dt/aframe-resonance-audio-component?style=flat-square
-[img-npm-version-badge]: https://img.shields.io/npm/v/aframe-resonance-audio-component?style=flat-square
+<% for (var image in images) { %>
+[img-<%= image %>]: <%= images[image] %><% } %>
 
 <!-- links -->
-
-[link-aframe]: https://aframe.io/
-[link-build-linux]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/linux.yml
-[link-build-macos]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/macos.yml
-[link-build-windows]: https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml
-[link-codacy]: https://www.codacy.com/gh/mkungla/aframe-resonance-audio-component/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mkungla/aframe-resonance-audio-component&amp;utm_campaign=Badge_Grade
-[link-contributors]: https://github.com/mkungla/aframe-resonance-audio-component/graphs/contributors
-[link-etiennepinchon/aframe-resonance]: https://github.com/etiennepinchon/aframe-resonance
-[link-gh-pages]: https://mkungla.github.io/aframe-resonance-audio-component/
-[link-jsdelivr]: https://www.jsdelivr.com/package/npm/aframe-resonance-audio-component
-[link-license]: ./LICENSE
-[link-npm-package]: https://www.npmjs.com/package/aframe-resonance-audio-component
-[link-resonance-audio]: https://developers.google.com/resonance-audio/
+<% for (var link in links) { %>
+[link-<%= link %>]: <%= links[link] %><% } %>

@@ -16,6 +16,9 @@ const {
   description,
   version,
   readme,
+  devDependencies: {
+    aframe,
+  },
  } = pkgjson
 
 const pkginfo = {
@@ -120,6 +123,41 @@ const pkgconfig = {
       ],
     }),
     ...examples,
+    new HtmlWebpackPlugin({
+      inject: false,
+      minify: false,
+      filename: path.resolve(__dirname, './README.md'),
+      template: path.resolve(__dirname, './docs/readme.tmpl.md'),
+      templateParameters: {
+        version: version,
+        links: {
+          'aframe': 'https://aframe.io/',
+          'build-linux': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/linux.yml',
+          'build-macos': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/macos.yml',
+          'build-windows': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml',
+          'codacy': 'https://www.codacy.com/gh/mkungla/aframe-resonance-audio-component/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mkungla/aframe-resonance-audio-component&amp;utm_campaign=Badge_Grade',
+          'contributors': 'https://github.com/mkungla/aframe-resonance-audio-component/graphs/contributors',
+          'etiennepinchon/aframe-resonance': 'https://github.com/etiennepinchon/aframe-resonance',
+          'gh-pages': 'https://mkungla.github.io/aframe-resonance-audio-component/',
+          'jsdelivr': 'https://www.jsdelivr.com/package/npm/aframe-resonance-audio-component',
+          'license': './LICENSE',
+          'npm-package': 'https://www.npmjs.com/package/aframe-resonance-audio-component',
+          'resonance-audio': 'https://developers.google.com/resonance-audio/',
+        },
+        images: {
+          'aframe-badge': `https://img.shields.io/badge/a--frame-${aframe}-FC3164.svg?style=flat-square`,
+          'build-linux-badge': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/linux.yml/badge.svg',
+          'build-macos-badge': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/macos.yml/badge.svg',
+          'build-windows-badge': 'https://github.com/mkungla/aframe-resonance-audio-component/actions/workflows/windows.yml/badge.svg',
+          'codacy-badge': 'https://app.codacy.com/project/badge/Grade/22954e84e25844d4bc615cfc0c298638',
+          'contributors-badge': 'https://img.shields.io/github/contributors/mkungla/aframe-resonance-audio-component?style=flat-square',
+          'jsdelivr-badge': 'https://img.shields.io/jsdelivr/npm/hy/aframe-resonance-audio-component?style=flat-square',
+          'license-badge': 'https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square',
+          'npm-download-badge': 'https://img.shields.io/npm/dt/aframe-resonance-audio-component?style=flat-square',
+          'npm-version-badge': 'https://img.shields.io/npm/v/aframe-resonance-audio-component?style=flat-square',
+        },
+      }
+    })
   ],
   optimization: {
     minimize: true,
