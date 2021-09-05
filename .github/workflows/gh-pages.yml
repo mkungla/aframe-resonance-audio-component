@@ -16,6 +16,7 @@ jobs:
           node-version: '14'
       - run: npm ci
       - run: npm run build
+      - run: npm run dist:jsdelivr
       - run: git fetch origin gh-pages
       - run: git switch gh-pages
       - run: |
