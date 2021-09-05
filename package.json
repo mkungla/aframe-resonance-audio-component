@@ -36,6 +36,7 @@
     "test": "karma start ./tests/karma.conf.js",
     "test:coverage": "COVERAGE=true karma start ./tests/karma.conf.js",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
+    "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
     "test:edge": "karma start ./tests/karma.conf.js --browsers Edge",
     "preversion": "npm run lint && npm test",
     "dist:jsdelivr": "node ./docs/dist-to-jsdelivr.js",
