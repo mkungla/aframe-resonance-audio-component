@@ -76,7 +76,7 @@ AFRAME.registerComponent('resonance-audio-src', {
     this.updateResonancePosition().updateVisualization()
 
     const roomEl = this.getRoomChoice()
-  
+
     if ((roomEl && roomEl.components && roomEl.components['resonance-audio-room']) !== this.room) {
       /**
        * Yes, this looks ugly. And this approach has a reason. The audio source needs the audio
@@ -225,13 +225,13 @@ AFRAME.registerComponent('resonance-audio-src', {
    * @returns {HTMLElement|null}
    */
   getRoomChoice () {
-    const ar = this.data.room
-    return !ar
+    const room = this.data.room
+    return !room
       ? this.el.parentNode
-      : ar instanceof AFRAME.AEntity
-        ? ar
-        : typeof ar === 'string'
-          ? document.querySelector(ar)
+      : room instanceof AFRAME.AEntity
+        ? room
+        : typeof room === 'string'
+          ? document.querySelector(room)
           : this.el.parentNode
   },
 
