@@ -9,6 +9,8 @@ module.exports = function (config) {
     basePath: '../',
     // Default use firefox only
     browsers: ['ChromeHeadless'],
+    browserDisconnectTimeout: 5000,
+    processKillTimeout: 5000,
     singleRun: true,
     concurrency: Infinity,
     port: 9999,
