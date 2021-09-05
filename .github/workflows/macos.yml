@@ -9,7 +9,6 @@ on:
 
 jobs:
   firefox:
-    needs: test
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +19,6 @@ jobs:
       - run: npm ci
       - run: npm run test:firefox
   chrome:
-    needs: test
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,14 +28,14 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test:chrome
-  safari:
-    needs: test
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run test:safari
+  # safari:
+  #   needs: test
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 16
+  #         cache: 'npm'
+  #     - run: npm ci
+  #     - run: npm run test:safari
