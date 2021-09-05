@@ -45,7 +45,7 @@ class ExamplesHeader extends HTMLElement {
 class DocsFooter extends HTMLElement {
   constructor() {
     super()
-    let footer = `${"aframe-resonance-audio-component"}@v${"0.4.7"}`
+    let footer = `${"aframe-resonance-audio-component"}@v${"0.4.8"}`
     if (typeof AFRAME !== 'undefined') {
       footer += ` - aframe@v${AFRAME.version}`
     }

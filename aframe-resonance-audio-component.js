@@ -7477,7 +7477,8 @@ AFRAME.registerComponent('resonance-audio-room', {
   },
   setFromBB (base = {}) {
     // TODO: make a better bounding box, taking into account the centrepoint position of the entity.
-    const size = getBoundingBox(this.el.object3D).getSize()
+    const size = new THREE.Vector3()
+    getBoundingBox(this.el.object3D).getSize(size)
     this.setRoom({ ...base, width: size.x, height: size.y, depth: size.z })
   },
   setRoom (values) {
@@ -7561,7 +7562,7 @@ AFRAME.registerPrimitive('a-resonance-audio-room', {
   object3D.updateMatrixWorld()
   const m = new THREE.Matrix4()
   if (object3D.parent !== null) {
-    m.getInverse(object3D.parent.matrixWorld, false)
+    m.copy(object3D.parent.matrixWorld).invert()
   }
   object3D.matrix = m
   // To prevent matrix being reassigned.
