@@ -594,16 +594,21 @@ suite(`component ${crbb}`, () => {
 
   test('model loading, src entering the room, and bounded-audioroom-loaded event', () => {
     const delta = 0.000001
-    expect(roomComponent.data.width).to.be.closeTo(w, delta)
-    expect(roomComponent.data.height).to.be.closeTo(h, delta)
-    expect(roomComponent.data.depth).to.be.closeTo(d, delta)
-    expect(roomComponent.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({ width: w / 2, height: h / 2, depth: d / 2 })
-    const visualizationSize = new THREE.Vector3()
-    new THREE.Box3().setFromObject(roomComponent.el.getObject3D('audio-room')).getSize(visualizationSize)
-    expect(visualizationSize.x).to.be.closeTo(w, delta)
-    expect(visualizationSize.y).to.be.closeTo(h, delta)
-    expect(visualizationSize.z).to.be.closeTo(d, delta)
-    expect(srcEl.components[cs].room).to.equal(roomComponent)
+    expect(roomComponent.data.width).to.be.closeTo(w, delta, 'data.w delta')
+    expect(roomComponent.data.height).to.be.closeTo(h, delta, 'data.h delta')
+    expect(roomComponent.data.depth).to.be.closeTo(d, delta, 'data.d delta')
+    expect(roomComponent.resonanceAudioScene._room.early._halfDimensions).to.deep.equal({ width: w / 2, height: h / 2, depth: d / 2 }, '_halfDimensions')
+
+    const size = new THREE.Vector3()
+    const o3d = roomComponent.el.getObject3D('audio-room')
+    o3d.updateMatrixWorld()
+    const box = new THREE.Box3().setFromObject(o3d)
+    box.getSize(size)
+
+    expect(size.x).to.be.closeTo(w, delta, 'size.w delta')
+    expect(size.y).to.be.closeTo(h, delta, 'size.h delta')
+    expect(size.z).to.be.closeTo(d, delta, 'size.d delta')
+    expect(srcEl.components[cs].room).to.equal(roomComponent, 'room eq component')
   })
 
   teardown(() => {
