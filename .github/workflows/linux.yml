@@ -8,7 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  chrome:
     name: test node ${{ matrix.node }}
     runs-on: ubuntu-latest
     strategy:
@@ -23,10 +23,8 @@ jobs:
       - run: npm ci
       - run: npm test
   firefox:
-    needs: test
+    needs: chrome
     runs-on: ubuntu-latest
-    env:
-      DISPLAY: :0
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -34,21 +32,5 @@ jobs:
           node-version: 16
           cache: 'npm'
       - run: npm ci
-      - run: |
-          sh -e /etc/init.d/xvfb start
-          npm run test:firefox
-  chrome:
-    needs: test
-    runs-on: ubuntu-latest
-    env:
-      DISPLAY: :0
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'npm'
-      - run: npm ci
-      - run: |
-          sh -e /etc/init.d/xvfb start
-          npm run test:chrome
+      - run: npm run test:firefox:headless
+

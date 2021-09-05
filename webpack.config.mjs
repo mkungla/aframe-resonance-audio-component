@@ -50,6 +50,7 @@ const examples = [
   'primitives-with-multiple-sources.html',
   'primitives-using-mediastream.html',
   'using-obj-model-as-room.html',
+  'multiple-rooms.html',
 ].map(example => {
   return new HtmlWebpackPlugin({
     inject: false,

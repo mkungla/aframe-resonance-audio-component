@@ -36,6 +36,7 @@
     "test": "karma start ./tests/karma.conf.js",
     "test:coverage": "COVERAGE=true karma start ./tests/karma.conf.js",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
+    "test:firefox:headless": "karma start ./tests/karma.conf.js --browsers FirefoxHeadless",
     "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
     "test:safari": "karma start ./tests/karma.conf.js --browsers Safari",
     "test:edge": "karma start ./tests/karma.conf.js --browsers Edge",

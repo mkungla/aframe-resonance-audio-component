@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= htmlWebpackPlugin.options.title %> - Multiple rooms</title>
+<meta charset=utf-8 />
+<link rel="icon" sizes="192x192" href="https://aframe.io/images/aframe-logo-192.png">
+<script src="assets/aframe/aframe.min.js"></script>
+<%= htmlWebpackPlugin.tags.headTags %>
+<body>
+
+<header is="example-header" title="Multiple rooms"></header>
+<main>
+<!-- EXAMPLE -->
+<a-scene embedded>
+  <a-assets>
+    <audio id="ambient1" src="assets/static/audio/track.mp3" preload="auto"></audio>
+    <audio id="ambient2" src="assets/static/audio/track.mp3" preload="auto"></audio>
+  </a-assets>
+
+  <!-- ROOM 1 -->
+  <a-resonance-audio-room
+    visualize="true"
+    position="-15 0 -15"
+    width="10"
+    height="10"
+    depth="10">
+    <a-resonance-audio-src
+      visualize="true"
+      src="#ambient1"
+      loop="true"
+      autoplay="true"></a-resonance-audio-src>
+  </a-resonance-audio-room>
+
+  <!-- ROOM 2 -->
+  <a-resonance-audio-room
+    visualize="true"
+    position="15 0 -15"
+    width="10"
+    height="10"
+    depth="10"
+    left="brick-bare"
+    right="curtain-heavy"
+    front="plywood-panel"
+    back="glass-thin"
+    down="parquet-on-concrete"
+    up="acoustic-ceiling-tiles">
+    <a-resonance-audio-src
+      visualize="true"
+      src="#ambient2"
+      loop="true"
+      autoplay="true"></a-resonance-audio-src>
+  </a-resonance-audio-room>
+
+  <a-sky color="#6EBAA7"></a-sky>
+</a-scene>
+<!-- / EXAMPLE -->
+</main>
+<footer is="docs-footer"/></footer>
+<a is="github-corner"></a>
