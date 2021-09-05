@@ -101,7 +101,7 @@ suite(`component ${cr}`, () => {
 
   suite('initialization', () => {
     test('position and rotation', () => {
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       // Audio room in world coordinates.
       compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates.
@@ -137,7 +137,7 @@ suite(`component ${cr}`, () => {
   suite('update properties', () => {
     test('container position', () => {
       containerEl.setAttribute('position', '-10 -20 -30')
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       // Audio room in world coordinates (changed).
       compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -7, y: -17, z: -27 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates (changed).
@@ -146,7 +146,7 @@ suite(`component ${cr}`, () => {
 
     test('container rotation', () => {
       containerEl.setAttribute('rotation', '0 -90 0')
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       // Audio room in world coordinates.
       compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -4, y: 1, z: 0 }, { x: 0, y: -45 - 90, z: 0 })
       // Visualization in world coordinates.
@@ -155,7 +155,7 @@ suite(`component ${cr}`, () => {
 
     test('room position', () => {
       roomEl.setAttribute('position', '-10 -20 -30')
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       // Audio room in world coordinates.
       compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: -11, y: -22, z: -33 }, { x: 0, y: -45, z: 0 })
       // Visualization in world coordinates.
@@ -164,7 +164,7 @@ suite(`component ${cr}`, () => {
 
     test('room rotation', () => {
       roomEl.setAttribute('rotation', '0 -90 0')
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       // Audio room in world coordinates.
       compareMatrixtoPosAndRot(roomEl.object3D.matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: -90, z: 0 })
       // Visualization in world coordinates.
@@ -223,7 +223,7 @@ suite(`component ${cr}`, () => {
       // Set camera to same height as room.
       roomEl.sceneEl.camera.el.setAttribute('position', '0 1 0')
       // Get camera position relative to the room.
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       const m = new THREE.Matrix4().multiplyMatrices(
         new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld
@@ -236,7 +236,7 @@ suite(`component ${cr}`, () => {
       // Set camera to same height as room.
       roomEl.sceneEl.camera.el.setAttribute('position', '1.5 1 0')
       // Get camera position relative to the room.
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       const m = new THREE.Matrix4().multiplyMatrices(
         new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld
@@ -249,7 +249,7 @@ suite(`component ${cr}`, () => {
       // Set camera to same height as room.
       roomEl.sceneEl.camera.el.setAttribute('position', '2 1 0')
       // Get camera position relative to the room.
-      roomEl.sceneEl.object3D.updateMatrixWorld(true)
+      roomEl.sceneEl.object3D.updateMatrixWorld()
       const m = new THREE.Matrix4().multiplyMatrices(
         new THREE.Matrix4().copy(roomEl.object3D.matrixWorld).invert(),
         roomEl.sceneEl.camera.matrixWorld

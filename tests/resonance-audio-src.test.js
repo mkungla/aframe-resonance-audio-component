@@ -112,7 +112,7 @@ suite(`component ${cs} without entering an audio room`, () => {
 
   test('update audio src position', () => {
     el.setAttribute(cs, 'position', '4 4 4')
-    document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+    document.querySelector('a-scene').object3D.updateMatrixWorld()
     // Audio source entity in world coordinates (unchanged).
     compareMatrixtoPosAndRot(el.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
     // Resonance Source in world coordinates (changed).
@@ -123,7 +123,7 @@ suite(`component ${cs} without entering an audio room`, () => {
 
   test('update audio src rotation', () => {
     el.setAttribute(cs, 'rotation', '0 90 0')
-    document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+    document.querySelector('a-scene').object3D.updateMatrixWorld()
     // Audio source entity in world coordinates (unchanged).
     compareMatrixtoPosAndRot(el.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
     // Resonance Source in world coordinates (changed).

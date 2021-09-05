@@ -127,7 +127,7 @@ suite(`component ${cs} in a ${cr}`, () => {
     })
 
     test('position, orientation and visualization position and orientation', () => {
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source in world coordinates.
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
       compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: 2, y: 1, z: 0 }, { x: 0, y: 0, z: 0 })
@@ -159,8 +159,8 @@ suite(`component ${cs} in a ${cr}`, () => {
 
   suite(`${cs} property updates`, () => {
     test('container position', () => {
-      containerEl.setAttribute('position', '-10 -20 -30') // room: -7 -17 -27
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      containerEl.setAttribute('position', '-10 -20 -30')
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source in world coordinates (changed).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: -6, y: -16, z: -26 }, { x: 0, y: 45, z: 0 })
       compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -7, y: -17, z: -27 }, { x: 0, y: 0, z: 0 })
@@ -177,7 +177,8 @@ suite(`component ${cs} in a ${cr}`, () => {
 
     test('container rotation', () => {
       containerEl.setAttribute('rotation', '0 -180 0')
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
+
       // Audio source entity in world coordinates (changed).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: -5, y: 2, z: -7 }, { x: 0, y: -135, z: 0 })
       compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -4, y: 1, z: -6 }, { x: 0, y: -180, z: 0 })
@@ -194,7 +195,7 @@ suite(`component ${cs} in a ${cr}`, () => {
 
     test('audio src position', () => {
       srcEl1.setAttribute(cs, 'position', '4 4 4')
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source entity in world coordinates (unchanged).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
       // Resonance Source in world coordinates (changed).
@@ -207,7 +208,7 @@ suite(`component ${cs} in a ${cr}`, () => {
 
     test('audio src rotation', () => {
       srcEl1.setAttribute(cs, 'rotation', '0 90 0')
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source entity in world coordinates (unchanged).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: 3, y: 2, z: 1 }, { x: 0, y: 45, z: 0 })
       // Resonance Source in world coordinates (changed).
@@ -248,7 +249,7 @@ suite(`component ${cs} in a ${cr}`, () => {
     test('position and orientation update', () => {
       roomEl.setAttribute('position', '-1 -2 2') // in world coordinates: -2 -4 -1
       roomEl.setAttribute('rotation', '0 -180 0')
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source in world coordinates (changed).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: -3, y: -3, z: -2 }, { x: 0, y: -135, z: 0 })
       compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -2, y: -4, z: -1 }, { x: 0, y: -180, z: 0 })
@@ -265,7 +266,7 @@ suite(`component ${cs} in a ${cr}`, () => {
     test('position and orientation update', () => {
       srcEl1.setAttribute('position', '2 2 2') // in world coordinates: 4 3 2
       srcEl1.setAttribute('rotation', '0 90 0')
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       // Audio source in world coordinates (changed).
       compareMatrixtoPosAndRot(srcEl1.object3D.matrixWorld, { x: 4, y: 3, z: 2 }, { x: 0, y: 90, z: 0 })
       // Resonance Source in world coordinates (changed).
@@ -506,7 +507,7 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
   })
 
   test('position', () => {
-    document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+    document.querySelector('a-scene').object3D.updateMatrixWorld()
     // Audio source entity in world coordinates.
     compareMatrixtoPosAndRot(srcEl2.object3D.matrixWorld, { x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: 0 })
     // Resonance Source in world coordinates.
@@ -519,7 +520,7 @@ suite(`component ${cr} and ${cs} non-hierarchically attached`, () => {
 
   test('switch rooms', done => {
     srcEl1.addEventListener('audioroom-entered', evt => {
-      document.querySelector('a-scene').object3D.updateMatrixWorld(true)
+      document.querySelector('a-scene').object3D.updateMatrixWorld()
       expect(evt.detail.room).to.equal(roomEl2)
       expect(roomEl1.audioSources).to.be.an('array').that.does.not.include(component1)
       // Audio source entity in world coordinates (unchanged).
