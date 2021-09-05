@@ -3,4 +3,4 @@ if (typeof AFRAME === 'undefined') {
 }
 
 require('./resonance-audio-room')
-import('./resonance-audio-src')
+require('./resonance-audio-src')
