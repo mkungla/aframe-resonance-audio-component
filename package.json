@@ -40,7 +40,7 @@
     "test:chrome": "karma start ./tests/karma.conf.js --browsers Chrome",
     "test:safari": "karma start ./tests/karma.conf.js --browsers Safari",
     "test:edge": "karma start ./tests/karma.conf.js --browsers Edge",
-    "preversion": "npm run lint && npm test",
+    "preversion": "npm run lint && npm test && rm -rf dist/",
     "dist:jsdelivr": "node ./docs/dist-to-jsdelivr.js",
     "version": "npm run build && npm run dist:jsdelivr && git add -A",
     "postversion": "git push && git push --tags"

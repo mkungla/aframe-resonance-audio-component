@@ -11,6 +11,5 @@ webpack.config.mjs
 
 dist/assets/*
 dist/*.html
-dist/src_resonance-audio-src_js.*
 
 coverage/
