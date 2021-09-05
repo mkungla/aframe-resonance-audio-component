@@ -44,3 +44,14 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test:chrome
+  edge:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:edge
