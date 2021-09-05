@@ -22,9 +22,9 @@ yarn add aframe-resonance-audio-component
 JS**DELIVR**  
 [![A free CDN for Open Source][img-jsdelivr-badge]][link-jsdelivr]
 
-**Use in version v0.4.11**
+**Use in version v1.0.0**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@0.4.11/dist/aframe-resonance-audio-component.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@1.0.0/dist/aframe-resonance-audio-component.min.js"></script>
 ```
 **Use in browser latest version** *(not recommended for production usage)*
 ```html
