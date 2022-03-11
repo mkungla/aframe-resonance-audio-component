@@ -49,7 +49,7 @@
     "resonance-audio": "^1.0.0"
   },
   "devDependencies": {
-    "aframe": "1.2.0",
+    "aframe": "1.3.0",
     "chai": "^4.3.4",
     "chai-shallow-deep-equal": "^1.4.6",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
