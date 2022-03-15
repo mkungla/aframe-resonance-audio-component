@@ -94,7 +94,7 @@ const pkgconfig = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'node_modules/aframe/dist/aframe.*'),
+          from: path.resolve(__dirname, 'node_modules/aframe/dist/aframe-*'),
           to: path.resolve(__dirname, 'dist/assets/aframe/[name][ext]'),
         },
         {

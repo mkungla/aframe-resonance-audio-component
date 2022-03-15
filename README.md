@@ -328,7 +328,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 
 
-[img-aframe-badge]: https://img.shields.io/badge/a--frame-1.2.0-FC3164.svg?style=flat-square
+[img-aframe-badge]: https://img.shields.io/badge/a--frame-^1.3.0-FC3164.svg?style=flat-square
 
 <!-- links -->
 [link-aframe]: https://aframe.io/
