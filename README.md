@@ -37,8 +37,6 @@ JS**DELIVR**
 
 ---
 
-![dependencies](https://img.shields.io/david/mkungla/aframe-resonance-audio-component?style=flat-square)
-![devDependencies](https://img.shields.io/david/dev/mkungla/aframe-resonance-audio-component?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/mkungla/aframe-resonance-audio-component?style=flat-square)
 
 ## Table of contents
@@ -328,7 +326,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 
 
-[img-aframe-badge]: https://img.shields.io/badge/a--frame-^1.3.0-FC3164.svg?style=flat-square
+[img-aframe-badge]: https://img.shields.io/badge/a--frame-1.3.0-FC3164.svg?style=flat-square
 
 <!-- links -->
 [link-aframe]: https://aframe.io/
