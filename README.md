@@ -22,9 +22,9 @@ yarn add aframe-resonance-audio-component
 JS**DELIVR**  
 [![A free CDN for Open Source][img-jsdelivr-badge]][link-jsdelivr]
 
-**Use in version v1.0.0**
+**Use in version v1.1.0**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@1.0.0/dist/aframe-resonance-audio-component.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-resonance-audio-component@1.1.0/dist/aframe-resonance-audio-component.min.js"></script>
 ```
 **Use in browser latest version** *(not recommended for production usage)*
 ```html
@@ -37,6 +37,8 @@ JS**DELIVR**
 
 ---
 
+![dependencies](https://img.shields.io/david/mkungla/aframe-resonance-audio-component?style=flat-square)
+![devDependencies](https://img.shields.io/david/dev/mkungla/aframe-resonance-audio-component?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/mkungla/aframe-resonance-audio-component?style=flat-square)
 
 ## Table of contents
@@ -326,7 +328,7 @@ Dynamically changing positioning and rotation of audio source or room container 
 
 
 
-[img-aframe-badge]: https://img.shields.io/badge/a--frame-1.3.0-FC3164.svg?style=flat-square
+[img-aframe-badge]: https://img.shields.io/badge/a--frame-^1.3.0-FC3164.svg?style=flat-square
 
 <!-- links -->
 [link-aframe]: https://aframe.io/
